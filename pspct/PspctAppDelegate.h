@@ -17,6 +17,4 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic, retain) Facebook *facebook;
 
--(void) preloadMvc;
-
 @end

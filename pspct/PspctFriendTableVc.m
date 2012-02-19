@@ -10,19 +10,20 @@
 #import "PspctAppDelegate.h"
 #import <MessageUI/MessageUI.h>
 #import "ScanAddressBook.h"
+#import "SimpleRequester.h"
 
 @implementation PspctFriendTableVc
 
-@synthesize listId, friends, listName, selected;
+@synthesize listId, friends, friends_hidden, listName, listType, selected;
 
-- (id)initWithListId:(NSString*)identifier andListName:(NSString*)name
+- (id)initWithListId:(NSString*)identifier andListName:(NSString*)name andListType:(NSString*)type
 {
-    self = [super init];
-    //self = [super initWithStyle:UITableViewStylePlain];
+    self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
         self.listId = identifier;
         self.listName = name;
-        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+        self.listType = type;
+        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Send"
                                                                         style:UIBarButtonItemStyleDone target:self action:@selector(sendMessage:)];
         
         self.navigationItem.rightBarButtonItem = rightButton;
@@ -42,6 +43,7 @@
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
     self.friends = [result objectForKey:@"data"];
+    self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:11];
     self.selected = [[NSMutableArray alloc] initWithArray:self.friends];    
     for (int i=0; i<self.selected.count; i++) {
         [self.selected replaceObjectAtIndex:i withObject:@"yes"];
@@ -56,6 +58,18 @@
     for (NSDictionary *list in self.friends) {
         NSLog(@"%@", [list objectForKey:@"name"]);
     }
+
+    NSLog(@"type: %@", self.listType);
+    if ([self.listType isEqualToString:@"family"])
+    {
+        NSLog(@"we have a family");
+        [self.friends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", nil]];
+        [self.selected addObject:@"yes"];
+        [self.friends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", nil]];
+        [self.selected addObject:@"yes"];
+    }
+    
+    
     [self.tableView reloadData];
 }
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
@@ -78,7 +92,7 @@
     PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString* endpoint = [NSString stringWithFormat:@"%@/members", self.listId, nil];
     NSLog(@"--asking for friends from: %@", endpoint);
-    
+
     [appDelegate.facebook requestWithGraphPath:endpoint andDelegate:self];
 
     self.navigationItem.title = self.listName;
@@ -135,9 +149,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (self.friends)
+    if (!self.friends)
+        return 0;
+    if (section==0)
         return self.friends.count;
-    return 0;
+    return self.friends_hidden.count;
+    
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -225,13 +243,14 @@
 
 - (IBAction)sendMessage:(id)sender
 {
+    
     MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
     
     messageVc.messageComposeDelegate = self;
     
     NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
     //get last name
-    
+    ScanAddressBook *addressBook = [[ScanAddressBook alloc] init];
     for (int i=0; i<self.selected.count; i++) {
         
         if ([[self.selected objectAtIndex:i] isEqualToString:@"no"])
@@ -240,14 +259,15 @@
         NSString *fullname = [[self.friends objectAtIndex:i] objectForKey:@"name"];
         NSArray *components = [fullname componentsSeparatedByString:@" "];
     
-        NSString *lastname;
-        if (components.count>0)
+        NSString *lastname = nil;
+        if (components.count>1)
             lastname = [components objectAtIndex:components.count-1];
-        else
-            lastname = @"unknown";
+        NSString* firstname = [components objectAtIndex:0];
+
+        
     
         //get number
-        NSString *number = [[[ScanAddressBook alloc] init] simpleSearch:lastname];
+        NSString *number = [addressBook simpleSearch:firstname andLastName:lastname];
         if (number)
             [recipients addObject:number];
     }
@@ -255,21 +275,43 @@
     messageVc.recipients = recipients;
     messageVc.body = @"Be right there!";
     
+    //This check is late in the message so debug info is written to the log
+    if (![MFMessageComposeViewController canSendText])
+        return;
+    
     [self presentViewController:messageVc animated:YES completion:nil];
     NSLog(@"shown");
 }
 
-- (void)delayPresentation:(MFMessageComposeViewController*)mvc
-{
-    NSLog(@"presenting");
-    //UITableViewController *tbvc = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    //[self.navigationController presentModalViewController:mvc animated:YES];
-    [self.navigationController presentViewController:mvc animated:YES completion:nil];
-}
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
     [self dismissModalViewControllerAnimated:YES];
+}
+
+-(NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return @"Hide";
+}
+
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"commit editing style");
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [self.friends removeObjectAtIndex:indexPath.row];
+        [self.selected removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }   
+    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
 }
 
 @end

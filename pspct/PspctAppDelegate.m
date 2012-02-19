@@ -7,7 +7,6 @@
 //
 
 #import "PspctAppDelegate.h"
-#import <MessageUI/MessageUI.h>
 
 @implementation PspctAppDelegate
 
@@ -25,28 +24,11 @@
         facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
     }
     if (![facebook isSessionValid]) {
-        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", nil];
+        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", @"friends_birthday", @"user_relationships", nil];
         [facebook authorize:permissions];
     }
-    
-    NSLog(@"preloading");
-    [self performSelectorInBackground:@selector(preloadMvc) withObject:nil];
-    NSLog(@"preloaded");
-    
+       
     return YES;
-}
-
--(void) preloadMvc
-{
-    //verrry slow the first time this object is called.  preloading seems to help out a bit.
-    NSLog(@"preloading mvc");
-    if ([MFMessageComposeViewController canSendText])
-    {
-        MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
-        messageVc.body = @"blank text";
-        NSLog(@"preloaded mvc with body: %@", messageVc.body);
-    }
-
 }
 
 /** FACEBOOK SUPPORT **/
@@ -54,6 +36,8 @@
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     return [facebook handleOpenURL:url]; 
 }
+
+
 
 // For 4.2+ support
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url

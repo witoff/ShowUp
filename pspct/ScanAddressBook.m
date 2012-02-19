@@ -11,7 +11,7 @@
 
 @implementation ScanAddressBook
 
-
+@synthesize contacts;
 
 - (void) search
 {
@@ -77,6 +77,9 @@
 
 - (NSArray*) getContacts
 {
+    if (self.contacts != nil)
+        return self.contacts;
+    
     ABAddressBookRef addressBook = ABAddressBookCreate();
     CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople(addressBook);
     CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
@@ -180,19 +183,51 @@
     
     CFRelease(addressBook);
     CFRelease(allPeople);
-    return contactArray;
+    self.contacts = contactArray;
+    return self.contacts;
 }
 
-- (NSString*) simpleSearch:(NSString*)lastName
+- (NSString*) simpleSearch:(NSString*)firstname andLastName:(NSString*)lastname;
 {
-    lastName= [lastName lowercaseString];
-    NSArray *contacts = [self getContacts];
-    for (NSDictionary *person in contacts) {
-        
-        if ([lastName isEqualToString:[[person objectForKey:@"lastname"] lowercaseString]])
-            return [person objectForKey:@"telephone"];
+    //TODO: Replace this with a smart dynamic programming best fit model
+    if (firstname)
+        firstname = [firstname lowercaseString];
+    if (lastname)
+        lastname = [lastname lowercaseString];
+    
+    for (NSDictionary *person in [self getContacts]) {
+        NSString* personFirstname = [[person objectForKey:@"firstname"] lowercaseString];
+        NSString* personLastname = [[person objectForKey:@"lastname"] lowercaseString];
+
+        if (lastname && lastname.length>0 && personLastname.length>0)
+        {
+            if ([lastname isEqualToString:personLastname])
+            {
+                if (!firstname)
+                    return [person objectForKey:@"telephone"];
+                if ([self doBidirectionalSubstringMatch:firstname andTwo:personFirstname])
+                    return [person objectForKey:@"telephone"];
+            }
+        }
+        else if ([self doBidirectionalSubstringMatch:firstname andTwo:personFirstname])
+            return [person objectForKey:@"telephone"];                    
+            
     }
+    NSLog(@"no match for:\nfirstname: %@\nlastname: %@", firstname, lastname);
     return nil;
+}
+
+-(BOOL)doBidirectionalSubstringMatch:(NSString*)one andTwo:(NSString*)two
+{
+    //Account for shortened/nicknames
+    if (one.length < two.length)
+    {
+        if ([two rangeOfString:one].location ==  NSNotFound)
+            return NO;
+    }
+    else if ([one rangeOfString:two].location == NSNotFound)
+        return NO;
+    return YES;
 }
 
 @end

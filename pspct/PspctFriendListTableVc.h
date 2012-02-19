@@ -11,11 +11,16 @@
 
 @interface PspctFriendListTableVc : UITableViewController<FBRequestDelegate>
 {
-    NSArray* friendLists;
+    NSMutableArray* friendLists;
+    NSMutableArray* friendLists_hidden;
 }
 
-@property (nonatomic, retain) NSArray *friendLists;
+@property (nonatomic, retain) NSMutableArray *friendLists;
+@property (nonatomic, retain) NSMutableArray *friendLists_hidden;
 
-
+-(IBAction)btnEdit_click:(id)sender;
+-(void) preloadMvc;
+-(void) loadData;
+-(void) saveData;
 
 @end

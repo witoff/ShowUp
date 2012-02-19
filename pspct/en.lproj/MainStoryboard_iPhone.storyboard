@@ -9,16 +9,16 @@
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RFZ-o1-blB" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="zZ4-I5-0NP" customClass="PspctFriendListTableVc" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="Lists" id="CKc-s9-4AT"/>
+                    <navigationItem key="navigationItem" title="Friend Lists" id="CKc-s9-4AT"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1086" y="-261"/>
+            <point key="canvasLocation" x="1156" y="-360"/>
         </scene>
         <scene sceneID="axn-1k-eSj">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AE5-UV-6V9" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController definesPresentationContext="YES" id="8ki-ng-VqH" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Friend LIsts" id="UHs-3b-Qki"/>
+                    <tabBarItem key="tabBarItem" title="Friend LIsts" image="112-group.png" id="UHs-3b-Qki"/>
                     <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="ZGi-lF-OBz">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -27,7 +27,36 @@
                     </connections>
                 </navigationController>
             </objects>
-            <point key="canvasLocation" x="529" y="-250"/>
+            <point key="canvasLocation" x="667" y="-374"/>
+        </scene>
+        <scene sceneID="hUU-ln-QdR">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bce-nS-fSp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="U36-4J-Z93" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="L7c-Tz-SYe">
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Event List" id="dXi-sK-Yis"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1156" y="252"/>
+        </scene>
+        <scene sceneID="LdM-ww-R9u">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FcF-eH-aQQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController definesPresentationContext="YES" id="u2D-sy-7iy" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Events" id="6PU-rB-jqm"/>
+                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="Efq-ru-PL4">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="U36-4J-Z93" kind="relationship" relationship="rootViewController" id="4ZI-e5-Trz"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="667" y="252"/>
         </scene>
         <scene sceneID="13">
             <objects>
@@ -54,10 +83,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Options" image="second" id="6"/>
+                    <tabBarItem key="tabBarItem" title="Options" image="20-gear2.png" id="6"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="657" y="756"/>
+            <point key="canvasLocation" x="667" y="866"/>
         </scene>
         <scene sceneID="15">
             <objects>
@@ -75,15 +104,19 @@
                     </connections>
                 </tabBarController>
             </objects>
-            <point key="canvasLocation" x="28" y="154"/>
+            <point key="canvasLocation" x="28" y="252"/>
         </scene>
     </scenes>
     <resources>
-        <image name="second" width="16" height="16"/>
+        <image name="112-group.png" width="32" height="21"/>
+        <image name="20-gear2.png" width="26" height="28"/>
     </resources>
     <classes>
         <class className="PspctFriendListTableVc" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PspctFriendListTableVc.h"/>
+            <relationships>
+                <relationship kind="action" name="btnEdit_click:"/>
+            </relationships>
         </class>
         <class className="PspctSecondViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PspctSecondViewController.h"/>

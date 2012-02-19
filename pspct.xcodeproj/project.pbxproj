@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06577D4614F0AC1200EA6180 /* 112-group.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4114F0AC1200EA6180 /* 112-group.png */; };
+		06577D4714F0AC1200EA6180 /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4214F0AC1200EA6180 /* 83-calendar.png */; };
+		06577D4814F0AC1200EA6180 /* 20-gear2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4314F0AC1200EA6180 /* 20-gear2.png */; };
+		06577D4914F0AC1200EA6180 /* 55-network.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4414F0AC1200EA6180 /* 55-network.png */; };
+		06577D4A14F0AC1200EA6180 /* 27-planet.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4514F0AC1200EA6180 /* 27-planet.png */; };
+		06577D4D14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06577D4C14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m */; };
+		06577D5114F0C08900EA6180 /* SimpleRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 06577D5014F0C08900EA6180 /* SimpleRequester.m */; };
 		06788E6C14E770AD007C5BE4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06788E6B14E770AD007C5BE4 /* UIKit.framework */; };
 		06788E6E14E770AD007C5BE4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06788E6D14E770AD007C5BE4 /* Foundation.framework */; };
 		06788E7014E770AD007C5BE4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06788E6F14E770AD007C5BE4 /* CoreGraphics.framework */; };
@@ -62,6 +69,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06577D4114F0AC1200EA6180 /* 112-group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group.png"; sourceTree = "<group>"; };
+		06577D4214F0AC1200EA6180 /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
+		06577D4314F0AC1200EA6180 /* 20-gear2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "20-gear2.png"; sourceTree = "<group>"; };
+		06577D4414F0AC1200EA6180 /* 55-network.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "55-network.png"; sourceTree = "<group>"; };
+		06577D4514F0AC1200EA6180 /* 27-planet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "27-planet.png"; sourceTree = "<group>"; };
+		06577D4B14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PspctPredefinedMessageTableVc.h; sourceTree = "<group>"; };
+		06577D4C14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PspctPredefinedMessageTableVc.m; sourceTree = "<group>"; };
+		06577D4F14F0C08900EA6180 /* SimpleRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleRequester.h; sourceTree = "<group>"; };
+		06577D5014F0C08900EA6180 /* SimpleRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleRequester.m; sourceTree = "<group>"; };
 		06788E6714E770AD007C5BE4 /* pspct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pspct.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06788E6B14E770AD007C5BE4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		06788E6D14E770AD007C5BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -149,6 +165,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06577D4014F0AC0400EA6180 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				06577D4114F0AC1200EA6180 /* 112-group.png */,
+				06577D4214F0AC1200EA6180 /* 83-calendar.png */,
+				06577D4314F0AC1200EA6180 /* 20-gear2.png */,
+				06577D4414F0AC1200EA6180 /* 55-network.png */,
+				06577D4514F0AC1200EA6180 /* 27-planet.png */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		06577D4E14F0C05200EA6180 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				06577D4F14F0C08900EA6180 /* SimpleRequester.h */,
+				06577D5014F0C08900EA6180 /* SimpleRequester.m */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
 		06788E5C14E770AC007C5BE4 = {
 			isa = PBXGroup;
 			children = (
@@ -198,6 +235,7 @@
 				06788E8F14E770AD007C5BE4 /* second@2x.png */,
 				06788E7214E770AD007C5BE4 /* Supporting Files */,
 				06F26F8614E84B1C009121C1 /* TableVCs */,
+				06577D4E14F0C05200EA6180 /* util */,
 				06C9622314E876FE0045F610 /* ScanAddressBook.h */,
 				06C9622414E876FE0045F610 /* ScanAddressBook.m */,
 			);
@@ -207,6 +245,7 @@
 		06788E7214E770AD007C5BE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				06577D4014F0AC0400EA6180 /* Images */,
 				06788E7314E770AD007C5BE4 /* pspct-Info.plist */,
 				06788E7414E770AD007C5BE4 /* InfoPlist.strings */,
 				06788E7714E770AD007C5BE4 /* main.m */,
@@ -290,6 +329,8 @@
 				06F26F8414E77EED009121C1 /* PspctFriendListTableVc.m */,
 				06F26F8714E84B5C009121C1 /* PspctFriendTableVc.h */,
 				06F26F8814E84B5C009121C1 /* PspctFriendTableVc.m */,
+				06577D4B14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.h */,
+				06577D4C14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m */,
 			);
 			name = TableVCs;
 			sourceTree = "<group>";
@@ -388,6 +429,11 @@
 				06788E8E14E770AD007C5BE4 /* second.png in Resources */,
 				06788E9014E770AD007C5BE4 /* second@2x.png in Resources */,
 				06788ED214E77186007C5BE4 /* FBDialog.bundle in Resources */,
+				06577D4614F0AC1200EA6180 /* 112-group.png in Resources */,
+				06577D4714F0AC1200EA6180 /* 83-calendar.png in Resources */,
+				06577D4814F0AC1200EA6180 /* 20-gear2.png in Resources */,
+				06577D4914F0AC1200EA6180 /* 55-network.png in Resources */,
+				06577D4A14F0AC1200EA6180 /* 27-planet.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +484,8 @@
 				06F26F8514E77EED009121C1 /* PspctFriendListTableVc.m in Sources */,
 				06F26F8914E84B5C009121C1 /* PspctFriendTableVc.m in Sources */,
 				06C9622514E876FF0045F610 /* ScanAddressBook.m in Sources */,
+				06577D4D14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m in Sources */,
+				06577D5114F0C08900EA6180 /* SimpleRequester.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
