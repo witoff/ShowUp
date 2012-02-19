@@ -7,17 +7,76 @@
 //
 
 #import "PspctAppDelegate.h"
+#import <MessageUI/MessageUI.h>
 
 @implementation PspctAppDelegate
 
-@synthesize window = _window;
+@synthesize window = _window, facebook;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:@"FBAccessTokenKey"] 
+        && [defaults objectForKey:@"FBExpirationDateKey"]) {
+        facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
+        facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
+    }
+    if (![facebook isSessionValid]) {
+        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", nil];
+        [facebook authorize:permissions];
+    }
+    
+    NSLog(@"preloading");
+    [self performSelectorInBackground:@selector(preloadMvc) withObject:nil];
+    NSLog(@"preloaded");
+    
     return YES;
 }
-							
+
+-(void) preloadMvc
+{
+    //verrry slow the first time this object is called.  preloading seems to help out a bit.
+    NSLog(@"preloading mvc");
+    if ([MFMessageComposeViewController canSendText])
+    {
+        MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
+        messageVc.body = @"blank text";
+        NSLog(@"preloaded mvc with body: %@", messageVc.body);
+    }
+
+}
+
+/** FACEBOOK SUPPORT **/
+// Pre 4.2 support
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [facebook handleOpenURL:url]; 
+}
+
+// For 4.2+ support
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [facebook handleOpenURL:url]; 
+}
+- (void)fbDidLogin {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
+    [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
+    [defaults synchronize];
+    
+}
+
+-(void)fbDidExtendToken:(NSString *)accessToken expiresAt:(NSDate *)expiresAt {
+    NSLog(@"token extended");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:accessToken forKey:@"FBAccessTokenKey"];
+    [defaults setObject:expiresAt forKey:@"FBExpirationDateKey"];
+    [defaults synchronize];
+}
+
+/** iOS METHODS **/
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     /*
@@ -41,11 +100,12 @@
      */
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
+-(void)applicationDidBecomeActive:(UIApplication *)application
 {
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
+    [facebook extendAccessTokenIfNeeded];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

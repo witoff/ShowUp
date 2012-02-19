@@ -7,9 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FBConnect.h"
 
-@interface PspctAppDelegate : UIResponder <UIApplicationDelegate>
+@interface PspctAppDelegate : UIResponder <UIApplicationDelegate, FBSessionDelegate>
+{
+    Facebook *facebook;
+}
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, retain) Facebook *facebook;
+
+-(void) preloadMvc;
 
 @end
