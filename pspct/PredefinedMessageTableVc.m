@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "PspctPredefinedMessageTableVc.h"
+#import "PredefinedMessageTableVc.h"
 
 
-@implementation PspctPredefinedMessageTableVc
+@implementation PredefinedMessageTableVc
 
 @synthesize messages;
 

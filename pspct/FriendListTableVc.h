@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Facebook.h"
 
-@interface PspctFriendListTableVc : UITableViewController<FBRequestDelegate>
+@interface FriendListTableVc : UITableViewController<FBRequestDelegate>
 {
     NSMutableArray* friendLists;
     NSMutableArray* friendLists_hidden;
@@ -22,5 +22,7 @@
 -(void) preloadMvc;
 -(void) loadData;
 -(void) saveData;
+
+-(IBAction)editOrder:(id)sender;
 
 @end

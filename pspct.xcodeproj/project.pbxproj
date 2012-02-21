@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06291B7A14F3659D000BB1D9 /* OptionsVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06291B7914F3659D000BB1D9 /* OptionsVc.m */; };
 		06577D4614F0AC1200EA6180 /* 112-group.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4114F0AC1200EA6180 /* 112-group.png */; };
 		06577D4714F0AC1200EA6180 /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4214F0AC1200EA6180 /* 83-calendar.png */; };
 		06577D4814F0AC1200EA6180 /* 20-gear2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4314F0AC1200EA6180 /* 20-gear2.png */; };
 		06577D4914F0AC1200EA6180 /* 55-network.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4414F0AC1200EA6180 /* 55-network.png */; };
 		06577D4A14F0AC1200EA6180 /* 27-planet.png in Resources */ = {isa = PBXBuildFile; fileRef = 06577D4514F0AC1200EA6180 /* 27-planet.png */; };
-		06577D4D14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06577D4C14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m */; };
+		06577D4D14F0B60D00EA6180 /* PredefinedMessageTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06577D4C14F0B60D00EA6180 /* PredefinedMessageTableVc.m */; };
 		06577D5114F0C08900EA6180 /* SimpleRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 06577D5014F0C08900EA6180 /* SimpleRequester.m */; };
 		06788E6C14E770AD007C5BE4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06788E6B14E770AD007C5BE4 /* UIKit.framework */; };
 		06788E6E14E770AD007C5BE4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06788E6D14E770AD007C5BE4 /* Foundation.framework */; };
@@ -46,8 +47,8 @@
 		06C9622514E876FF0045F610 /* ScanAddressBook.m in Sources */ = {isa = PBXBuildFile; fileRef = 06C9622414E876FE0045F610 /* ScanAddressBook.m */; };
 		06C9622714E877AB0045F610 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C9622614E877AB0045F610 /* AddressBook.framework */; };
 		06C9622914E877B30045F610 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C9622814E877B30045F610 /* AddressBookUI.framework */; };
-		06F26F8514E77EED009121C1 /* PspctFriendListTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06F26F8414E77EED009121C1 /* PspctFriendListTableVc.m */; };
-		06F26F8914E84B5C009121C1 /* PspctFriendTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06F26F8814E84B5C009121C1 /* PspctFriendTableVc.m */; };
+		06F26F8514E77EED009121C1 /* FriendListTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06F26F8414E77EED009121C1 /* FriendListTableVc.m */; };
+		06F26F8914E84B5C009121C1 /* FriendTableVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06F26F8814E84B5C009121C1 /* FriendTableVc.m */; };
 		06F26F8B14E85956009121C1 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06F26F8A14E85956009121C1 /* MessageUI.framework */; };
 /* End PBXBuildFile section */
 
@@ -69,13 +70,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06291B7814F3659D000BB1D9 /* OptionsVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVc.h; sourceTree = "<group>"; };
+		06291B7914F3659D000BB1D9 /* OptionsVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVc.m; sourceTree = "<group>"; };
 		06577D4114F0AC1200EA6180 /* 112-group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group.png"; sourceTree = "<group>"; };
 		06577D4214F0AC1200EA6180 /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
 		06577D4314F0AC1200EA6180 /* 20-gear2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "20-gear2.png"; sourceTree = "<group>"; };
 		06577D4414F0AC1200EA6180 /* 55-network.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "55-network.png"; sourceTree = "<group>"; };
 		06577D4514F0AC1200EA6180 /* 27-planet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "27-planet.png"; sourceTree = "<group>"; };
-		06577D4B14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PspctPredefinedMessageTableVc.h; sourceTree = "<group>"; };
-		06577D4C14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PspctPredefinedMessageTableVc.m; sourceTree = "<group>"; };
+		06577D4B14F0B60D00EA6180 /* PredefinedMessageTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PredefinedMessageTableVc.h; sourceTree = "<group>"; };
+		06577D4C14F0B60D00EA6180 /* PredefinedMessageTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PredefinedMessageTableVc.m; sourceTree = "<group>"; };
 		06577D4F14F0C08900EA6180 /* SimpleRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleRequester.h; sourceTree = "<group>"; };
 		06577D5014F0C08900EA6180 /* SimpleRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleRequester.m; sourceTree = "<group>"; };
 		06788E6714E770AD007C5BE4 /* pspct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pspct.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,10 +134,10 @@
 		06C9622414E876FE0045F610 /* ScanAddressBook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanAddressBook.m; sourceTree = "<group>"; };
 		06C9622614E877AB0045F610 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		06C9622814E877B30045F610 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
-		06F26F8314E77EED009121C1 /* PspctFriendListTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PspctFriendListTableVc.h; sourceTree = "<group>"; };
-		06F26F8414E77EED009121C1 /* PspctFriendListTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PspctFriendListTableVc.m; sourceTree = "<group>"; };
-		06F26F8714E84B5C009121C1 /* PspctFriendTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PspctFriendTableVc.h; sourceTree = "<group>"; };
-		06F26F8814E84B5C009121C1 /* PspctFriendTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PspctFriendTableVc.m; sourceTree = "<group>"; };
+		06F26F8314E77EED009121C1 /* FriendListTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendListTableVc.h; sourceTree = "<group>"; };
+		06F26F8414E77EED009121C1 /* FriendListTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendListTableVc.m; sourceTree = "<group>"; };
+		06F26F8714E84B5C009121C1 /* FriendTableVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendTableVc.h; sourceTree = "<group>"; };
+		06F26F8814E84B5C009121C1 /* FriendTableVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendTableVc.m; sourceTree = "<group>"; };
 		06F26F8A14E85956009121C1 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -325,12 +328,14 @@
 		06F26F8614E84B1C009121C1 /* TableVCs */ = {
 			isa = PBXGroup;
 			children = (
-				06F26F8314E77EED009121C1 /* PspctFriendListTableVc.h */,
-				06F26F8414E77EED009121C1 /* PspctFriendListTableVc.m */,
-				06F26F8714E84B5C009121C1 /* PspctFriendTableVc.h */,
-				06F26F8814E84B5C009121C1 /* PspctFriendTableVc.m */,
-				06577D4B14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.h */,
-				06577D4C14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m */,
+				06F26F8314E77EED009121C1 /* FriendListTableVc.h */,
+				06F26F8414E77EED009121C1 /* FriendListTableVc.m */,
+				06F26F8714E84B5C009121C1 /* FriendTableVc.h */,
+				06F26F8814E84B5C009121C1 /* FriendTableVc.m */,
+				06577D4B14F0B60D00EA6180 /* PredefinedMessageTableVc.h */,
+				06577D4C14F0B60D00EA6180 /* PredefinedMessageTableVc.m */,
+				06291B7814F3659D000BB1D9 /* OptionsVc.h */,
+				06291B7914F3659D000BB1D9 /* OptionsVc.m */,
 			);
 			name = TableVCs;
 			sourceTree = "<group>";
@@ -481,11 +486,12 @@
 				06788ED914E77186007C5BE4 /* SBJsonBase.m in Sources */,
 				06788EDA14E77186007C5BE4 /* SBJsonParser.m in Sources */,
 				06788EDB14E77186007C5BE4 /* SBJsonWriter.m in Sources */,
-				06F26F8514E77EED009121C1 /* PspctFriendListTableVc.m in Sources */,
-				06F26F8914E84B5C009121C1 /* PspctFriendTableVc.m in Sources */,
+				06F26F8514E77EED009121C1 /* FriendListTableVc.m in Sources */,
+				06F26F8914E84B5C009121C1 /* FriendTableVc.m in Sources */,
 				06C9622514E876FF0045F610 /* ScanAddressBook.m in Sources */,
-				06577D4D14F0B60D00EA6180 /* PspctPredefinedMessageTableVc.m in Sources */,
+				06577D4D14F0B60D00EA6180 /* PredefinedMessageTableVc.m in Sources */,
 				06577D5114F0C08900EA6180 /* SimpleRequester.m in Sources */,
+				06291B7A14F3659D000BB1D9 /* OptionsVc.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

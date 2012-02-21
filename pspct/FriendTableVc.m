@@ -6,15 +6,17 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "PspctFriendTableVc.h"
+#import "FriendTableVc.h"
 #import "PspctAppDelegate.h"
 #import <MessageUI/MessageUI.h>
 #import "ScanAddressBook.h"
 #import "SimpleRequester.h"
 
-@implementation PspctFriendTableVc
+@implementation FriendTableVc
 
 @synthesize listId, friends, friends_hidden, listName, listType, selected;
+
+#pragma mark - init
 
 - (id)initWithListId:(NSString*)identifier andListName:(NSString*)name andListType:(NSString*)type
 {
@@ -42,33 +44,54 @@
 
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
-    self.friends = [result objectForKey:@"data"];
-    self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:11];
-    self.selected = [[NSMutableArray alloc] initWithArray:self.friends];    
-    for (int i=0; i<self.selected.count; i++) {
-        [self.selected replaceObjectAtIndex:i withObject:@"yes"];
-    }
     
-    for (NSString* key in [result keyEnumerator]) {
-        NSLog(@"key: %@", key);
-    }
-    
-    NSLog(@"facebook response, %i friends", self.friends.count);
-    
-    for (NSDictionary *list in self.friends) {
-        NSLog(@"%@", [list objectForKey:@"name"]);
-    }
+    NSMutableArray* newFriends = [result objectForKey:@"data"];
 
+    NSString *selectedString = nil;
+    if (newFriends.count>10)
+        selectedString = @"NO";
+    else
+        selectedString = @"YES";
+    
     NSLog(@"type: %@", self.listType);
     if ([self.listType isEqualToString:@"family"])
     {
         NSLog(@"we have a family");
-        [self.friends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", nil]];
-        [self.selected addObject:@"yes"];
-        [self.friends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", nil]];
-        [self.selected addObject:@"yes"];
+        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", nil]];
+        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", nil]];
     }
     
+    BOOL hasChanges = NO;
+    for (NSDictionary* nf in newFriends) {
+        bool isFound = NO;
+        NSString* new_id = [nf objectForKey:@"id"];
+        for (NSDictionary* friend in self.friends) {
+            if ([new_id isEqualToString:[friend objectForKey:@"id"]])
+            {
+                isFound = YES;
+                break;
+            }
+        }
+        if (!isFound)
+            for (NSDictionary* friend in self.friends_hidden) {
+                if ([new_id isEqualToString:[friend objectForKey:@"id"]])
+                {
+                    isFound = YES;
+                    break;
+                }  
+            }
+        if (isFound)
+            continue;
+        hasChanges=YES;
+        [self.friends addObject:nf];
+        [self.selected addObject:selectedString];
+    }
+    
+    //TODO: Handle if a user has been deleted from a group on Facebook
+    
+    if (hasChanges)
+        [self.tableView reloadData];
+    NSLog(@"data merged");
     
     [self.tableView reloadData];
 }
@@ -89,10 +112,12 @@
 
 - (void)viewDidLoad
 {
+    [self loadData];
+    
     PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString* endpoint = [NSString stringWithFormat:@"%@/members", self.listId, nil];
     NSLog(@"--asking for friends from: %@", endpoint);
-
+    
     [appDelegate.facebook requestWithGraphPath:endpoint andDelegate:self];
 
     self.navigationItem.title = self.listName;
@@ -100,10 +125,8 @@
     [super viewDidLoad];
 
     // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    self.clearsSelectionOnViewWillAppear = NO;
  
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewDidUnload
@@ -130,6 +153,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    [self saveData];
     [super viewDidDisappear:animated];
 }
 
@@ -170,7 +194,7 @@
     
     NSDictionary *list = [self.friends objectAtIndex:indexPath.row];
     cell.textLabel.text = [list objectForKey:@"name"];
-    if ([[self.selected objectAtIndex:indexPath.row] isEqualToString:@"yes"])
+    if ([[self.selected objectAtIndex:indexPath.row] isEqualToString:@"YES"])
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     else
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -179,66 +203,26 @@
 
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"selection found");
     
-    if ([[self.selected objectAtIndex:indexPath.row] isEqualToString:@"yes"])
-        [self.selected replaceObjectAtIndex:indexPath.row withObject:@"no"];
+    if ([[self.selected objectAtIndex:indexPath.row] isEqualToString:@"YES"])
+    {
+        [self.selected replaceObjectAtIndex:indexPath.row withObject:@"NO"];
+        NSLog(@"marked no");
+    }
     else
-        [self.selected replaceObjectAtIndex:indexPath.row withObject:@"yes"];
+    {
+        NSLog(@"current: %@", [self.selected objectAtIndex:indexPath.row]);
+        [self.selected replaceObjectAtIndex:indexPath.row withObject:@"YES"];
+        NSLog(@"marked yes");
+    }
     
     [self.tableView reloadData];
-    return;
-    
-    if (![MFMessageComposeViewController canSendText])
-    { 
-        NSLog(@"Can't send text");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Cannot send a message" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];
-        return;
-    }
+
 }
 
 - (IBAction)sendMessage:(id)sender
@@ -253,7 +237,7 @@
     ScanAddressBook *addressBook = [[ScanAddressBook alloc] init];
     for (int i=0; i<self.selected.count; i++) {
         
-        if ([[self.selected objectAtIndex:i] isEqualToString:@"no"])
+        if ([[self.selected objectAtIndex:i] isEqualToString:@"NO"])
             continue;
         
         NSString *fullname = [[self.friends objectAtIndex:i] objectForKey:@"name"];
@@ -305,6 +289,7 @@
     NSLog(@"commit editing style");
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [self.friends_hidden addObject:[self.friends objectAtIndex:indexPath.row]];
         [self.friends removeObjectAtIndex:indexPath.row];
         [self.selected removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -312,6 +297,47 @@
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
+}
+
+-(void)loadData
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+    if (dict)
+    {
+        //Check for nils otherwise they can prematurely terminate the dictionary that's later saved
+        self.friends = [dict objectForKey:@"friends"];
+        if (!self.friends)
+            self.friends = [[NSMutableArray alloc] initWithCapacity:5];
+        self.friends_hidden = [dict objectForKey:@"friends_hidden"];
+        if (!self.friends_hidden)
+            self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
+        self.selected = [dict objectForKey:@"selected"];
+        if (!self.selected)
+            self.selected = [[NSMutableArray alloc] initWithCapacity:5];
+    }
+    else
+    {
+        NSLog(@"NO DATA TO LOAD, INITIALIZING WITH EMPTY DATA");
+        self.friends = [[NSMutableArray alloc] initWithCapacity:11];
+        self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
+        self.selected = [[NSMutableArray alloc] initWithCapacity:11];
+    }
+}
+
+-(void)saveData
+{
+    NSLog(@"saving data");
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friends, @"friends", self.friends_hidden, @"friends_hidden", self.selected, @"selected", nil];
+    if (![dict writeToFile:filePath atomically:YES])
+        NSLog(@":: There was an error saving your data!!");
 }
 
 @end

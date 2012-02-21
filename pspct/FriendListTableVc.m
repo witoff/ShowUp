@@ -6,12 +6,12 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "PspctFriendListTableVC.h"
+#import "FriendListTableVc.h"
 #import "PspctAppDelegate.h"
-#import "PspctFriendTableVc.h"
+#import "FriendTableVc.h"
 #import <MessageUI/MessageUI.h>
 
-@implementation PspctFriendListTableVc
+@implementation FriendListTableVc
 
 @synthesize friendLists, friendLists_hidden;
 
@@ -197,13 +197,27 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 
+    UILongPressGestureRecognizer *recognizer  = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(editOrder:)];
+    [cell addGestureRecognizer:recognizer];
+    
     NSDictionary *list = [self.friendLists objectAtIndex:indexPath.row];
     cell.textLabel.text = [list objectForKey:@"name"];
 
     return cell;
 }
 
+-(IBAction)editOrder:(id)sender
+{
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;    
+    [self setEditing:YES animated:YES];
+}
 
+-(void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    if (!editing)
+        self.navigationItem.rightBarButtonItem = nil;
+    [super setEditing:editing animated:animated];
+}
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
@@ -248,8 +262,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *list = [self.friendLists objectAtIndex:indexPath.row];
+    [self setEditing:NO];
     
-    PspctFriendTableVc *friendTable = [[PspctFriendTableVc alloc] initWithListId:[list objectForKey:@"id"] andListName:[list objectForKey:@"name"] andListType:[list objectForKey:@"list_type"]];
+    FriendTableVc *friendTable = [[FriendTableVc alloc] initWithListId:[list objectForKey:@"id"] andListName:[list objectForKey:@"name"] andListType:[list objectForKey:@"list_type"]];
     [self.navigationController pushViewController:friendTable animated:YES];
     
 }

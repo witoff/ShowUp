@@ -10,7 +10,7 @@
 #import "FBRequest.h"
 #import <MessageUI/MessageUI.h>
 
-@interface PspctFriendTableVc : UITableViewController<FBRequestDelegate, MFMessageComposeViewControllerDelegate>
+@interface FriendTableVc : UITableViewController<FBRequestDelegate, MFMessageComposeViewControllerDelegate>
 {
     NSString* listId;
     NSString* listName;
@@ -29,5 +29,7 @@
 
 - (id)initWithListId:(NSString*)identifier andListName:(NSString*)name andListType:(NSString*)type;
 - (IBAction)sendMessage:(id)sender;
+- (void)loadData;
+- (void)saveData;
 
 @end

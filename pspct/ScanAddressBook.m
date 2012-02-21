@@ -195,22 +195,37 @@
     if (lastname)
         lastname = [lastname lowercaseString];
     
+    NSLog(@"searching for last name: '%@'", lastname);
+    
     for (NSDictionary *person in [self getContacts]) {
-        NSString* personFirstname = [[person objectForKey:@"firstname"] lowercaseString];
-        NSString* personLastname = [[person objectForKey:@"lastname"] lowercaseString];
+        NSString* abFirstname = [[person objectForKey:@"firstname"] lowercaseString];
+        NSString* abLastname = [[person objectForKey:@"lastname"] lowercaseString];
 
-        if (lastname && lastname.length>0 && personLastname.length>0)
+        if (lastname && lastname.length>0)
         {
-            if ([lastname isEqualToString:personLastname])
+            
+            if ([abLastname isEqualToString:lastname])
             {
+                NSLog(@"last names are equal");
                 if (!firstname)
                     return [person objectForKey:@"telephone"];
-                if ([self doBidirectionalSubstringMatch:firstname andTwo:personFirstname])
+                if ([self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
                     return [person objectForKey:@"telephone"];
+                if (abLastname.length==0 && [self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
+                    return [person objectForKey:@"telephone"];
+                NSLog(@"no last name match");
             }
+            else if (abLastname.length==0 && [self doBidirectionalSubstringMatch:abFirstname andTwo:lastname])
+                return [person objectForKey:@"telephone"];
+                
         }
-        else if ([self doBidirectionalSubstringMatch:firstname andTwo:personFirstname])
+        else if ([self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
             return [person objectForKey:@"telephone"];                    
+        //Conditional needed to see if it's a common first name
+        if (abLastname.length==0 && [self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
+            return [person objectForKey:@"telephone"];    
+        
+        //
             
     }
     NSLog(@"no match for:\nfirstname: %@\nlastname: %@", firstname, lastname);
