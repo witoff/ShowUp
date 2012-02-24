@@ -32,12 +32,7 @@
         <scene sceneID="hUU-ln-QdR">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bce-nS-fSp" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="U36-4J-Z93" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="L7c-Tz-SYe">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
+                <viewController id="U36-4J-Z93" customClass="EventVc" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" title="Event List" id="dXi-sK-Yis"/>
                 </viewController>
             </objects>
@@ -47,7 +42,7 @@
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FcF-eH-aQQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController definesPresentationContext="YES" id="u2D-sy-7iy" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Events" id="6PU-rB-jqm"/>
+                    <tabBarItem key="tabBarItem" title="Events" image="83-calendar.png" id="6PU-rB-jqm"/>
                     <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="Efq-ru-PL4">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -79,6 +74,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="8ki-ng-VqH" kind="relationship" relationship="viewControllers" id="Ukt-sE-sgW"/>
+                        <segue destination="u2D-sy-7iy" kind="relationship" relationship="viewControllers" id="q9a-Vx-hFf"/>
                         <segue destination="3" kind="relationship" relationship="viewControllers" id="27"/>
                     </connections>
                 </tabBarController>
@@ -89,16 +85,26 @@
     <resources>
         <image name="112-group.png" width="32" height="21"/>
         <image name="20-gear2.png" width="26" height="28"/>
+        <image name="83-calendar.png" width="23" height="25"/>
     </resources>
     <classes>
+        <class className="EventVc" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/EventVc.h"/>
+        </class>
         <class className="FriendListTableVc" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FriendListTableVc.h"/>
             <relationships>
                 <relationship kind="action" name="btnEdit_click:"/>
+                <relationship kind="action" name="editOrder:"/>
             </relationships>
         </class>
         <class className="OptionsVc" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/OptionsVc.h"/>
+            <relationships>
+                <relationship kind="action" name="logoutOfFacebook:"/>
+                <relationship kind="action" name="showHiddenFriends:"/>
+                <relationship kind="action" name="showHiddenLists:"/>
+            </relationships>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

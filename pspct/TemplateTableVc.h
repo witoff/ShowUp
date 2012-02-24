@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PredefinedMessageTableVc : UITableViewController
+@interface TemplateTableVc : UITableViewController
 {
     NSMutableArray *messages;
 }

@@ -199,6 +199,8 @@
 
     UILongPressGestureRecognizer *recognizer  = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(editOrder:)];
     [cell addGestureRecognizer:recognizer];
+
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     NSDictionary *list = [self.friendLists objectAtIndex:indexPath.row];
     cell.textLabel.text = [list objectForKey:@"name"];
@@ -215,7 +217,10 @@
 -(void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     if (!editing)
+    {
         self.navigationItem.rightBarButtonItem = nil;
+        [self saveData];
+    }
     [super setEditing:editing animated:animated];
 }
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -269,7 +274,10 @@
     
 }
 
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 60.;
+}
 
 
 @end

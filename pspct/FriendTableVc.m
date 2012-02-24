@@ -11,10 +11,25 @@
 #import <MessageUI/MessageUI.h>
 #import "ScanAddressBook.h"
 #import "SimpleRequester.h"
+#import "TemplateTableVc.h"
+
+@interface FriendTableVc (hidden)
+
+-(IBAction)showTemplateTable:(id)sender;
+
+- (void)loadData;
+- (void)saveData;
+
+-(NSArray*)getSelectedRecipients;
+
+- (IBAction)sendSms:(id)sender;
+
+@end
+
 
 @implementation FriendTableVc
 
-@synthesize listId, friends, friends_hidden, listName, listType, selected;
+@synthesize listId, friends, friends_hidden, listName, listType, btnMessage;
 
 #pragma mark - init
 
@@ -25,28 +40,33 @@
         self.listId = identifier;
         self.listName = name;
         self.listType = type;
-        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Send"
-                                                                        style:UIBarButtonItemStyleDone target:self action:@selector(sendMessage:)];
+
+        //Add Message Button
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        btn.frame = CGRectMake(0, 0, 44, 44);
+       
+        //Images
+        [btn setImage:[UIImage imageNamed:@"18_envelope_white"] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"18_envelope"] forState:UIControlStateHighlighted];
         
-        self.navigationItem.rightBarButtonItem = rightButton;
+        //Gestures
+        [btn addTarget:self action:@selector(sendSms:) forControlEvents:UIControlEventTouchUpInside];
+        
+        UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showTemplateTable:)];
+        [btn addGestureRecognizer:recognizer];
+        self.btnMessage = [[UIBarButtonItem alloc] initWithCustomView:btn];
+        
+        self.navigationItem.rightBarButtonItem = btnMessage;
     }
     return self;
 }
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+#pragma mark - facebook
 
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
-    
     NSMutableArray* newFriends = [result objectForKey:@"data"];
-
+    
     NSString *selectedString = nil;
     if (newFriends.count>10)
         selectedString = @"NO";
@@ -54,7 +74,8 @@
         selectedString = @"YES";
     
     NSLog(@"type: %@", self.listType);
-    if ([self.listType isEqualToString:@"family"])
+    //Auto add some members if the list is new
+    if ([self.listType isEqualToString:@"family"] && self.friends.count==0)
     {
         NSLog(@"we have a family");
         [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", nil]];
@@ -83,8 +104,9 @@
         if (isFound)
             continue;
         hasChanges=YES;
+        
+        [nf setValue:selectedString forKey:@"selected"];
         [self.friends addObject:nf];
-        [self.selected addObject:selectedString];
     }
     
     //TODO: Handle if a user has been deleted from a group on Facebook
@@ -119,14 +141,14 @@
     NSLog(@"--asking for friends from: %@", endpoint);
     
     [appDelegate.facebook requestWithGraphPath:endpoint andDelegate:self];
-
+    
     self.navigationItem.title = self.listName;
     
     [super viewDidLoad];
-
+    
     // Uncomment the following line to preserve selection between presentations.
     self.clearsSelectionOnViewWillAppear = NO;
- 
+    
 }
 
 - (void)viewDidUnload
@@ -192,15 +214,35 @@
     }
     
     
-    NSDictionary *list = [self.friends objectAtIndex:indexPath.row];
-    cell.textLabel.text = [list objectForKey:@"name"];
-    if ([[self.selected objectAtIndex:indexPath.row] isEqualToString:@"YES"])
+    NSDictionary *friend = [self.friends objectAtIndex:indexPath.row];
+    cell.textLabel.text = [friend objectForKey:@"name"];
+    if ([[friend valueForKey:@"selected"] isEqualToString:@"YES"])
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     else
         cell.accessoryType = UITableViewCellAccessoryNone;
     
-    return cell;
+    UILongPressGestureRecognizer *recognizer  = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(editOrder:)];
+    [cell addGestureRecognizer:recognizer];
 
+    
+    return cell;
+    
+}
+
+-(IBAction)editOrder:(id)sender
+{
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;    
+    [self setEditing:YES animated:YES];
+}
+
+-(void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    if (!editing)
+    {
+        self.navigationItem.rightBarButtonItem = btnMessage;
+        [self saveData];
+    }
+    [super setEditing:editing animated:animated];
 }
 
 #pragma mark - Table view delegate
@@ -209,55 +251,63 @@
 {
     NSLog(@"selection found");
     
-    if ([[self.selected objectAtIndex:indexPath.row] isEqualToString:@"YES"])
+    NSMutableDictionary *friend = [self.friends objectAtIndex:indexPath.row];
+    
+    if ([[friend valueForKey:@"selected"] isEqualToString:@"YES"])
     {
-        [self.selected replaceObjectAtIndex:indexPath.row withObject:@"NO"];
-        NSLog(@"marked no");
+        [friend setValue:@"NO" forKey:@"selected"];
     }
     else
     {
-        NSLog(@"current: %@", [self.selected objectAtIndex:indexPath.row]);
-        [self.selected replaceObjectAtIndex:indexPath.row withObject:@"YES"];
-        NSLog(@"marked yes");
+        [friend setValue:@"YES" forKey:@"selected"];
     }
     
     [self.tableView reloadData];
-
+    
 }
 
-- (IBAction)sendMessage:(id)sender
+#pragma mark - custom methods
+
+-(NSArray*)getSelectedRecipients
 {
-    
-    MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
-    
-    messageVc.messageComposeDelegate = self;
-    
     NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
     //get last name
     ScanAddressBook *addressBook = [[ScanAddressBook alloc] init];
-    for (int i=0; i<self.selected.count; i++) {
+    for (NSDictionary *friend in self.friends) {
         
-        if ([[self.selected objectAtIndex:i] isEqualToString:@"NO"])
+        if (![[friend valueForKey:@"selected"] isEqualToString:@"YES"])
             continue;
         
-        NSString *fullname = [[self.friends objectAtIndex:i] objectForKey:@"name"];
+        NSString *fullname = [friend objectForKey:@"name"];
         NSArray *components = [fullname componentsSeparatedByString:@" "];
-    
+        
         NSString *lastname = nil;
         if (components.count>1)
             lastname = [components objectAtIndex:components.count-1];
         NSString* firstname = [components objectAtIndex:0];
-
         
-    
+        
+        
         //get number
         NSString *number = [addressBook simpleSearch:firstname andLastName:lastname];
         if (number)
             [recipients addObject:number];
     }
-        
-    messageVc.recipients = recipients;
-    messageVc.body = @"Be right there!";
+    return recipients;
+}
+
+- (IBAction)sendSms:(id)sender
+{
+    [self sendSmsWithMessage:@""];
+}
+- (void)sendSmsWithMessage:(NSString*)message
+{
+    MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
+    
+    messageVc.messageComposeDelegate = self;
+    
+    messageVc.recipients = [self getSelectedRecipients];
+    messageVc.body = message;
     
     //This check is late in the message so debug info is written to the log
     if (![MFMessageComposeViewController canSendText])
@@ -267,6 +317,18 @@
     NSLog(@"shown");
 }
 
+
+
+-(IBAction)showTemplateTable:(id)sender
+{
+    NSLog(@"sendPredefinedMessage");
+    if (self.navigationController.viewControllers.count==2)
+    {
+        NSLog(@"Pushing VC");
+        TemplateTableVc *pmvc = [[TemplateTableVc alloc] init];
+        [self.navigationController pushViewController:pmvc animated:YES];
+    }
+}
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
@@ -282,6 +344,10 @@
 {
     return YES;
 }
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
 
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -291,12 +357,21 @@
         // Delete the row from the data source
         [self.friends_hidden addObject:[self.friends objectAtIndex:indexPath.row]];
         [self.friends removeObjectAtIndex:indexPath.row];
-        [self.selected removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+
     }   
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+
+    NSDictionary *obj = [self.friends objectAtIndex:fromIndexPath.row];
+    [self.friends removeObjectAtIndex:fromIndexPath.row];
+    [self.friends insertObject:obj atIndex:toIndexPath.row];
+    
+    NSLog(@"cell was moved");
 }
 
 -(void)loadData
@@ -315,16 +390,12 @@
         self.friends_hidden = [dict objectForKey:@"friends_hidden"];
         if (!self.friends_hidden)
             self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
-        self.selected = [dict objectForKey:@"selected"];
-        if (!self.selected)
-            self.selected = [[NSMutableArray alloc] initWithCapacity:5];
     }
     else
     {
         NSLog(@"NO DATA TO LOAD, INITIALIZING WITH EMPTY DATA");
         self.friends = [[NSMutableArray alloc] initWithCapacity:11];
         self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
-        self.selected = [[NSMutableArray alloc] initWithCapacity:11];
     }
 }
 
@@ -335,7 +406,7 @@
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
     
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friends, @"friends", self.friends_hidden, @"friends_hidden", self.selected, @"selected", nil];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friends, @"friends", self.friends_hidden, @"friends_hidden", nil];
     if (![dict writeToFile:filePath atomically:YES])
         NSLog(@":: There was an error saving your data!!");
 }
