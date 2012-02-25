@@ -372,4 +372,12 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
   self.state = kFBRequestStateComplete;
 }
 
+
+- (void)cancel {
+    [_connection cancel];
+    [_connection release], _connection = nil;
+    //_delegate = nil;
+}
+
+
 @end

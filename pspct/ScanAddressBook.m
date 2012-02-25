@@ -8,12 +8,50 @@
 
 #import "ScanAddressBook.h"
 #import <AddressBook/AddressBook.h>
+#import "Contact.h"
+#import <Accelerate/Accelerate.h>
+
+
+@interface ScanAddressBook (hidden)
+
+- (Contact*)getContactWithRecord:(ABRecordRef)ref;
+
+- (NSArray*) getAllContacts;
+
+- (BOOL)doBidirectionalSubstringMatch:(NSString*)one andTwo:(NSString*)two;
+
+- (NSArray*)matchesFirstName:(NSString*)searchString withContactPool:(NSArray*)contacts searchSubstrings:(BOOL)doSearchSubstrings;
+- (NSArray*)matchesLastName:(NSString*)searchString withContactPool:(NSArray*)contacts searchSubstrings:(BOOL)doSearchSubstrings;
+
+- (void) testSearch;
+
++ (NSArray*)allcontacts;
++ (void)setAllcontacts:(NSArray*)newContacts;
+
+@end
+
+static NSArray* allcontacts;
+
 
 @implementation ScanAddressBook
 
-@synthesize contacts;
++ (NSArray*)allcontacts {
+    return allcontacts;
+}
 
-- (void) search
++ (void)setAllcontacts:(NSArray *)newContacts
+{
+    if (allcontacts != newContacts) {
+        allcontacts = newContacts;
+    }
+}
+
++(void)invalidateContactList
+{
+    allcontacts = nil;
+}
+
+- (void) testSearch
 {
     NSUInteger i;
     NSUInteger k;
@@ -30,13 +68,15 @@
     
     for ( i=0; i<[people count]; i++ )
     {
+        
         ABRecordRef person = (__bridge_retained ABRecordRef)[people objectAtIndex:i];
-
+        
         ABMutableMultiValueRef lastName = ABRecordCopyValue(person, kABPersonLastNameProperty);
         CFIndex lastNameCount = ABMultiValueGetCount( lastName );
         
         for ( k=0; k<lastNameCount; k++ )
         {
+            
             CFStringRef phoneNumberLabel = ABMultiValueCopyLabelAtIndex( lastName, k );
             CFStringRef phoneNumberValue = ABMultiValueCopyValueAtIndex( lastName, k );
             CFStringRef phoneNumberLocalizedLabel = ABAddressBookCopyLocalizedLabel( phoneNumberLabel );    // converts "_$!<Work>!$_" to "work" and "_$!<Mobile>!$_" to "mobile"
@@ -75,121 +115,113 @@
     CFRelease(addressBook);
 }
 
-- (NSArray*) getContacts
+#pragma mark - contact getters
+
+- (NSArray*) getAllContacts
 {
-    if (self.contacts != nil)
-        return self.contacts;
+    if (allcontacts)
+        return allcontacts;
     
     ABAddressBookRef addressBook = ABAddressBookCreate();
     CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople(addressBook);
     CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
+    
     NSMutableDictionary *dicContact;
-    CFTypeRef multival;
     NSMutableArray *contactArray = [[NSMutableArray alloc] initWithCapacity:100];
     for( int i = 0 ; i < nPeople ; i++ )
     {
         
-        dicContact = [[NSMutableDictionary alloc] init];
-        
         ABRecordRef ref = CFArrayGetValueAtIndex(allPeople, i );
+        Contact *contact = [self getContactWithRecord:ref];      
+        CFRelease(ref);
         
-        if(ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil || [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonFirstNameProperty)] length] == 0)
-            [dicContact setValue:[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonFirstNameProperty)] forKey:@"firstname"];
-        else
-            [dicContact setValue:@"" forKey:@"firstname"];
-        
-        if(ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil || [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonLastNameProperty)] length] == 0)   
-        {
-            NSString *personLastName = [NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonLastNameProperty)];
-            [dicContact setValue: personLastName forKey:@"lastname"];
-        }
-        else
-            [dicContact setValue:@"" forKey:@"lastname"];
-        
-        if(ABRecordCopyValue(ref, kABPersonOrganizationProperty) != nil || [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonOrganizationProperty)] length] == 0)   
-            [dicContact setValue:[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonOrganizationProperty)] forKey:@"name"];
-        else
-            [dicContact setValue:[NSString stringWithFormat:@"%@ %@",[dicContact valueForKey:@"firstname"],[dicContact valueForKey:@"lastname"]] forKey:@"name"];
-        
-        NSData *data1 = (__bridge_transfer NSData *) ABPersonCopyImageData(ref);
-        
-        if(data1 == nil)
-            [dicContact setObject:@"" forKey:@"image"];
-        else
-            [dicContact setObject:data1 forKey:@"image"];
-        
-        multival = ABRecordCopyValue(ref, kABPersonAddressProperty);
-        NSArray *arrayAddress = (__bridge_transfer NSArray *)ABMultiValueCopyArrayOfAllValues(multival);
-        if([arrayAddress count] > 0)
-        {
-            if([[arrayAddress objectAtIndex:0] valueForKey:@"City"] != nil)
-                [dicContact setValue:[[arrayAddress objectAtIndex:0] valueForKey:@"City"] forKey:@"city"];
-            else
-                [dicContact setValue:@"" forKey:@"city"];
-            
-            if([[arrayAddress objectAtIndex:0] valueForKey:@"State"] != nil)
-                [dicContact setValue:[[arrayAddress objectAtIndex:0] valueForKey:@"State"] forKey:@"state"];
-            
-            else
-                [dicContact setValue:@"" forKey:@"state"];
-            
-            if([[arrayAddress objectAtIndex:0] valueForKey:@"Street"] != nil)
-                [dicContact setValue:[[arrayAddress objectAtIndex:0] valueForKey:@"Street"] forKey:@"address1"];
-            else
-                [dicContact setValue:@"" forKey:@"address1"];
-            
-            if([[arrayAddress objectAtIndex:0] valueForKey:@"ZIP"] != nil)
-                [dicContact setValue:[[arrayAddress objectAtIndex:0] valueForKey:@"ZIP"] forKey:@"postcode"];
-            else
-                [dicContact setValue:@"" forKey:@"postcode"];
-         }
-        else
-        {
-            [dicContact setValue:@"" forKey:@"city"];
-            [dicContact setValue:@"" forKey:@"address1"];
-            [dicContact setValue:@"" forKey:@"state"];
-            [dicContact setValue:@"" forKey:@"postcode"];
-        }
-        
-        multival = ABRecordCopyValue(ref, kABPersonPhoneProperty);
-        NSArray *arrayPhone = (__bridge_transfer NSArray *)ABMultiValueCopyArrayOfAllValues(multival);
-        if([arrayPhone count] > 0)
-            [dicContact setValue:[arrayPhone objectAtIndex:0] forKey:@"telephone"];
-        else
-            [dicContact setValue:@"" forKey:@"telephone"];
-        
-        multival = ABRecordCopyValue(ref, kABPersonEmailProperty);
-        NSArray *arrayEmail = (__bridge_transfer NSArray *)ABMultiValueCopyArrayOfAllValues(multival);
-        if([arrayEmail count])
-            [dicContact setValue:[arrayEmail objectAtIndex:0] forKey:@"email"];
-        else
-            [dicContact setValue:@"" forKey:@"email"];
-        
-        multival = ABRecordCopyValue(ref, kABPersonURLProperty);
-        NSArray *arrayURL = (__bridge_transfer NSArray *)ABMultiValueCopyArrayOfAllValues(multival);
-        if([arrayURL count])
-            [dicContact setValue:[arrayURL objectAtIndex:0] forKey:@"website"];
-        else
-            [dicContact setValue:@"" forKey:@"website"];
-        
-        [dicContact setValue:@"" forKey:@"address2"];
-        [dicContact setValue:@"" forKey:@"mobile"];
-        [dicContact setValue:@"" forKey:@"fax"];
-        [dicContact setValue:@"1.000000,1.000000,0.000000,0.000000" forKey:@"color"];
-        
-        [contactArray addObject:dicContact];
-        //[dicContact release];
+        [contactArray addObject:contact];
     }
     
     CFRelease(addressBook);
-    CFRelease(allPeople);
-    self.contacts = contactArray;
-    return self.contacts;
+    //CFRelease(allPeople);
+    allcontacts = contactArray;
+    return allcontacts;
 }
 
-- (NSString*) simpleSearch:(NSString*)firstname andLastName:(NSString*)lastname;
+- (Contact*)getContactWithRecord:(ABRecordRef)ref
 {
-    //TODO: Replace this with a smart dynamic programming best fit model
+    
+    Contact *contact = [[Contact alloc] init];
+    
+    
+    //id
+    ABRecordID record_id = ABRecordGetRecordID(ref);
+    NSNumber *identifier = [NSNumber numberWithInt:record_id];
+    contact.identifier = identifier;
+    
+    //firstname
+    if(ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil || 
+       [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonFirstNameProperty)] length] == 0)
+        contact.firstname = [NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonFirstNameProperty)];
+    
+    //lastname
+    if(ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil || [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonLastNameProperty)] length] == 0)
+        contact.lastname = [NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonLastNameProperty)];
+    
+    //image
+    NSData *imgData = (__bridge_transfer NSData *) ABPersonCopyImageData(ref);
+    contact.image = [UIImage imageWithData:imgData];
+    
+    //all phone numbers
+    ABMutableMultiValueRef phoneNumbers = ABRecordCopyValue(ref, kABPersonPhoneProperty);
+    CFIndex phoneNumberCount = ABMultiValueGetCount( phoneNumbers );
+    
+    for (int i=0; i<phoneNumberCount; i++ )
+    {
+        CFStringRef cfLabel = ABMultiValueCopyLabelAtIndex( phoneNumbers, i );
+        CFStringRef cfNumber = ABMultiValueCopyValueAtIndex( phoneNumbers, i );
+        
+        // converts "_$!<Work>!$_" to "work" and "_$!<Mobile>!$_" to "mobile"
+        CFStringRef cfLocalized = ABAddressBookCopyLocalizedLabel( cfLabel );   
+        
+        NSString *label = (__bridge NSString *)cfLocalized;
+        NSString *number = (__bridge NSString *)cfNumber;
+        
+        NSDictionary *dicNumber = [[NSDictionary alloc] initWithObjectsAndKeys:label, @"label", number, @"number", nil];
+        
+        [contact.numbers addObject:dicNumber];
+        
+        CFRelease(cfLocalized);
+        CFRelease(cfLabel);
+        CFRelease(cfNumber);
+    }
+    
+    //email
+    CFTypeRef multival = ABRecordCopyValue(ref, kABPersonEmailProperty);
+    NSArray *arrayEmail = (__bridge_transfer NSArray *)ABMultiValueCopyArrayOfAllValues(multival);
+    contact.email = [arrayEmail objectAtIndex:0];
+    
+    CFRelease(multival);
+    
+    return contact;
+    
+}
+
+- (Contact*)getContactWithId:(NSNumber*)identifier
+{
+    ABAddressBookRef addressBook = ABAddressBookCreate();
+    ABRecordID recordId = [identifier integerValue];
+    
+    ABRecordRef person = ABAddressBookGetPersonWithRecordID(addressBook, recordId);
+    Contact *contact = [self getContactWithRecord:person];
+    
+    CFRelease(addressBook);
+    CFRelease(person);
+    
+    return contact;
+}
+
+#pragma mark - searching
+
+- (Contact*)simpleSearch:(NSString*)firstname andLastName:(NSString*)lastname;
+{
+    NSLog(@"simpleSearch");
     if (firstname)
         firstname = [firstname lowercaseString];
     if (lastname)
@@ -197,10 +229,10 @@
     
     NSLog(@"searching for last name: '%@'", lastname);
     
-    for (NSDictionary *person in [self getContacts]) {
-        NSString* abFirstname = [[person objectForKey:@"firstname"] lowercaseString];
-        NSString* abLastname = [[person objectForKey:@"lastname"] lowercaseString];
-
+    for (Contact *contact in [self getAllContacts]) {
+        NSString* abFirstname = [contact.firstname lowercaseString];
+        NSString* abLastname = [contact.lastname lowercaseString];
+        
         if (lastname && lastname.length>0)
         {
             
@@ -208,32 +240,240 @@
             {
                 NSLog(@"last names are equal");
                 if (!firstname)
-                    return [person objectForKey:@"telephone"];
+                    return contact;
                 if ([self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
-                    return [person objectForKey:@"telephone"];
+                    return contact;
                 if (abLastname.length==0 && [self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
-                    return [person objectForKey:@"telephone"];
+                    return contact;
                 NSLog(@"no last name match");
             }
             else if (abLastname.length==0 && [self doBidirectionalSubstringMatch:abFirstname andTwo:lastname])
-                return [person objectForKey:@"telephone"];
-                
+                return contact;
+            
         }
         else if ([self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
-            return [person objectForKey:@"telephone"];                    
+            return contact;
         //Conditional needed to see if it's a common first name
         if (abLastname.length==0 && [self doBidirectionalSubstringMatch:firstname andTwo:abFirstname])
-            return [person objectForKey:@"telephone"];    
+            return contact;
         
         //
-            
+        
     }
     NSLog(@"no match for:\nfirstname: %@\nlastname: %@", firstname, lastname);
     return nil;
 }
 
+- (NSArray*)matchesLastName:(NSString*)searchString withContactPool:(NSArray*)contacts searchSubstrings:(BOOL)doSearchSubstrings
+{
+    NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:5];
+    
+    for (Contact *contact in contacts) {
+        NSString* abSearchString = [contact.lastname lowercaseString];
+        
+        if (doSearchSubstrings)
+        {
+            if ([self doBidirectionalSubstringMatch:abSearchString andTwo:searchString])
+                [matches addObject:contact];
+        }
+        else 
+        {
+            if ([abSearchString isEqualToString:searchString])
+            {
+                [matches addObject:contact];
+            }
+        }
+    }
+    return matches;
+}
+- (NSArray*)matchesFirstName:(NSString*)searchString withContactPool:(NSArray*)contacts searchSubstrings:(BOOL)doSearchSubstrings
+{
+    NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:5];
+    
+    for (Contact *contact in contacts) {
+        NSString* abSearchString = [contact.firstname lowercaseString];
+        
+        if (doSearchSubstrings)
+        {
+            if ([self doBidirectionalSubstringMatch:abSearchString andTwo:searchString])
+                [matches addObject:contact];
+        }
+        else 
+        {
+            if ([abSearchString isEqualToString:searchString])
+            {
+                [matches addObject:contact];
+            }
+        }
+    }
+    return matches;
+}
+
+
+- (Contact*) search:(NSString*)firstname andLastName:(NSString*)lastname
+{
+    NSLog(@"simpleSearch");
+    
+    if (firstname.length == 0)
+        firstname = nil;
+    if (lastname.length == 0)
+        lastname = nil;
+    
+    if (firstname)
+        firstname = [firstname lowercaseString];
+    if (lastname)
+        lastname = [lastname lowercaseString];
+    
+    NSLog(@"searching for last name: '%@'", lastname);
+    
+    
+    
+    //
+    // LAST NAME MATCHING
+    //
+    if (lastname)
+    {
+        NSArray *matchesLastName = [self matchesLastName:lastname withContactPool:[self getAllContacts] searchSubstrings:NO];
+        
+        if (matchesLastName.count>0)
+        {
+            NSLog(@"lastname matched");
+            if (!firstname)
+            {     
+                Contact* contact = [matchesLastName objectAtIndex:0];
+                contact.matchConfidence = [NSNumber numberWithDouble: .9 /exp(matchesLastName.count-2)];
+                return contact;                
+            }
+            else
+            {
+                NSLog(@"lastname matched: %i. and a firstname was provided", matchesLastName.count);
+                NSArray *matchesLastAndFirst = [self matchesFirstName:firstname withContactPool:matchesLastName searchSubstrings:NO];
+                if (matchesLastAndFirst.count>0)
+                {
+                    Contact* contact = [matchesLastAndFirst objectAtIndex:0];
+                    contact.matchConfidence = [NSNumber numberWithDouble: .99 /exp(matchesLastName.count-2)];
+                    return contact;
+                }
+                else
+                {
+                    matchesLastAndFirst = [self matchesFirstName:firstname withContactPool:matchesLastName searchSubstrings:YES];
+                    if (matchesLastAndFirst.count>0)
+                    {
+                        Contact* contact = [matchesLastAndFirst objectAtIndex:0];
+                        contact.matchConfidence = [NSNumber numberWithDouble: .80 /exp(matchesLastName.count-2)];
+                        return contact;
+                    }
+                }
+                
+                
+            }
+        }
+        
+        //flexible lastname
+        matchesLastName = [self matchesLastName:lastname withContactPool:[self getAllContacts] searchSubstrings:YES];
+        
+        if (matchesLastName.count>0)
+        {
+            NSLog(@"flexible lastname found");
+            if (!firstname)
+            {     
+                Contact* contact = [matchesLastName objectAtIndex:0];
+                contact.matchConfidence = [NSNumber numberWithDouble: .9 /exp(matchesLastName.count-1)];
+                return contact;                
+            }
+            else
+            {
+                NSLog(@"lastname matched: %i. and a firstname was provided", matchesLastName.count);
+                NSArray *matchesLastAndFirst = [self matchesFirstName:firstname withContactPool:matchesLastName searchSubstrings:NO];
+                if (matchesLastAndFirst.count>0)
+                {
+                    Contact* contact = [matchesLastAndFirst objectAtIndex:0];
+                    contact.matchConfidence = [NSNumber numberWithDouble: .99 /exp(matchesLastName.count-1)];
+                    return contact;
+                }
+                else
+                {
+                    matchesLastAndFirst = [self matchesFirstName:firstname withContactPool:matchesLastName searchSubstrings:YES];
+                    if (matchesLastAndFirst.count>0)
+                    {
+                        Contact* contact = [matchesLastAndFirst objectAtIndex:0];
+                        contact.matchConfidence = [NSNumber numberWithDouble: .80 /exp(matchesLastName.count-1)];
+                        return contact;
+                    }
+                }
+                
+                
+            }
+        }
+        
+        //lastname in firstname
+        matchesLastName = [self matchesFirstName:lastname withContactPool:[self getAllContacts] searchSubstrings:NO];
+        
+        if (matchesLastName.count>0)
+        {
+            NSLog(@"lastname found in first");
+            if (!firstname)
+            {     
+                Contact* contact = [matchesLastName objectAtIndex:0];
+                contact.matchConfidence = [NSNumber numberWithDouble: .9 /exp(matchesLastName.count-1)];
+                return contact;                
+            }
+            else
+            {
+                Contact* contact = [matchesLastName objectAtIndex:0];
+                contact.matchConfidence = [NSNumber numberWithDouble: .70 /exp(matchesLastName.count-1)];
+                return contact;
+                
+            }
+        }
+        
+        //flexible lastname in firstname
+        matchesLastName = [self matchesFirstName:lastname withContactPool:[self getAllContacts] searchSubstrings:YES];
+        
+        if (matchesLastName.count>0)
+        {
+            NSLog(@"lastname found in first");
+            if (!firstname)
+            {     
+                Contact* contact = [matchesLastName objectAtIndex:0];
+                contact.matchConfidence = [NSNumber numberWithDouble: .9 /exp(matchesLastName.count-1)];
+                return contact;                
+            }
+            else
+            {
+                NSArray *matchesLastAndFirst = [self matchesFirstName:firstname withContactPool:matchesLastName searchSubstrings:YES];
+                if (matchesLastAndFirst.count>0)
+                {
+                    Contact* contact = [matchesLastAndFirst objectAtIndex:0];
+                    contact.matchConfidence = [NSNumber numberWithDouble: .85 /exp(matchesLastName.count-1)];
+                    return contact;
+                }
+                else
+                {
+                    Contact* contact = [matchesLastName objectAtIndex:0];
+                    contact.matchConfidence = [NSNumber numberWithDouble: .70 /exp(matchesLastName.count-1)];
+                    return contact;
+                }
+                
+                
+            }
+        }
+        
+        
+        
+    }
+    
+    
+    NSLog(@"no match for:\nfirstname: %@\nlastname: %@", firstname, lastname);
+    return nil;
+}
+
+
 -(BOOL)doBidirectionalSubstringMatch:(NSString*)one andTwo:(NSString*)two
 {
+    if (!one || !two)
+        return NO;
+    
     //Account for shortened/nicknames
     if (one.length < two.length)
     {

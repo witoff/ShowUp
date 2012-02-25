@@ -94,6 +94,8 @@
 
 - (BOOL)isSessionValid;
 
+- (void)cancelPendingRequest;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +137,6 @@
  *  - the user revoked the app's permissions
  *  - the user changed his or her password
  */
-- (void)fbSessionInvalidated;
+- (void)fbSessionInvalidated; 
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "pspctTests.h"
+#import "ScanAddressBook.h"
 
 @implementation pspctTests
 
@@ -26,7 +27,13 @@
 
 - (void)testExample
 {
-    STFail(@"Unit tests are not implemented yet in pspctTests");
+    //STFail(@"Unit tests are not implemented yet in pspctTests");
+    
+}
+
+- (void)testScanAddressBook
+{
+
 }
 
 @end

@@ -12,6 +12,7 @@
 #import "ScanAddressBook.h"
 #import "SimpleRequester.h"
 #import "TemplateTableVc.h"
+#import "Contact.h"
 
 @interface FriendTableVc (hidden)
 
@@ -40,11 +41,11 @@
         self.listId = identifier;
         self.listName = name;
         self.listType = type;
-
+        
         //Add Message Button
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         btn.frame = CGRectMake(0, 0, 44, 44);
-       
+        
         //Images
         [btn setImage:[UIImage imageNamed:@"18_envelope_white"] forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:@"18_envelope"] forState:UIControlStateHighlighted];
@@ -153,6 +154,13 @@
 
 - (void)viewDidUnload
 {
+    if (!self.friends || self.friends.count==0)
+    {
+        //Need to cancel any unsent FB requests so dumb FB api doesnt return to a non-existend VC
+        PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        [appDelegate.facebook cancelPendingRequest];
+    }
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -223,7 +231,7 @@
     
     UILongPressGestureRecognizer *recognizer  = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(editOrder:)];
     [cell addGestureRecognizer:recognizer];
-
+    
     
     return cell;
     
@@ -289,7 +297,11 @@
         
         
         //get number
-        NSString *number = [addressBook simpleSearch:firstname andLastName:lastname];
+        Contact *contact = [addressBook search:firstname andLastName:lastname];
+        
+        NSString* number = [contact getBestNumber];
+        NSLog(@"Confidence for: %@ is: %@", [contact getFullname], contact.matchConfidence);
+        
         if (number)
             [recipients addObject:number];
     }
@@ -360,13 +372,13 @@
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
-
+        
     }   
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-
+    
     NSDictionary *obj = [self.friends objectAtIndex:fromIndexPath.row];
     [self.friends removeObjectAtIndex:fromIndexPath.row];
     [self.friends insertObject:obj atIndex:toIndexPath.row];

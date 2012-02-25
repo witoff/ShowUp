@@ -11,6 +11,7 @@
 #import "PspctAppDelegate.h"
 #import "ScanAddressBook.h"
 #import <MessageUI/MessageUI.h>
+#import "Contact.h"
 
 @implementation EventVc
 
@@ -222,9 +223,10 @@
     ScanAddressBook *addressBook = [[ScanAddressBook alloc] init];
         
     //get number
-    NSString *number = [addressBook simpleSearch:firstname andLastName:lastname];
-    if (number)
-        [recipients addObject:number];
+    Contact *contact = [addressBook simpleSearch:firstname andLastName:lastname];
+    
+    if (contact)
+        [recipients addObject:[contact getBestNumber]];
     
     return recipients;
 }

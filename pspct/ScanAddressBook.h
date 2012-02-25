@@ -7,17 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AddressBook/AddressBook.h>
+#import "Contact.h"
 
 @interface ScanAddressBook : NSObject
 {
-    NSArray* contacts;
+
 }
 
-@property (nonatomic, retain) NSArray* contacts;
+- (Contact*) simpleSearch:(NSString*)firstname andLastName:(NSString*)lastname;
+- (Contact*) search:(NSString*)firstname andLastName:(NSString*)lastname;
+- (Contact*)getContactWithId:(NSNumber*)identifier;
 
-- (void) search;
-- (NSArray*) getContacts;
-- (NSString*) simpleSearch:(NSString*)firstname andLastName:(NSString*)lastname;
-- (BOOL)doBidirectionalSubstringMatch:(NSString*)one andTwo:(NSString*)two;
++(void)invalidateContactList;
 
 @end

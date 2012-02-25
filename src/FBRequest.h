@@ -87,6 +87,7 @@ typedef NSUInteger FBRequestState;
 - (BOOL) loading;
 
 - (void) connect;
+- (void)cancel;
 
 @end
 
