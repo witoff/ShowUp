@@ -131,23 +131,23 @@
 		067466BC14FA242500A5119C /* 286-speechbubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "286-speechbubble@2x.png"; sourceTree = "<group>"; };
 		067466BF14FA247400A5119C /* 286-speechbubble-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "286-speechbubble-white.png"; sourceTree = "<group>"; };
 		067466C014FA247400A5119C /* 286-speechbubble-white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "286-speechbubble-white@2x.png"; sourceTree = "<group>"; };
-		06788E6714E770AD007C5BE4 /* pspct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pspct.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		06788E6714E770AD007C5BE4 /* perspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = perspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06788E6B14E770AD007C5BE4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		06788E6D14E770AD007C5BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		06788E6F14E770AD007C5BE4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		06788E7314E770AD007C5BE4 /* pspct-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "pspct-Info.plist"; sourceTree = "<group>"; };
+		06788E7314E770AD007C5BE4 /* perspect-Info.plist */ = {isa = PBXFileReference; path = "perspect-Info.plist"; sourceTree = "<group>"; };
 		06788E7514E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		06788E7714E770AD007C5BE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		06788E7914E770AD007C5BE4 /* pspct-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pspct-Prefix.pch"; sourceTree = "<group>"; };
+		06788E7914E770AD007C5BE4 /* perspect-Prefix.pch */ = {isa = PBXFileReference; path = "perspect-Prefix.pch"; sourceTree = "<group>"; };
 		06788E7A14E770AD007C5BE4 /* PspctAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PspctAppDelegate.h; sourceTree = "<group>"; };
 		06788E7B14E770AD007C5BE4 /* PspctAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PspctAppDelegate.m; sourceTree = "<group>"; };
 		06788E7E14E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		06788E8114E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		06788E8A14E770AD007C5BE4 /* PspctSecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PspctSecondViewController.h; sourceTree = "<group>"; };
 		06788E8B14E770AD007C5BE4 /* PspctSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PspctSecondViewController.m; sourceTree = "<group>"; };
-		06788E9614E770AD007C5BE4 /* pspctTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pspctTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		06788E9614E770AD007C5BE4 /* perspectTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = perspectTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		06788E9714E770AD007C5BE4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		06788E9F14E770AD007C5BE4 /* pspctTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "pspctTests-Info.plist"; sourceTree = "<group>"; };
+		06788E9F14E770AD007C5BE4 /* perspectTests-Info.plist */ = {isa = PBXFileReference; path = "perspectTests-Info.plist"; sourceTree = "<group>"; };
 		06788EA114E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		06788EA314E770AD007C5BE4 /* pspctTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pspctTests.h; sourceTree = "<group>"; };
 		06788EA414E770AD007C5BE4 /* pspctTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pspctTests.m; sourceTree = "<group>"; };
@@ -315,8 +315,8 @@
 		06788E6814E770AD007C5BE4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				06788E6714E770AD007C5BE4 /* pspct.app */,
-				06788E9614E770AD007C5BE4 /* pspctTests.octest */,
+				06788E6714E770AD007C5BE4 /* perspect.app */,
+				06788E9614E770AD007C5BE4 /* perspectTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -357,10 +357,10 @@
 			children = (
 				06D30E5214FAF84B00ED3254 /* images-pspct */,
 				06577D4014F0AC0400EA6180 /* Images-iOS */,
-				06788E7314E770AD007C5BE4 /* pspct-Info.plist */,
+				06788E7314E770AD007C5BE4 /* perspect-Info.plist */,
 				06788E7414E770AD007C5BE4 /* InfoPlist.strings */,
 				06788E7714E770AD007C5BE4 /* main.m */,
-				06788E7914E770AD007C5BE4 /* pspct-Prefix.pch */,
+				06788E7914E770AD007C5BE4 /* perspect-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -378,7 +378,7 @@
 		06788E9E14E770AD007C5BE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				06788E9F14E770AD007C5BE4 /* pspctTests-Info.plist */,
+				06788E9F14E770AD007C5BE4 /* perspectTests-Info.plist */,
 				06788EA014E770AD007C5BE4 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -503,9 +503,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		06788E6614E770AD007C5BE4 /* pspct */ = {
+		06788E6614E770AD007C5BE4 /* perspect */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "pspct" */;
+			buildConfigurationList = 06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspect" */;
 			buildPhases = (
 				06788E6314E770AD007C5BE4 /* Sources */,
 				06788E6414E770AD007C5BE4 /* Frameworks */,
@@ -515,14 +515,14 @@
 			);
 			dependencies = (
 			);
-			name = pspct;
+			name = perspect;
 			productName = pspct;
-			productReference = 06788E6714E770AD007C5BE4 /* pspct.app */;
+			productReference = 06788E6714E770AD007C5BE4 /* perspect.app */;
 			productType = "com.apple.product-type.application";
 		};
-		06788E9514E770AD007C5BE4 /* pspctTests */ = {
+		06788E9514E770AD007C5BE4 /* perspectTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "pspctTests" */;
+			buildConfigurationList = 06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspectTests" */;
 			buildPhases = (
 				06788E9114E770AD007C5BE4 /* Sources */,
 				06788E9214E770AD007C5BE4 /* Frameworks */,
@@ -534,9 +534,9 @@
 			dependencies = (
 				06788E9C14E770AD007C5BE4 /* PBXTargetDependency */,
 			);
-			name = pspctTests;
+			name = perspectTests;
 			productName = pspctTests;
-			productReference = 06788E9614E770AD007C5BE4 /* pspctTests.octest */;
+			productReference = 06788E9614E770AD007C5BE4 /* perspectTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -547,7 +547,7 @@
 			attributes = {
 				LastUpgradeCheck = 0420;
 			};
-			buildConfigurationList = 06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "pspct" */;
+			buildConfigurationList = 06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "perspect" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -565,8 +565,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				06788E6614E770AD007C5BE4 /* pspct */,
-				06788E9514E770AD007C5BE4 /* pspctTests */,
+				06788E6614E770AD007C5BE4 /* perspect */,
+				06788E9514E770AD007C5BE4 /* perspectTests */,
 			);
 		};
 /* End PBXProject section */
@@ -692,7 +692,7 @@
 /* Begin PBXTargetDependency section */
 		06788E9C14E770AD007C5BE4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 06788E6614E770AD007C5BE4 /* pspct */;
+			target = 06788E6614E770AD007C5BE4 /* perspect */;
 			targetProxy = 06788E9B14E770AD007C5BE4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -784,10 +784,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "pspct/pspct-Prefix.pch";
-				INFOPLIST_FILE = "pspct/pspct-Info.plist";
+				GCC_PREFIX_HEADER = "pspct/perspect-Prefix.pch";
+				INFOPLIST_FILE = "pspct/perspect-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = perspect;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -797,10 +797,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "pspct/pspct-Prefix.pch";
-				INFOPLIST_FILE = "pspct/pspct-Info.plist";
+				GCC_PREFIX_HEADER = "pspct/perspect-Prefix.pch";
+				INFOPLIST_FILE = "pspct/perspect-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = perspect;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -816,8 +816,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pspct/pspct-Prefix.pch";
-				INFOPLIST_FILE = "pspctTests/pspctTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "pspctTests/perspectTests-Info.plist";
+				PRODUCT_NAME = perspectTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -833,8 +833,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pspct/pspct-Prefix.pch";
-				INFOPLIST_FILE = "pspctTests/pspctTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "pspctTests/perspectTests-Info.plist";
+				PRODUCT_NAME = perspectTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -843,7 +843,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "pspct" */ = {
+		06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "perspect" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06788EA614E770AD007C5BE4 /* Debug */,
@@ -852,7 +852,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "pspct" */ = {
+		06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspect" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06788EA914E770AD007C5BE4 /* Debug */,
@@ -861,7 +861,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "pspctTests" */ = {
+		06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspectTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06788EAC14E770AD007C5BE4 /* Debug */,
