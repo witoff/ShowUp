@@ -8,6 +8,8 @@
 
 #import "OptionsVc.h"
 #import "PspctAppDelegate.h"
+#import "Constants.h"
+#import "FriendListTableVc.h"
 
 @implementation OptionsVc
 
@@ -85,7 +87,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 3;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -103,24 +105,18 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    
-    
-    UITapGestureRecognizer *recognizer;
     switch (indexPath.section) {
         case 0:
+            //Show hidden lists
             cell.textLabel.text = @"Show Hidden Lists";
-            recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showHiddenLists:)];
-            [cell addGestureRecognizer:recognizer];
+            break;
+        case 11:
+            //Show hidden friends
+            cell.textLabel.text = @"Show Hidden Friends";            
             break;
         case 1:
-            cell.textLabel.text = @"Show Hidden Friends";
-            recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showHiddenFriends:)];
-            [cell addGestureRecognizer:recognizer];
-            break;
-        case 2:
+            //Logout of facebook
             cell.textLabel.text = @"Logout of Facebook";
-            recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(logoutOfFacebook:)];
-            [cell addGestureRecognizer:recognizer];
             break;
         default:
             break;
@@ -134,25 +130,75 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"selected");
+    
+    NSString* strSuccess = nil;
+    switch (indexPath.section) {
+        case 0:
+            //Show hidden lists
+            [self showHiddenLists];
+            strSuccess = @"Hidden Lists Re-added";
+            break;
+        case 11:
+            //Show hidden friends
+            [self showHiddenFriends];
+            strSuccess = @"Hidden Friends Re-added";
+            break;
+        case 1:
+            //Logout of facebook
+            [self logoutOfFacebook];
+            strSuccess = @"Logged out of Facebook";
+            break;
+        default:
+            break;
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Success" message:strSuccess delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    [alert show];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
--(IBAction)showHiddenLists:(id)sender
+-(void)showHiddenLists
 {
     NSLog(@"hidden lists");
-    //TODO: implement correctly
+    [FriendListTableVc showHiddenLists];
 
 }
--(IBAction)showHiddenFriends:(id)sender
+
+-(void)showHiddenFriends
 {
     NSLog(@"hidden friends");
-    //TODO: implement
-    
+    //TODO: implement correctly
 }
--(IBAction)logoutOfFacebook:(id)sender
+
+-(void)logoutOfFacebook
 {
     NSLog(@"logout");
     PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate.facebook logout];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:@"FBAccessTokenKey"];
+    [defaults removeObjectForKey:@"FBExpirationDateKey"];
+    [defaults synchronize];
+
+    //DELETE ALL FILES
+    /*
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:FRIEND_LIST_FILENAME];
+    
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    
+    NSError *error;
+    if ([fileMgr removeItemAtPath:filePath error:&error] != YES)
+        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
+    
+    // Show contents of Documents directory
+    NSLog(@"Documents directory: %@",
+          [fileMgr contentsOfDirectoryAtPath:documentsDirectory error:&error]);
+    */
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:EVENT_FB_LOGOUT object:self];
 }
 
 

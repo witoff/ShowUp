@@ -10,8 +10,8 @@
 
 @interface OptionsVc : UITableViewController
 
--(IBAction)showHiddenLists:(id)sender;
--(IBAction)showHiddenFriends:(id)sender;
--(IBAction)logoutOfFacebook:(id)sender;
+-(void)showHiddenLists;
+-(void)showHiddenFriends;
+-(void)logoutOfFacebook;
 
 @end

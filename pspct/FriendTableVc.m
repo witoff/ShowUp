@@ -9,14 +9,16 @@
 #import "FriendTableVc.h"
 #import "PspctAppDelegate.h"
 #import <MessageUI/MessageUI.h>
-#import "ScanAddressBook.h"
+#import "AbScanner.h"
 #import "SimpleRequester.h"
 #import "TemplateTableVc.h"
-#import "Contact.h"
+#import "AbContact.h"
+#import "FbContact.h"
 
 @interface FriendTableVc (hidden)
 
 -(IBAction)showTemplateTable:(id)sender;
+-(IBAction)showMissingContact:(id)sender;
 
 - (void)loadData;
 - (void)saveData;
@@ -25,12 +27,13 @@
 
 - (IBAction)sendSms:(id)sender;
 
+
 @end
 
 
 @implementation FriendTableVc
 
-@synthesize listId, friends, friends_hidden, listName, listType, btnMessage;
+@synthesize listId, friends, friends_hidden, listName, listType, btnMessage, selected, imgMissing;
 
 #pragma mark - init
 
@@ -47,8 +50,8 @@
         btn.frame = CGRectMake(0, 0, 44, 44);
         
         //Images
-        [btn setImage:[UIImage imageNamed:@"18_envelope_white"] forState:UIControlStateNormal];
-        [btn setImage:[UIImage imageNamed:@"18_envelope"] forState:UIControlStateHighlighted];
+        [btn setImage:[UIImage imageNamed:@"286-speechbubble-white"] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"286-speechbubble"] forState:UIControlStateHighlighted];
         
         //Gestures
         [btn addTarget:self action:@selector(sendSms:) forControlEvents:UIControlEventTouchUpInside];
@@ -68,35 +71,38 @@
 {
     NSMutableArray* newFriends = [result objectForKey:@"data"];
     
-    NSString *selectedString = nil;
-    if (newFriends.count>10)
-        selectedString = @"NO";
-    else
-        selectedString = @"YES";
+    NSNumber *isSelected = [NSNumber numberWithBool:!(newFriends.count>10)];
     
     NSLog(@"type: %@", self.listType);
     //Auto add some members if the list is new
     if ([self.listType isEqualToString:@"family"] && self.friends.count==0)
     {
         NSLog(@"we have a family");
-        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", nil]];
-        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", nil]];
+        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", @"Mom", @"id", nil]];
+        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", @"Dad", @"id", nil]];
+        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Sister",@"name", @"Sister", @"id", nil]];
+        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Brother",@"name", @"Brother", @"id", nil]];
     }
+    
+    NSMutableDictionary *selected_unmatched = [[NSMutableDictionary alloc] initWithCapacity:11];
+    NSMutableArray *friends_unmatched = [[NSMutableArray alloc] initWithCapacity:11];
     
     BOOL hasChanges = NO;
     for (NSDictionary* nf in newFriends) {
+        
         bool isFound = NO;
-        NSString* new_id = [nf objectForKey:@"id"];
-        for (NSDictionary* friend in self.friends) {
-            if ([new_id isEqualToString:[friend objectForKey:@"id"]])
+        NSString* new_key = [nf objectForKey:@"id"];
+        
+        for (FbContact* fbContact in self.friends) {
+            if ([fbContact.key isEqualToString:new_key])
             {
                 isFound = YES;
                 break;
             }
         }
         if (!isFound)
-            for (NSDictionary* friend in self.friends_hidden) {
-                if ([new_id isEqualToString:[friend objectForKey:@"id"]])
+            for (FbContact* fbContact in self.friends_hidden) {
+                if ([fbContact.key isEqualToString:new_key])
                 {
                     isFound = YES;
                     break;
@@ -105,15 +111,33 @@
         if (isFound)
             continue;
         hasChanges=YES;
+
+        FbContact *newContact = [[FbContact alloc] init];
+        newContact.name = [nf objectForKey:@"name"];
+        newContact.key = [nf  objectForKey:@"id"];
         
-        [nf setValue:selectedString forKey:@"selected"];
-        [self.friends addObject:nf];
+
+        
+        if (![newContact getBestAbContact] || ![[newContact getBestAbContact] getBestNumber])
+        {
+            [selected_unmatched setObject:[NSNumber numberWithBool:NO] forKey:newContact.key];
+            [friends_unmatched addObject:newContact];
+        }
+        else
+        {
+            [self.selected setObject:isSelected forKey:newContact.key];
+            [self.friends addObject:newContact];
+        }
     }
     
     //TODO: Handle if a user has been deleted from a group on Facebook
     
     if (hasChanges)
+    {
+        [self.selected addEntriesFromDictionary:selected_unmatched];
+        [self.friends addObjectsFromArray:friends_unmatched];
         [self.tableView reloadData];
+    }
     NSLog(@"data merged");
     
     [self.tableView reloadData];
@@ -222,9 +246,21 @@
     }
     
     
-    NSDictionary *friend = [self.friends objectAtIndex:indexPath.row];
-    cell.textLabel.text = [friend objectForKey:@"name"];
-    if ([[friend valueForKey:@"selected"] isEqualToString:@"YES"])
+    FbContact *fbContact = [self.friends objectAtIndex:indexPath.row];
+    cell.textLabel.text = fbContact.name;
+    //cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", fbContact.name, [[fbContact getBestAbContact] getBestNumber]];
+    
+    if (![fbContact getBestAbContact] || ![[fbContact getBestAbContact] getBestNumber])
+    {
+        if (!self.imgMissing)
+            self.imgMissing = [UIImage imageNamed:@"184-warning"];
+        
+        cell.imageView.image = self.imgMissing;
+    }
+    else
+        cell.imageView.image = nil;
+    
+    if ([[self.selected objectForKey:fbContact.key] boolValue])
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     else
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -235,6 +271,12 @@
     
     return cell;
     
+}
+
+-(IBAction)showMissingContact:(id)sender
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Missing Number" message:@"A match could not be found for this person" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+    [alert show];
 }
 
 -(IBAction)editOrder:(id)sender
@@ -257,18 +299,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    if (cell.imageView.image)
+    {
+        [self showMissingContact:cell];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        return;
+    }
     NSLog(@"selection found");
     
-    NSMutableDictionary *friend = [self.friends objectAtIndex:indexPath.row];
+    FbContact *contact = [self.friends objectAtIndex:indexPath.row];
     
-    if ([[friend valueForKey:@"selected"] isEqualToString:@"YES"])
-    {
-        [friend setValue:@"NO" forKey:@"selected"];
-    }
-    else
-    {
-        [friend setValue:@"YES" forKey:@"selected"];
-    }
+
+    //Toggle selection
+    BOOL isSelected = [[selected objectForKey:contact.key] boolValue];
+    [selected setObject:[NSNumber numberWithBool:!isSelected] forKey:contact.key];
     
     [self.tableView reloadData];
     
@@ -280,26 +325,16 @@
 {
     NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
     //get last name
-    ScanAddressBook *addressBook = [[ScanAddressBook alloc] init];
-    for (NSDictionary *friend in self.friends) {
+    for (FbContact *friend in self.friends) {
         
-        if (![[friend valueForKey:@"selected"] isEqualToString:@"YES"])
+        if (![[self.selected valueForKey:friend.key] boolValue])
             continue;
         
-        NSString *fullname = [friend objectForKey:@"name"];
-        NSArray *components = [fullname componentsSeparatedByString:@" "];
-        
-        NSString *lastname = nil;
-        if (components.count>1)
-            lastname = [components objectAtIndex:components.count-1];
-        NSString* firstname = [components objectAtIndex:0];
-        
-        
-        
         //get number
-        Contact *contact = [addressBook search:firstname andLastName:lastname];
+        AbContact *contact = [friend getBestAbContact];
         
         NSString* number = [contact getBestNumber];
+        
         NSLog(@"Confidence for: %@ is: %@", [contact getFullname], contact.matchConfidence);
         
         if (number)
@@ -325,6 +360,10 @@
     if (![MFMessageComposeViewController canSendText])
         return;
     
+    NSNumber *n_recipients = [NSNumber numberWithInt:messageVc.recipients.count];
+    [[MixpanelAPI sharedAPI] track:@"sending message" properties:[NSDictionary dictionaryWithObject:n_recipients forKey:@"n_recipients"]];
+
+    
     [self presentViewController:messageVc animated:YES completion:nil];
     NSLog(@"shown");
 }
@@ -333,6 +372,7 @@
 
 -(IBAction)showTemplateTable:(id)sender
 {
+    [[MixpanelAPI sharedAPI] track:@"opened template table"]; 
     NSLog(@"sendPredefinedMessage");
     if (self.navigationController.viewControllers.count==2)
     {
@@ -344,6 +384,23 @@
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
+    NSString* resultString;
+    switch (result) {
+        case MessageComposeResultCancelled:
+            resultString = @"cancelled";
+            break;
+        case MessageComposeResultFailed:
+            resultString = @"failed";            
+            break;
+        case MessageComposeResultSent:
+            resultString = @"sent";
+            break;
+        default:
+            resultString = @"";
+            break;
+    }
+    [[MixpanelAPI sharedAPI] track:@"message sent" properties:[NSDictionary dictionaryWithObjectsAndKeys:resultString, @"result", nil]];
+    
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -386,41 +443,48 @@
     NSLog(@"cell was moved");
 }
 
+
 -(void)loadData
 {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
-    
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-    if (dict)
-    {
-        //Check for nils otherwise they can prematurely terminate the dictionary that's later saved
-        self.friends = [dict objectForKey:@"friends"];
-        if (!self.friends)
-            self.friends = [[NSMutableArray alloc] initWithCapacity:5];
-        self.friends_hidden = [dict objectForKey:@"friends_hidden"];
-        if (!self.friends_hidden)
-            self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
-    }
-    else
+    /*
+     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+     NSString *documentsDirectory = [paths objectAtIndex:0];
+     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
+     
+     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+     if (dict)
+     {
+     //Check for nils otherwise they can prematurely terminate the dictionary that's later saved
+     self.friends = [dict objectForKey:@"friends"];
+     if (!self.friends)
+     self.friends = [[NSMutableArray alloc] initWithCapacity:5];
+     self.friends_hidden = [dict objectForKey:@"friends_hidden"];
+     if (!self.friends_hidden)
+     self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
+     }
+     else
+     */
     {
         NSLog(@"NO DATA TO LOAD, INITIALIZING WITH EMPTY DATA");
-        self.friends = [[NSMutableArray alloc] initWithCapacity:11];
+        self.friends = [[NSMutableArray alloc] initWithCapacity:12];
         self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
+        self.selected = [[NSMutableDictionary alloc] initWithCapacity:17];
     }
 }
 
 -(void)saveData
 {
-    NSLog(@"saving data");
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
-    
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friends, @"friends", self.friends_hidden, @"friends_hidden", nil];
-    if (![dict writeToFile:filePath atomically:YES])
-        NSLog(@":: There was an error saving your data!!");
+    /*
+     NSLog(@"saving data");
+     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+     NSString *documentsDirectory = [paths objectAtIndex:0];
+     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
+     
+     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friends, @"friends", self.friends_hidden, @"friends_hidden", nil];
+     if (![dict writeToFile:filePath atomically:YES])
+     NSLog(@":: There was an error saving your data!!");
+     */
 }
+
 
 @end

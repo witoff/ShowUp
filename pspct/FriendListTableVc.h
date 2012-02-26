@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "Facebook.h"
 
+#define FILE_FRIENDLISTS @"friendLists"
+#define FILE_FRIENDLISTS_HIDDEN @"friendLists_hidden"
+
 @interface FriendListTableVc : UITableViewController<FBRequestDelegate>
 {
     NSMutableArray* friendLists;
@@ -18,11 +21,12 @@
 @property (nonatomic, retain) NSMutableArray *friendLists;
 @property (nonatomic, retain) NSMutableArray *friendLists_hidden;
 
--(IBAction)btnEdit_click:(id)sender;
--(void) preloadMvc;
++(void) deleteData;
++(void) showHiddenLists;
+
 -(void) loadData;
 -(void) saveData;
 
--(IBAction)editOrder:(id)sender;
+-(void) preloadMvc;
 
 @end

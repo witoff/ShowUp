@@ -7,17 +7,22 @@
 //
 
 #import "PspctAppDelegate.h"
-#import "ScanAddressBook.h"
+#import "AbScanner.h"
+#import "MixpanelAPI.h"
+#import "Constants.h"
 
 @implementation PspctAppDelegate
 
-@synthesize window = _window, facebook;
+@synthesize window = _window, facebook, mixpanel;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSLog(@"application :: didFinishLaunchingWithOptions");
+    mixpanel = [MixpanelAPI sharedAPIWithToken:@"30cb438635ae2386bbde7c4ef81fd191"];
+    
     // Override point for customization after application launch.
     facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
-
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:@"FBAccessTokenKey"] 
         && [defaults objectForKey:@"FBExpirationDateKey"]) {
@@ -28,13 +33,14 @@
         NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", @"friends_birthday", @"user_relationships", nil];
         [facebook authorize:permissions];
     }
-       
+    
     return YES;
 }
 
 /** FACEBOOK SUPPORT **/
 // Pre 4.2 support
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    NSLog(@"handleOpenURL");
     return [facebook handleOpenURL:url]; 
 }
 
@@ -46,10 +52,14 @@
     return [facebook handleOpenURL:url]; 
 }
 - (void)fbDidLogin {
+    NSLog(@"fbDidLogin");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:EVENT_FB_LOGIN object:self];
+    
     
 }
 
@@ -90,11 +100,14 @@
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
-
+    
     //invalidate contact list... may have changed while you were outside of the app
-    [ScanAddressBook invalidateContactList];
+    [AbScanner invalidateContactList];
     
     [facebook extendAccessTokenIfNeeded];
+    
+    [mixpanel track:@"opened application"]; 
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

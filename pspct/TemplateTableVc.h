@@ -8,11 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TemplateTableVc : UITableViewController
+@interface TemplateTableVc : UITableViewController<UIAlertViewDelegate>
 {
     NSMutableArray *messages;
 }
 
 @property (nonatomic, retain) NSMutableArray *messages;
+
+-(void)loadTemplates;
+-(IBAction)addTemplate:(id)sender;
+-(void)saveData;
 
 @end

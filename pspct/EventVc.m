@@ -9,9 +9,9 @@
 #import "EventVc.h"
 #import "Facebook.h"
 #import "PspctAppDelegate.h"
-#import "ScanAddressBook.h"
+#import "AbScanner.h"
 #import <MessageUI/MessageUI.h>
-#import "Contact.h"
+#import "AbContact.h"
 
 @implementation EventVc
 
@@ -220,10 +220,10 @@
 {
     NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
     //get last name
-    ScanAddressBook *addressBook = [[ScanAddressBook alloc] init];
+    AbScanner *addressBook = [[AbScanner alloc] init];
         
     //get number
-    Contact *contact = [addressBook simpleSearch:firstname andLastName:lastname];
+    AbContact *contact = [addressBook simpleSearch];
     
     if (contact)
         [recipients addObject:[contact getBestNumber]];

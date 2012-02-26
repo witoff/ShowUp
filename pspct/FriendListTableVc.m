@@ -10,10 +10,73 @@
 #import "PspctAppDelegate.h"
 #import "FriendTableVc.h"
 #import <MessageUI/MessageUI.h>
+#import "MixpanelAPI.h"
+#import "Constants.h"
+
+@interface FriendListTableVc (hidden)
+
++(NSString*)getSaveFilePath;
+
+-(IBAction)editOrder:(id)sender;
+
+-(void)fbDidLogin:(NSNotification*)notification;
+-(void)fbDidLogout:(NSNotification*)notification;
+-(void)dataUpdated:(NSNotification*)notification;
+@end
 
 @implementation FriendListTableVc
 
 @synthesize friendLists, friendLists_hidden;
+
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+    NSLog(@"FLTVC :: initWithCoder");
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(fbDidLogin:) 
+                                                     name:EVENT_FB_LOGIN
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(fbDidLogout:) 
+                                                     name:EVENT_FB_LOGOUT
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(dataUpdated:) 
+                                                     name:EVENT_FRIENDLIST_SHOW_HIDDEN
+                                                   object:nil];
+    }
+    return self;
+}
+
+-(void)fbDidLogin:(NSNotification*)notification
+{
+    NSLog(@"didLogin friend list: %@", notification.name);
+    
+    PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
+    if ([appDelegate.facebook isSessionValid])
+        [appDelegate.facebook requestWithGraphPath:@"me/friendlists" andDelegate:self];
+    else
+        NSLog(@"Session was not valid");
+    
+    [self performSelectorInBackground:@selector(preloadMvc) withObject:nil];
+    
+    
+}
+
+-(void)fbDidLogout:(NSNotification*)notification
+{
+    self.friendLists = nil;
+    self.friendLists_hidden = nil;
+    [self.tableView reloadData];
+}
+-(void)dataUpdated:(NSNotification *)notification
+{
+    NSLog(@"data updated");
+    [self loadData];
+    [self.tableView reloadData];
+}
 
 // FACEBOOK REQUEST METHODS
 -(void)request:(FBRequest *)request didLoad:(id)result
@@ -47,9 +110,12 @@
         hasChanges=YES;
         [self.friendLists addObject:new_fl];
     }
-
+    
     if (hasChanges)
+    {
+        [self saveData];
         [self.tableView reloadData];
+    }
     NSLog(@"data merged");
 }
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
@@ -66,77 +132,94 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
--(void)loadData
++(NSString*)getSaveFilePath
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"friendLists.dat"];
-    
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:FILENAME_FRIEND_LIST];
+    return filePath;
+}
+
+-(void)loadData
+{    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:[FriendListTableVc getSaveFilePath]];
     if (dict)
     {
-        self.friendLists = [dict objectForKey:@"friendLists"];
-        self.friendLists_hidden = [dict objectForKey:@"friendLists_hidden"];
+        self.friendLists = [dict objectForKey:FILE_FRIENDLISTS];
+        self.friendLists_hidden = [dict objectForKey:FILE_FRIENDLISTS_HIDDEN];            
     }
-    else
-    {
+
+    if (!self.friendLists)
         self.friendLists = [[NSMutableArray alloc] initWithCapacity:11];
+    if (!self.friendLists_hidden)
         self.friendLists_hidden = [[NSMutableArray alloc] initWithCapacity:5];
-    }
+    
+    NSLog(@"loaded data.  lists: %i, hidden: %i", self.friendLists.count, self.friendLists_hidden.count);
 }
 
 -(void)saveData
 {
     NSLog(@"saving data");
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"friendLists.dat"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friendLists, FILE_FRIENDLISTS, self.friendLists_hidden, FILE_FRIENDLISTS_HIDDEN, nil];
+    [dict writeToFile:[FriendListTableVc getSaveFilePath] atomically:YES];
     
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friendLists, @"friendLists", self.friendLists_hidden, @"friendLists_hidden", nil];
-    [dict writeToFile:filePath atomically:YES];
+    NSLog(@"loaded data.  lists: %i, hidden: %i", self.friendLists.count, self.friendLists_hidden.count);
+}
+
++(void)deleteData
+{
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    
+    NSError *error;
+    if ([fileMgr removeItemAtPath:[FriendListTableVc getSaveFilePath] error:&error] != YES)
+        NSLog(@"Unable to delete file: %@", [error localizedDescription]);
+}
+
++(void) showHiddenLists
+{
+    NSLog(@"showHiddenLists");
+    NSMutableDictionary *loaded = [NSMutableDictionary dictionaryWithContentsOfFile:[FriendListTableVc getSaveFilePath]];
+    if (loaded)
+    {
+        NSMutableArray *friendLists =  [loaded objectForKey:@"friendLists"];
+        NSMutableArray *friendLists_hidden =  [loaded objectForKey:@"friendLists_hidden"];
+        [friendLists addObjectsFromArray:friendLists_hidden];
+        
+        NSMutableDictionary *toSave = [NSMutableDictionary dictionaryWithObjectsAndKeys:friendLists, FILE_FRIENDLISTS, nil];
+        [toSave writeToFile:[FriendListTableVc getSaveFilePath] atomically:YES];        
+        
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:EVENT_FRIENDLIST_SHOW_HIDDEN object:nil];
+    
 }
 
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
-    //self.navigationItem.rightBarButtonItem = self.editButtonItem;    
+    NSLog(@"viewDidLoad");
     [self loadData];
     
-    PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
-    if ([appDelegate.facebook isSessionValid])
-        [appDelegate.facebook requestWithGraphPath:@"me/friendlists" andDelegate:self];
-    else
-        NSLog(@"Session was not valid");
-    
-    NSLog(@"preloading");
-    [self performSelectorInBackground:@selector(preloadMvc) withObject:nil];
-    NSLog(@"preloaded");
+    [self fbDidLogin:nil];
     
     [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewDidUnload
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-
+    NSLog(@"viewWillAppear");
     [super viewWillAppear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    NSLog(@"viewDidAppear");
     [super viewDidAppear:animated];
 }
 
@@ -160,7 +243,6 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [self saveData];
     [super viewDidDisappear:animated];
 }
 
@@ -174,14 +256,14 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-
+    
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
+    
     // Return the number of rows in the section.
     if (self.friendLists)
         return self.friendLists.count;
@@ -196,15 +278,15 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-
+    
     UILongPressGestureRecognizer *recognizer  = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(editOrder:)];
     [cell addGestureRecognizer:recognizer];
-
+    
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     NSDictionary *list = [self.friendLists objectAtIndex:indexPath.row];
     cell.textLabel.text = [list objectForKey:@"name"];
-
+    
     return cell;
 }
 
@@ -266,6 +348,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [[MixpanelAPI sharedAPI] track:@"opened list"]; 
+    
     NSDictionary *list = [self.friendLists objectAtIndex:indexPath.row];
     [self setEditing:NO];
     
@@ -277,6 +361,12 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 60.;
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    //using arc so don't need to call [super dealloc]
 }
 
 

@@ -8,6 +8,14 @@
 
 #import "TemplateTableVc.h"
 #import "FriendTableVc.h"
+#import "Constants.h"
+#import "MixpanelAPI.h"
+
+@interface TemplateTableVc (hidden)
+
++(NSString*)getSaveFilePath;
+
+@end
 
 @implementation TemplateTableVc
 
@@ -18,17 +26,7 @@
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
-        self.messages = [[NSMutableArray alloc] initWithObjects:
-                         @"Be right there", 
-                         @"On my way!",
-                         @"Hey how have you been?",
-                         @"Hey drop me a line when you get a chance",
-                         @"Want to grab lunch?",
-                         @"What's the plan tonight?",
-                         @"What are you up to tonight?",
-                         @"What's up?",
-                         @"Who wants to catch a movie tonight?",
-                         nil];
+        
     }
     return self;
 }
@@ -46,8 +44,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     self.navigationItem.title = @"Templates";
+    [self loadTemplates];
 }
 
 - (void)viewDidUnload
@@ -93,7 +92,11 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section==0)
-        return self.messages.count;
+    {
+        if (self.messages)
+            return self.messages.count;
+        return 0;
+    }
     return 1;
 }
 
@@ -108,6 +111,8 @@
     
     if (indexPath.section==0)
     {
+        UILongPressGestureRecognizer *recognizer  = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(editOrder:)];
+        [cell addGestureRecognizer:recognizer];
         cell.textLabel.text = [self.messages objectAtIndex:indexPath.row];
     }
     else
@@ -117,45 +122,6 @@
     
     return cell;
 }
-
-/*
- // Override to support conditional editing of the table view.
- - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the specified item to be editable.
- return YES;
- }
- */
-
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
- {
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
- }   
- else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }   
- }
- */
-
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
- {
- }
- */
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
 
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
@@ -179,7 +145,127 @@
     else
     {
         //TODO: accept text here
+        [self addTemplate:nil];
     }
 }
+
+-(IBAction)editOrder:(id)sender
+{
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;    
+    [self setEditing:YES animated:YES];
+}
+
+-(void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    if (!editing)
+    {
+        //done editing
+        self.navigationItem.rightBarButtonItem = nil;
+        [self saveData];
+    }
+    [super setEditing:editing animated:animated];
+}
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return indexPath.section==0;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        
+        [[MixpanelAPI sharedAPI] track:@"deleted template" properties:[NSDictionary dictionaryWithObject:[self.messages objectAtIndex:indexPath.row] forKey:@"text"]];
+        
+        [self.messages removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
+        
+    }   
+    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+    NSString *obj = [self.messages objectAtIndex:fromIndexPath.row];
+    [self.messages removeObjectAtIndex:fromIndexPath.row];
+    [self.messages insertObject:obj atIndex:toIndexPath.row];
+    
+    NSLog(@"cell was moved");
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return (indexPath.section==0);
+}
+
+
+#pragma mark - template editing
+
++(NSString*)getSaveFilePath
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:FILENAME_TEMPLATE];
+    return filePath;
+}
+
+-(void)saveData
+{
+    NSLog(@"template table :: saving data");
+    NSString *path = [TemplateTableVc getSaveFilePath];    
+    [self.messages writeToFile:path atomically:YES];
+}
+
+-(void)loadTemplates
+{
+    NSString *path = [TemplateTableVc getSaveFilePath];    
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    
+    if (![fileMgr fileExistsAtPath:path])
+    {
+        //load & save defaults if file doesn't exist
+        self.messages = [[NSMutableArray alloc] initWithObjects:
+                         @"Be right there", 
+                         @"On my way!",
+                         @"What's up?",
+                         @"Call me when you get a chance",
+                         @"Want to grab lunch?",
+                         @"What's the plan tonight?",
+                         @"What are you up to tonight?",
+                         @"Want to catch a movie tonight?",
+                         @"Want to go for a run today?",
+                         nil];
+        [self.messages writeToFile:path atomically:YES];
+        [self.tableView reloadData];
+    }
+    else
+    {
+        self.messages = [NSMutableArray arrayWithContentsOfFile:path];
+    }
+    
+}
+
+-(IBAction)addTemplate:(id)sender
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Add a Template" message:@"Enter the text for a new Template message" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: @"Cancel", nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==0)
+    {
+        NSString *text = [alertView textFieldAtIndex:0].text;
+        [self.messages addObject:text];
+        [self saveData];
+        [self.tableView reloadData];
+        
+        [[MixpanelAPI sharedAPI] track:@"Added template" properties:[NSDictionary dictionaryWithObject:text forKey:@"text"]];
+    }
+}
+
 
 @end
