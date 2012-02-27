@@ -63,8 +63,8 @@
 		06C9622714E877AB0045F610 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C9622614E877AB0045F610 /* AddressBook.framework */; };
 		06C9622914E877B30045F610 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C9622814E877B30045F610 /* AddressBookUI.framework */; };
 		06D30E5614FAFB2200ED3254 /* Icon-small@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06D30E5314FAFB2200ED3254 /* Icon-small@2.png */; };
-		06D30E5714FAFB2200ED3254 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 06D30E5414FAFB2200ED3254 /* iTunesArtwork.png */; };
 		06D30E5814FAFB2200ED3254 /* Icon-small.png in Resources */ = {isa = PBXBuildFile; fileRef = 06D30E5514FAFB2200ED3254 /* Icon-small.png */; };
+		06EBAA5A14FAFF1100D2C78B /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 06EBAA5914FAFF1000D2C78B /* iTunesArtwork */; };
 		06ED3A6014F779AB0078C900 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 06ED3A5F14F779AB0078C900 /* 112-group@2x.png */; };
 		06ED3A6214F779BD0078C900 /* 20-gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 06ED3A6114F779BD0078C900 /* 20-gear@2x.png */; };
 		06ED3A6714F78F100078C900 /* EventVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06ED3A6614F78F100078C900 /* EventVc.m */; };
@@ -135,10 +135,10 @@
 		06788E6B14E770AD007C5BE4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		06788E6D14E770AD007C5BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		06788E6F14E770AD007C5BE4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		06788E7314E770AD007C5BE4 /* perspect-Info.plist */ = {isa = PBXFileReference; path = "perspect-Info.plist"; sourceTree = "<group>"; };
+		06788E7314E770AD007C5BE4 /* perspect-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "perspect-Info.plist"; sourceTree = "<group>"; };
 		06788E7514E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		06788E7714E770AD007C5BE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		06788E7914E770AD007C5BE4 /* perspect-Prefix.pch */ = {isa = PBXFileReference; path = "perspect-Prefix.pch"; sourceTree = "<group>"; };
+		06788E7914E770AD007C5BE4 /* perspect-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "perspect-Prefix.pch"; sourceTree = "<group>"; };
 		06788E7A14E770AD007C5BE4 /* PspctAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PspctAppDelegate.h; sourceTree = "<group>"; };
 		06788E7B14E770AD007C5BE4 /* PspctAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PspctAppDelegate.m; sourceTree = "<group>"; };
 		06788E7E14E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -147,7 +147,7 @@
 		06788E8B14E770AD007C5BE4 /* PspctSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PspctSecondViewController.m; sourceTree = "<group>"; };
 		06788E9614E770AD007C5BE4 /* perspectTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = perspectTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		06788E9714E770AD007C5BE4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		06788E9F14E770AD007C5BE4 /* perspectTests-Info.plist */ = {isa = PBXFileReference; path = "perspectTests-Info.plist"; sourceTree = "<group>"; };
+		06788E9F14E770AD007C5BE4 /* perspectTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "perspectTests-Info.plist"; sourceTree = "<group>"; };
 		06788EA114E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		06788EA314E770AD007C5BE4 /* pspctTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pspctTests.h; sourceTree = "<group>"; };
 		06788EA414E770AD007C5BE4 /* pspctTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pspctTests.m; sourceTree = "<group>"; };
@@ -183,8 +183,8 @@
 		06C9622614E877AB0045F610 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		06C9622814E877B30045F610 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		06D30E5314FAFB2200ED3254 /* Icon-small@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-small@2.png"; sourceTree = "<group>"; };
-		06D30E5414FAFB2200ED3254 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		06D30E5514FAFB2200ED3254 /* Icon-small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-small.png"; sourceTree = "<group>"; };
+		06EBAA5914FAFF1000D2C78B /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		06ED3A5F14F779AB0078C900 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		06ED3A6114F779BD0078C900 /* 20-gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "20-gear@2x.png"; sourceTree = "<group>"; };
 		06ED3A6514F78F100078C900 /* EventVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventVc.h; sourceTree = "<group>"; };
@@ -275,11 +275,11 @@
 		06577D4014F0AC0400EA6180 /* Images-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				06EBAA5914FAFF1000D2C78B /* iTunesArtwork */,
 				06ED3A6E14F7A0050078C900 /* icon.png */,
 				0664EDAF14F8A73C00C3D87F /* icon@2.png */,
 				06D30E5514FAFB2200ED3254 /* Icon-small.png */,
 				06D30E5314FAFB2200ED3254 /* Icon-small@2.png */,
-				06D30E5414FAFB2200ED3254 /* iTunesArtwork.png */,
 				0664EDAB14F8A20400C3D87F /* Default.png */,
 				0664EDAD14F8A3E400C3D87F /* Default@2x.png */,
 			);
@@ -611,8 +611,8 @@
 				067466C114FA247400A5119C /* 286-speechbubble-white.png in Resources */,
 				067466C214FA247400A5119C /* 286-speechbubble-white@2x.png in Resources */,
 				06D30E5614FAFB2200ED3254 /* Icon-small@2.png in Resources */,
-				06D30E5714FAFB2200ED3254 /* iTunesArtwork.png in Resources */,
 				06D30E5814FAFB2200ED3254 /* Icon-small.png in Resources */,
+				06EBAA5A14FAFF1100D2C78B /* iTunesArtwork in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
