@@ -103,6 +103,7 @@ static NSArray* allcontacts;
             CFRelease(phoneNumberLabel);
             CFRelease(phoneNumberValue);
         }
+        CFRelease(lastName);
         
         //
         // Phone Numbers
@@ -123,7 +124,9 @@ static NSArray* allcontacts;
             CFRelease(phoneNumberLocalizedLabel);
             CFRelease(phoneNumberLabel);
             CFRelease(phoneNumberValue);
-        }
+        }       
+        CFRelease(phoneNumbers);
+        CFRelease(person);
     }
     
     CFRelease(addressBook);
@@ -146,13 +149,13 @@ static NSArray* allcontacts;
         
         ABRecordRef ref = CFArrayGetValueAtIndex(allPeople, i );
         AbContact *contact = [AbContact contactWithRecordRef:ref];
-        CFRelease(ref);
+        //CFRelease(ref);
         
         [contactArray addObject:contact];
     }
-    
+
     CFRelease(addressBook);
-    //CFRelease(allPeople);
+    CFRelease(allPeople);
     allcontacts = contactArray;
     return allcontacts;
 }

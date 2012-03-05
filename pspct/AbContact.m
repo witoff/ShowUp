@@ -34,7 +34,7 @@
     ABRecordRef ref = ABAddressBookGetPersonWithRecordID(addressBook, recordId);
     AbContact *contact = [AbContact contactWithRecordRef:ref];
     CFRelease(addressBook);
-    CFRelease(ref);    
+    //CFRelease(ref);    
     
     return contact;
 }
@@ -138,7 +138,7 @@
         }
         
     }
-    NSLog(@"best number: %@", bestNumber);
+    NSLog(@"best number: %@ for label: %@", bestNumber, bestLabel);
     
     return bestNumber;
     

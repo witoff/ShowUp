@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "FBConnect.h"
 #import "MixpanelAPI.h"
+#import "IntroVc.h"
 
 @interface PspctAppDelegate : UIResponder <UIApplicationDelegate, FBSessionDelegate>
 {
@@ -17,7 +18,11 @@
 }
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) UIViewController *viewController;
+
 @property (nonatomic, retain) Facebook *facebook;
 @property (nonatomic, retain) MixpanelAPI *mixpanel;
+
+-(void)fbAuthorize;
 
 @end

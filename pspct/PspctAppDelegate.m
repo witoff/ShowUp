@@ -11,33 +11,77 @@
 #import "MixpanelAPI.h"
 #import "Constants.h"
 
+@interface PspctAppDelegate (hidden)
+
+-(void)showCorrectRootView;
+
+@end
+
 @implementation PspctAppDelegate
 
-@synthesize window = _window, facebook, mixpanel;
+@synthesize window = _window, facebook, mixpanel, viewController = _viewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSLog(@"application :: didFinishLaunchingWithOptions");
     mixpanel = [MixpanelAPI sharedAPIWithToken:@"30cb438635ae2386bbde7c4ef81fd191"];
-    
-    // Override point for customization after application launch.
     facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:@"FBAccessTokenKey"] 
         && [defaults objectForKey:@"FBExpirationDateKey"]) {
         facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
         facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
     }
-    if (![facebook isSessionValid]) {
-        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", @"friends_birthday", @"user_relationships", nil];
-        [facebook authorize:permissions];
-    }
+    
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    [self showCorrectRootView];
     
     return YES;
 }
 
-/** FACEBOOK SUPPORT **/
+-(void)showCorrectRootView
+{
+    //Launch Intro or storyboard
+    
+    if (self.viewController != nil)
+    {
+        if([facebook isSessionValid] && [self.window.rootViewController class ] != [IntroVc class])
+            return;
+        if(![facebook isSessionValid] && [self.window.rootViewController class ] == [IntroVc class])
+            return;
+    }
+    
+    if (![facebook isSessionValid]) {
+        self.viewController = [[IntroVc alloc] initWithNibName:@"IntroVc" bundle:nil];
+    }
+    else
+    {
+        mixpanel.nameTag = facebook.
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
+        self.viewController = [storyboard instantiateInitialViewController];
+    }
+    
+    self.window.rootViewController = self.viewController;
+    [self.window makeKeyAndVisible];
+    
+}
+
+/* If needed authorize the Fb User */
+-(void)fbAuthorize
+{
+    if (![facebook isSessionValid]) {
+        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", @"friends_birthday", @"user_relationships", nil];
+        [facebook authorize:permissions];
+    }
+    else
+    {
+        [self showCorrectRootView];
+    }
+}
+
+#pragma mark - FACEBOOK SUPPORT
 // Pre 4.2 support
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     NSLog(@"handleOpenURL");
@@ -60,7 +104,7 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EVENT_FB_LOGIN object:self];
     
-    
+    [self showCorrectRootView];
 }
 
 -(void)fbDidExtendToken:(NSString *)accessToken expiresAt:(NSDate *)expiresAt {
@@ -70,8 +114,11 @@
     [defaults setObject:expiresAt forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
 }
+-(void)fbDidLogout{}
+-(void)fbDidNotLogin:(BOOL)cancelled{}
+-(void)fbSessionInvalidated{}
 
-/** iOS METHODS **/
+#pragma mark - iOS Methods
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     /*
@@ -100,6 +147,8 @@
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
+    
+    [self showCorrectRootView];
     
     //invalidate contact list... may have changed while you were outside of the app
     [AbScanner invalidateContactList];
