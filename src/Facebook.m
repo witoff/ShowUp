@@ -211,6 +211,9 @@ appId = _appId;
  */
 - (void)authorizeWithFBAppAuth:(BOOL)tryFBAppAuth
                     safariAuth:(BOOL)trySafariAuth {
+    //Witoff: Never use external browser, launch within app
+    trySafariAuth = NO;
+    
     NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                    _appId, @"client_id",
                                    @"user_agent", @"type",

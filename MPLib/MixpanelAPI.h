@@ -154,4 +154,6 @@ static const NSUInteger kMPUploadInterval = 30;
  @discussion Uploads datapoints to the Mixpanel Server.
  */
 - (void)flush;
+
+NSString* calculateHMAC_SHA1(NSString *str, NSString *key);
 @end

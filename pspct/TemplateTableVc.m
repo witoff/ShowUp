@@ -140,7 +140,13 @@
         int controller_count = self.navigationController.viewControllers.count;
         FriendTableVc *friendVc = (FriendTableVc *)[self.navigationController.viewControllers objectAtIndex:controller_count-2];
         
-        [friendVc sendSmsWithMessage:[self.messages objectAtIndex:indexPath.row]];
+        
+        NSString *message = [self.messages objectAtIndex:indexPath.row];
+        
+        if ([message isEqualToString:@"<empty>"])
+            message = @"";
+        [friendVc sendSmsWithMessage:message];
+
     }
     else
     {
@@ -227,15 +233,16 @@
     {
         //load & save defaults if file doesn't exist
         self.messages = [[NSMutableArray alloc] initWithObjects:
+                         @"<empty>",
                          @"Be right there", 
                          @"On my way!",
-                         @"What's up?",
-                         @"Call me when you get a chance",
                          @"Want to grab lunch?",
-                         @"What's the plan tonight?",
-                         @"What are you up to tonight?",
-                         @"Want to catch a movie tonight?",
+                         @"I'll be 10 mins late today",
+                         @"I'll be there ASAP",
                          @"Want to go for a run today?",
+                         @"Want to catch a movie tonight?",
+                         @"Will you marry me?",
+                         @"Checkout pspct.com!",
                          nil];
         [self.messages writeToFile:path atomically:YES];
         [self.tableView reloadData];

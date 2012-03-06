@@ -54,9 +54,9 @@
         [btn setImage:[UIImage imageNamed:@"286-speechbubble"] forState:UIControlStateHighlighted];
         
         //Gestures
-        [btn addTarget:self action:@selector(sendSms:) forControlEvents:UIControlEventTouchUpInside];
+        [btn addTarget:self action:@selector(showTemplateTable:) forControlEvents:UIControlEventTouchUpInside];
         
-        UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showTemplateTable:)];
+        UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(sendSms:)];
         [btn addGestureRecognizer:recognizer];
         self.btnMessage = [[UIBarButtonItem alloc] initWithCustomView:btn];
         

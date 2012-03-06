@@ -10,7 +10,5 @@
 
 NSString * const EVENT_FB_LOGIN = @"fbDidLogin";
 NSString * const EVENT_FB_LOGOUT = @"fbDidLogout";
-NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
-NSString * const FILENAME_FRIEND_LIST = @"friendLists.dat";
-NSString * const FILENAME_TEMPLATE = @"templates.dat";
+NSString * const FILENAME_TEMPLATE = @"templates.plist";

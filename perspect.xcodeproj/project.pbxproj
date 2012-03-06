@@ -15,6 +15,8 @@
 		060EBF8A14F96A64004B4264 /* MixpanelEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 060EBF8414F96A64004B4264 /* MixpanelEvent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		0624192814F8E36B001B6D4A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0624192714F8E36B001B6D4A /* Accelerate.framework */; };
 		06291B7A14F3659D000BB1D9 /* OptionsVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06291B7914F3659D000BB1D9 /* OptionsVc.m */; };
+		064BCF3B1504520D00124A69 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 064BCF391504520D00124A69 /* Model.xcdatamodeld */; };
+		064BD02B15047CDF00124A69 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064BD02A15047CDF00124A69 /* CoreData.framework */; };
 		0653A2B615008BC5008CB1F1 /* icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 0653A2B415008BC5008CB1F1 /* icon@2.png */; };
 		0653A2B915008CB4008CB1F1 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0653A2B815008CB4008CB1F1 /* icon.png */; };
 		0653A2BC15008D06008CB1F1 /* icon.5@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 0653A2BA15008D05008CB1F1 /* icon.5@2.png */; };
@@ -123,6 +125,8 @@
 		0624192714F8E36B001B6D4A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		06291B7814F3659D000BB1D9 /* OptionsVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVc.h; sourceTree = "<group>"; };
 		06291B7914F3659D000BB1D9 /* OptionsVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVc.m; sourceTree = "<group>"; };
+		064BCF3A1504520D00124A69 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		064BD02A15047CDF00124A69 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		0653A2B415008BC5008CB1F1 /* icon@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2.png"; sourceTree = "<group>"; };
 		0653A2B815008CB4008CB1F1 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		0653A2BA15008D05008CB1F1 /* icon.5@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon.5@2.png"; sourceTree = "<group>"; };
@@ -234,6 +238,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				064BD02B15047CDF00124A69 /* CoreData.framework in Frameworks */,
 				0624192814F8E36B001B6D4A /* Accelerate.framework in Frameworks */,
 				06C9622914E877B30045F610 /* AddressBookUI.framework in Frameworks */,
 				06C9622714E877AB0045F610 /* AddressBook.framework in Frameworks */,
@@ -311,6 +316,14 @@
 			name = views;
 			sourceTree = "<group>";
 		};
+		064BCF3C1504521500124A69 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				064BCF391504520D00124A69 /* Model.xcdatamodeld */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
 		0653A2B3150089FF008CB1F1 /* old_icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -357,6 +370,7 @@
 		06788E5C14E770AC007C5BE4 = {
 			isa = PBXGroup;
 			children = (
+				064BD02A15047CDF00124A69 /* CoreData.framework */,
 				060EBF7514F96A64004B4264 /* MPLib */,
 				0624192714F8E36B001B6D4A /* Accelerate.framework */,
 				06C9622814E877B30045F610 /* AddressBookUI.framework */,
@@ -402,6 +416,7 @@
 				06A7E6DA1504316800CD5957 /* PspctTabBarController.h */,
 				06A7E6DB1504316800CD5957 /* PspctTabBarController.m */,
 				064BCF2E15044B8700124A69 /* views */,
+				064BCF3C1504521500124A69 /* model */,
 				06577D4E14F0C05200EA6180 /* util */,
 				068CC69E14F8CB8F0063BFC9 /* Contacts */,
 				06788E7214E770AD007C5BE4 /* Supporting Files */,
@@ -756,6 +771,7 @@
 				067466B614FA0A0200A5119C /* Constants.m in Sources */,
 				06A7E6DC1504316800CD5957 /* PspctTabBarController.m in Sources */,
 				06A7E76E1504353700CD5957 /* IntroVc.m in Sources */,
+				064BCF3B1504520D00124A69 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -951,6 +967,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		064BCF391504520D00124A69 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				064BCF3A1504520D00124A69 /* Model.xcdatamodel */,
+			);
+			currentVersion = 064BCF3A1504520D00124A69 /* Model.xcdatamodel */;
+			name = Model.xcdatamodeld;
+			path = ../Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 06788E5E14E770AC007C5BE4 /* Project object */;
 }
