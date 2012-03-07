@@ -49,13 +49,20 @@
     contact.key = identifier;
     
     //firstname
-    if(ABRecordCopyValue(ref, kABPersonFirstNameProperty) != nil || 
-       [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonFirstNameProperty)] length] == 0)
-        contact.firstname = [NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonFirstNameProperty)];
+    CFTypeRef firstname = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
+    if(firstname != nil)
+    {
+        contact.firstname = [NSString stringWithFormat:@"%@",firstname];
+        CFRelease(firstname);
+    }
     
     //lastname
-    if(ABRecordCopyValue(ref, kABPersonLastNameProperty) != nil || [[NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonLastNameProperty)] length] == 0)
-        contact.lastname = [NSString stringWithFormat:@"%@",ABRecordCopyValue(ref, kABPersonLastNameProperty)];
+    CFTypeRef lastname = ABRecordCopyValue(ref, kABPersonLastNameProperty);
+    if(lastname != nil)
+    {
+        contact.lastname = [NSString stringWithFormat:@"%@",lastname];
+        CFRelease(lastname);
+    }
     
     //image
     NSData *imgData = (__bridge_transfer NSData *) ABPersonCopyImageData(ref);
@@ -84,6 +91,7 @@
         CFRelease(cfLabel);
         CFRelease(cfNumber);
     }
+    CFRelease(phoneNumbers);
     
     //email
     CFTypeRef multival = ABRecordCopyValue(ref, kABPersonEmailProperty);

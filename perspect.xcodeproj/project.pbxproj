@@ -879,6 +879,7 @@
 		06788EA914E770AD007C5BE4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pspct/perspect-Prefix.pch";
 				INFOPLIST_FILE = "pspct/perspect-Info.plist";
@@ -892,6 +893,7 @@
 		06788EAA14E770AD007C5BE4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pspct/perspect-Prefix.pch";
 				INFOPLIST_FILE = "pspct/perspect-Info.plist";

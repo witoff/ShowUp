@@ -237,11 +237,12 @@
                          @"Be right there", 
                          @"On my way!",
                          @"Want to grab lunch?",
-                         @"I'll be 10 mins late today",
+                         @"Want to grab coffee?",
+                         @"I'll be 10 mins late",
                          @"I'll be there ASAP",
                          @"Want to go for a run today?",
                          @"Want to catch a movie tonight?",
-                         @"Will you marry me?",
+                         @"That's what she said?",
                          @"Checkout pspct.com!",
                          nil];
         [self.messages writeToFile:path atomically:YES];
