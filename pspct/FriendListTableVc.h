@@ -8,15 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "Facebook.h"
+#import "ModelGroup.h"
 
 @interface FriendListTableVc : UITableViewController<FBRequestDelegate>
 {
-    NSMutableArray* friendLists;
-    NSMutableArray* friendLists_hidden;
+    NSMutableArray* groups;
+    NSMutableArray* lists;
 }
 
-@property (nonatomic, retain) NSMutableArray *friendLists;
-@property (nonatomic, retain) NSMutableArray *friendLists_hidden;
+@property (nonatomic, retain) NSMutableArray *groups;
+@property (nonatomic, retain) NSMutableArray *lists;
 
 +(void) showHiddenLists;
 
@@ -25,5 +26,7 @@
 -(void) preloadMvc;
 
 -(NSManagedObject*)getNewList:(NSDictionary*)fbListObj;
+
+-(int)processFbResponse:(id)result withModel:(Class)groupType;
 
 @end

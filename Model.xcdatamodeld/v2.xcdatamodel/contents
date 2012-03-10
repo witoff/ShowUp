@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="AbkContactMatch" representedClassName="ModelAbkContactMatch" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="fb_match" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="FbUser" inverseName="adbk_match" inverseEntity="FbUser" syncable="YES"/>
+    </entity>
+    <entity name="FbGroup" representedClassName="ModelFbGroup" parentEntity="Group" syncable="YES"/>
+    <entity name="FbList" representedClassName="ModelFbList" parentEntity="Group" syncable="YES">
+        <attribute name="list_type" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="FbUser" representedClassName="ModelFbUser" syncable="YES">
+        <attribute name="abk_confidence" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="birthday" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="fb_id" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="firstname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="adbk_match" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="AbkContactMatch" inverseName="fb_match" inverseEntity="AbkContactMatch" syncable="YES"/>
+        <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FbGroup" inverseName="users" inverseEntity="Group" syncable="YES"/>
+    </entity>
+    <entity name="Group" representedClassName="ModelGroup" syncable="YES">
+        <attribute name="fb_id" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="is_visible" attributeType="Boolean" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FbUser" inverseName="groups" inverseEntity="FbUser" syncable="YES"/>
+    </entity>
+    <entity name="Templates" representedClassName="ModelTemplate" syncable="YES">
+        <attribute name="text" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="AbkContactMatch" positionX="90" positionY="192" width="128" height="75"/>
+        <element name="FbGroup" positionX="160" positionY="192" width="128" height="60"/>
+        <element name="FbList" positionX="160" positionY="192" width="128" height="60"/>
+        <element name="FbUser" positionX="628" positionY="-6120" width="128" height="165"/>
+        <element name="Group" positionX="117" positionY="408" width="128" height="105"/>
+        <element name="Templates" positionX="54" positionY="318" width="128" height="60"/>
+    </elements>
+</model>

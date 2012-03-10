@@ -12,6 +12,9 @@
 #import <MessageUI/MessageUI.h>
 #import "MixpanelAPI.h"
 #import "Constants.h"
+#import "ModelGroup.h"
+#import "ModelFbList.h"
+#import "ModelFbGroup.h"
 
 NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
@@ -28,11 +31,11 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
 @implementation FriendListTableVc
 
-@synthesize friendLists, friendLists_hidden;
+@synthesize groups, lists;
 
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
-    NSLog(@"FLTVC :: initWithCoder");
+    NSLog(@"FriendListTableVc :: initWithCoder");
     self = [super initWithCoder:aDecoder];
     if (self)
     {
@@ -52,48 +55,16 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     return self;
 }
 
--(void)debugModel
-{
-    //
-    // DEV CODE TO LEARN CORE DATA
-    //
-    
-    //Get Context
-    PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext *context = [delegate managedObjectContext];
-    
-    
-    //Creating a managed object
-    NSManagedObject *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
-    [newList setValue:@"test name" forKey:@"name"];
-    NSError *error;
-    //[context save:&error];
-    
-
-    //Get Entity
-    NSEntityDescription *entityDesc = [NSEntityDescription    
-                                       entityForName:@"List" inManagedObjectContext:context];
-    
-    NSFetchRequest* request = [[NSFetchRequest alloc] init];
-    
-    [request setEntity:entityDesc];
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"(name = %@)", "John Smith"];
-    [request setPredicate: pred];
-    NSArray *matching_objects = [context executeFetchRequest:request error:&error]; ;
-    for (NSManagedObject *obj in matching_objects)
-    {
-        NSLog(@"Found object: %@", [obj valueForKey:@"name"]);
-    }
-    
-}
-
 -(void)fbDidLogin:(NSNotification*)notification
 {
     NSLog(@"didLogin friend list: %@", notification.name);
     
     PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
     if ([appDelegate.facebook isSessionValid])
+    {
         [appDelegate.facebook requestWithGraphPath:@"me/friendlists" andDelegate:self];
+        [appDelegate.facebook requestWithGraphPath:@"me/groups" andDelegate:self];
+    }
     else
         NSLog(@"Session was not valid");
     
@@ -104,8 +75,8 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
 -(void)fbDidLogout:(NSNotification*)notification
 {
-    self.friendLists = nil;
-    self.friendLists_hidden = nil;
+    self.groups = nil;
+    self.lists = nil;
     [self.tableView reloadData];
 }
 -(void)dataUpdated:(NSNotification *)notification
@@ -118,65 +89,70 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 // FACEBOOK REQUEST METHODS
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
-    NSLog(@"facebook response received, merging data");
-    
-    //Merge new data with existing data
-    int n_changes=0;
-    NSMutableArray *lists = [result objectForKey:@"data"];
-    
-    for (NSDictionary* new_fl in lists) {
-        bool isFound = NO;
-        NSString* new_id = [new_fl objectForKey:@"id"];
-        for (NSManagedObject* fl in self.friendLists) {
-            if ([new_id isEqualToString:[fl valueForKey:@"id"]])
-            {
-                isFound = YES;
-                break;
-            }
-        }
-        if (!isFound)
-            for (NSManagedObject* fl in self.friendLists_hidden) {
-                if ([new_id isEqualToString:[fl valueForKey:@"id"]])
-                {
-                    isFound = YES;
-                    break;
-                }  
-            }
-        if (isFound)
-            continue;
-        n_changes++;
-        
-        NSManagedObject *obj = [self getNewList:new_fl];
-        [self.friendLists addObject:obj];
+    NSLog(@"facebook response did load");
+    int n_changes = 0;
+    if ([request.url containsString:@"/friendlists"])
+    {
+        NSLog(@"...friendlists");
+        n_changes = [self processFbResponse:result withModel:[ModelFbList class]];
     }
-
-    NSLog(@"%i changes found", n_changes);    
+    else if ([request.url containsString:@"/groups"])
+    {
+        NSLog(@"...groups");     
+        n_changes = [self processFbResponse:result withModel:[ModelFbGroup class]];        
+    }
+    
+    NSLog(@"n_changes: %i", n_changes);
     if (n_changes)
     {
+        
+        [self loadData];
         [self.tableView reloadData];
         [self updateRowOrder];
     }
-    NSLog(@"data merged");
-}
--(NSManagedObject*)getNewList:(NSDictionary*)fbListObj
-{
-    PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext *context = [delegate managedObjectContext];
     
-    
-    //Creating a managed object
-    NSManagedObject *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
-    [newList setValue:[fbListObj objectForKey:@"id"] forKey:@"id"];
-    [newList setValue:[fbListObj objectForKey:@"name"] forKey:@"name"];
-    [newList setValue:[fbListObj objectForKey:@"list_type"] forKey:@"list_type"];
-    [newList setValue:[NSNumber numberWithBool:NO] forKey:@"is_hidden"];
-    
-    //NSError *error;
-    //[context save:&error];
-    
-    return newList;
 }
 
+-(int)processFbResponse:(id)result withModel:(Class)groupType 
+{
+    NSArray *savedGroups = [groupType getAll];
+    
+    int n_changes=0;
+    NSMutableArray *newGroups = [result objectForKey:@"data"];
+    
+    for (NSDictionary* newGroup in newGroups) {
+        
+        bool isFound = NO;
+        NSString* new_id = [newGroup objectForKey:@"id"];
+        
+        for (ModelGroup* group in savedGroups) {
+            if ([new_id isEqualToString:group.fb_id])
+            {
+                isFound = YES;
+                if (![group.name isEqualToString:[newGroup objectForKey:@"name"]])
+                {
+                    group.name = [newGroup objectForKey:@"name"];
+                    n_changes++;
+                }
+                break;
+            }
+        }
+        if (isFound)
+            continue;
+        
+        NSLog(@"Group not found: %@", [newGroup objectForKey:@"name"]);
+        //Add new obj
+        n_changes++;
+        [groupType groupFromFbBlob:newGroup];
+        
+
+    }
+    if (n_changes)
+        //TODO: save????
+        
+        NSLog(@"%i changes found", n_changes);
+    return n_changes;
+}
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
 {
     NSLog(@"PspctFriendListTableVc :: Error in FB Request: %@", error.description);
@@ -194,40 +170,11 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 -(void)loadData
 {    
     NSLog(@"loading data");
-    //NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:[FriendListTableVc getSaveFilePath]];
-
-    self.friendLists = [[NSMutableArray alloc] initWithCapacity:11];
-    self.friendLists_hidden = [[NSMutableArray alloc] initWithCapacity:5];
     
-    //Get Context
-    PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext *context = [delegate managedObjectContext];
-        
+    self.groups = [[NSMutableArray alloc] initWithArray:[ModelFbGroup getAllVisible]];
+    self.lists = [[NSMutableArray alloc] initWithArray:[ModelFbList getAllVisible]];
     
-    //Get Entity
-    NSEntityDescription *entityDesc = [NSEntityDescription    
-                                       entityForName:@"List" inManagedObjectContext:context];
-    
-    NSFetchRequest* request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDesc];
-    
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"order" ascending:YES];
-    [request setSortDescriptors:[NSArray arrayWithObject:sort]];
-    
-    NSError *error;
-    NSArray *matching_objects = [context executeFetchRequest:request error:&error]; ;
-    for (NSManagedObject *obj in matching_objects)
-    {
-        NSNumber *isHidden = [obj valueForKey:@"is_hidden"];
-        
-        if ([isHidden boolValue])
-            [self.friendLists_hidden addObject:obj];
-        else
-            [self.friendLists addObject:obj];
-        NSLog(@"Found object: %@", [obj valueForKey:@"name"]);
-    }
-
-    NSLog(@"loaded data.  lists: %i, hidden: %i", self.friendLists.count, self.friendLists_hidden.count);
+    NSLog(@"loaded data.  lists: %i, groups: %i", self.groups.count, self.lists.count);
 }
 
 +(void) showHiddenLists
@@ -236,21 +183,12 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *context = [delegate managedObjectContext];
     
-    //Get Entity
-    NSEntityDescription *entityDesc = [NSEntityDescription    
-                                       entityForName:@"List" inManagedObjectContext:context];
-    
-    NSFetchRequest* request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDesc];
-    
-    NSError *error;
-    NSArray *matching_objects = [context executeFetchRequest:request error:&error]; ;
-    
-    NSNumber *isHidden = [NSNumber numberWithBool:NO];
-    for (NSManagedObject *obj in matching_objects)
+    NSArray* all = [ModelGroup getAll];
+    for (ModelGroup *group in all)
     {
-        [obj setValue:isHidden forKey:@"is_hidden"];
+        group.is_visible = [NSNumber numberWithBool:YES];
     }
+    NSError *error;
     [context save:&error];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EVENT_FRIENDLIST_SHOW_HIDDEN object:nil];
@@ -321,21 +259,22 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 {
     
     // Return the number of sections.
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
     // Return the number of rows in the section.
-    if (self.friendLists)
-        return self.friendLists.count;
+    if (section==0 && self.groups)
+        return self.groups.count;
+    if (section==1 && self.lists)
+        return self.lists.count;
     return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"getting cell");
     static NSString *CellIdentifier = @"ListCell";
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -348,9 +287,13 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    NSManagedObject *list = [self.friendLists objectAtIndex:indexPath.row];
-    cell.textLabel.text = [list valueForKey:@"name"];
-    NSLog(@"returning cell");
+    ModelGroup *group;    
+    if (indexPath.section==0)
+        group = [self.groups objectAtIndex:indexPath.row];
+    else
+        group = [self.lists objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = group.name;
     
     return cell;
 }
@@ -366,7 +309,6 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     if (!editing)
     {
         self.navigationItem.rightBarButtonItem = nil;
-        //[self saveData];
     }
     [super setEditing:editing animated:animated];
 }
@@ -380,10 +322,11 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSManagedObject *obj = [self.friendLists objectAtIndex:indexPath.row];
-        [obj setValue:[NSNumber numberWithBool:YES] forKey:@"is_hidden"];
-        [self.friendLists_hidden addObject:obj];
-        [self.friendLists removeObjectAtIndex:indexPath.row];
+        ModelGroup *obj = [self getModelGroupForIndexPath:indexPath];
+        obj.is_visible = [NSNumber numberWithBool:NO];
+        
+        [[self getDataArrayForIndexPath:indexPath] removeObjectAtIndex:indexPath.row];
+        
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         [self updateRowOrder];
@@ -394,11 +337,32 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     }   
 }
 
+-(ModelGroup*)getModelGroupForIndexPath:(NSIndexPath*)indexPath
+{
+    if (indexPath.section==0 && self.groups)
+        return [self.groups objectAtIndex:indexPath.row];
+    if (indexPath.section==1 && self.lists)
+        return [self.lists objectAtIndex:indexPath.row];
+    return nil;
+}
+-(NSMutableArray*)getDataArrayForIndexPath:(NSIndexPath*)indexPath
+{
+    if (indexPath.section==0)
+        return self.groups;
+    if (indexPath.section==1)
+        return self.lists;
+    return nil;
+}
+
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    NSDictionary *obj = [self.friendLists objectAtIndex:fromIndexPath.row];
-    [self.friendLists removeObjectAtIndex:fromIndexPath.row];
-    [self.friendLists insertObject:obj atIndex:toIndexPath.row];
+    if (fromIndexPath.section != toIndexPath.section)
+        return;
+    
+    ModelGroup *obj = [self getModelGroupForIndexPath:fromIndexPath];
+    NSMutableArray *data = [self getDataArrayForIndexPath:fromIndexPath];
+    [data removeObjectAtIndex:fromIndexPath.row];
+    [data insertObject:obj atIndex:toIndexPath.row];
     
     [self updateRowOrder];
     
@@ -407,9 +371,13 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
 -(void)updateRowOrder
 {
-    for (int i=0; i<self.friendLists.count; i++) {
-        NSManagedObject *obj = [self.friendLists objectAtIndex:i];
-        [obj setValue:[NSNumber numberWithInt:i] forKey:@"order"];
+    for (int i=0; i<self.groups.count; i++) {
+        ModelGroup *obj = [self.groups objectAtIndex:i];
+        obj.order = [NSNumber numberWithInt:i];
+    }
+    for (int i=0; i<self.lists.count; i++) {
+        ModelGroup *obj = [self.lists objectAtIndex:i];
+        obj.order = [NSNumber numberWithInt:i];
     }
 }
 
@@ -429,10 +397,15 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 {
     [[MixpanelAPI sharedAPI] track:@"opened list"]; 
     
-    NSManagedObject *list = [self.friendLists objectAtIndex:indexPath.row];
+    ModelGroup *group = [self getModelGroupForIndexPath:indexPath];
     [self setEditing:NO];
     
-    FriendTableVc *friendTable = [[FriendTableVc alloc] initWithListId:[list valueForKey:@"id"] andListName:[list valueForKey:@"name"] andListType:[list valueForKey:@"list_type"]];
+    //TODO: The model object should know what kind of table VC to show
+    FriendTableVc *friendTable;
+    if (group.class == [ModelFbList class])
+        friendTable= [[FriendTableVc alloc] initWithListId:group.fb_id andListName:group.name andListType:[group valueForKey:@"list_type"]];
+    else
+        friendTable= [[FriendTableVc alloc] initWithListId:group.fb_id andListName:group.name andListType:@"friends"];
     [self.navigationController pushViewController:friendTable animated:YES];
     
 }

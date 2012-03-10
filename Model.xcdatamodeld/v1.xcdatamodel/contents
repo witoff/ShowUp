@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="872" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="FbUser" syncable="YES">
         <attribute name="abk_confidence" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="abk_contact" optional="YES" attributeType="String" syncable="YES"/>
@@ -8,9 +8,9 @@
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="is_a_member" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="has_members" inverseEntity="List" syncable="YES"/>
+        <relationship name="is_a_member" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="has_members" inverseEntity="Group" syncable="YES"/>
     </entity>
-    <entity name="List" syncable="YES">
+    <entity name="Group" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="is_hidden" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="list_type" optional="YES" attributeType="String" syncable="YES"/>
@@ -22,11 +22,11 @@
     <entity name="Templates" syncable="YES">
         <attribute name="category" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="relationship" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="relationship" inverseEntity="List" syncable="YES"/>
+        <relationship name="relationship" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="relationship" inverseEntity="Group" syncable="YES"/>
     </entity>
     <elements>
-        <element name="List" positionX="-900" positionY="-18" width="144" height="135"/>
         <element name="FbUser" positionX="-873" positionY="153" width="128" height="165"/>
+        <element name="Group" positionX="-1044" positionY="-132" width="144" height="150"/>
         <element name="Templates" positionX="-1136" positionY="216" width="128" height="90"/>
     </elements>
 </model>

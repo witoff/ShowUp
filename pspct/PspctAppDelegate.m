@@ -86,7 +86,7 @@
 -(void)fbAuthorize
 {
     if (![facebook isSessionValid]) {
-        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", @"friends_birthday", @"user_relationships", nil];
+        NSArray *permissions = [[NSArray alloc] initWithObjects:@"read_friendlists", @"offline_access", @"user_events", @"manage_friendlists", @"friends_birthday", @"user_relationships", @"user_groups", nil];
         [facebook authorize:permissions];
     }
     else
