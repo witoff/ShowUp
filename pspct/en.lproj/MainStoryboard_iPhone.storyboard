@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2182" systemVersion="11D50b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
     <dependencies>
+        <deployment defaultVersion="1296" identifier="iOS"/>
         <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1179"/>
     </dependencies>
     <scenes>
+        <!--Group Table Vc - Perspect-->
         <scene sceneID="9VM-bG-Oww">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RFZ-o1-blB" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="zZ4-I5-0NP" customClass="FriendListTableVc" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="Friend Lists" id="CKc-s9-4AT"/>
+                <viewController id="zZ4-I5-0NP" customClass="GroupTableVc" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" title="Perspect" id="CKc-s9-4AT"/>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="1156" y="-360"/>
         </scene>
+        <!--Navigation Controller - Friend LIsts-->
         <scene sceneID="axn-1k-eSj">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AE5-UV-6V9" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -29,6 +32,7 @@
             </objects>
             <point key="canvasLocation" x="667" y="-374"/>
         </scene>
+        <!--Event Vc - Event List-->
         <scene sceneID="hUU-ln-QdR">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bce-nS-fSp" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -38,6 +42,7 @@
             </objects>
             <point key="canvasLocation" x="1156" y="252"/>
         </scene>
+        <!--Navigation Controller - Events-->
         <scene sceneID="LdM-ww-R9u">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FcF-eH-aQQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -54,6 +59,7 @@
             </objects>
             <point key="canvasLocation" x="667" y="252"/>
         </scene>
+        <!--Options Vc - Perspect Options-->
         <scene sceneID="pkv-zx-Ufq">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="abJ-bM-LRu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -63,6 +69,7 @@
             </objects>
             <point key="canvasLocation" x="1156" y="843"/>
         </scene>
+        <!--Navigation Controller - Options-->
         <scene sceneID="qGl-9g-OG2">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uu1-Ur-Oda" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -78,6 +85,7 @@
             </objects>
             <point key="canvasLocation" x="657" y="843"/>
         </scene>
+        <!--Pspct Tab Bar Controller-->
         <scene sceneID="15">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="14" sceneMemberID="firstResponder"/>
@@ -106,8 +114,8 @@
         <class className="EventVc" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/EventVc.h"/>
         </class>
-        <class className="FriendListTableVc" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FriendListTableVc.h"/>
+        <class className="GroupTableVc" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/GroupTableVc.h"/>
             <relationships>
                 <relationship kind="action" name="editOrder:"/>
             </relationships>

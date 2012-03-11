@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "FriendListTableVc.h"
+#import "GroupTableVc.h"
 #import "PspctAppDelegate.h"
 #import "FriendTableVc.h"
 #import <MessageUI/MessageUI.h>
@@ -18,7 +18,7 @@
 
 NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
-@interface FriendListTableVc (hidden)
+@interface GroupTableVc (hidden)
 
 -(IBAction)editOrder:(id)sender;
 
@@ -29,9 +29,17 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
 @end
 
-@implementation FriendListTableVc
+@implementation GroupTableVc
 
 @synthesize groups, lists;
+
+
+-(void)awakeFromNib
+{
+    UITableView *tbv = [[UITableView alloc] initWithFrame:CGRectMake(0,80,320,480) style:UITableViewStyleGrouped];
+    self.tableView = tbv;
+    [super awakeFromNib];
+}
 
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -89,26 +97,25 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 // FACEBOOK REQUEST METHODS
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
-    NSLog(@"facebook response did load");
+    NSLog(@"facebook response did load from url: %@", request.url);
     int n_changes = 0;
     if ([request.url containsString:@"/friendlists"])
-    {
-        NSLog(@"...friendlists");
         n_changes = [self processFbResponse:result withModel:[ModelFbList class]];
-    }
     else if ([request.url containsString:@"/groups"])
-    {
-        NSLog(@"...groups");     
         n_changes = [self processFbResponse:result withModel:[ModelFbGroup class]];        
-    }
     
     NSLog(@"n_changes: %i", n_changes);
     if (n_changes)
     {
+        //This method is called asynch, so don't cause thread errors in object methods
+        @synchronized(self)
+        {
+            [self loadData];
+            
+            [self.tableView reloadData];
+            [self updateRowOrder];
+        }
         
-        [self loadData];
-        [self.tableView reloadData];
-        [self updateRowOrder];
     }
     
 }
@@ -123,10 +130,10 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     for (NSDictionary* newGroup in newGroups) {
         
         bool isFound = NO;
-        NSString* new_id = [newGroup objectForKey:@"id"];
+        NSString* new_key = [newGroup objectForKey:@"id"];
         
         for (ModelGroup* group in savedGroups) {
-            if ([new_id isEqualToString:group.fb_id])
+            if ([new_key isEqualToString:group.fb_key])
             {
                 isFound = YES;
                 if (![group.name isEqualToString:[newGroup objectForKey:@"name"]])
@@ -141,16 +148,14 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
             continue;
         
         NSLog(@"Group not found: %@", [newGroup objectForKey:@"name"]);
-        //Add new obj
+        //Add new object to data store
         n_changes++;
         [groupType groupFromFbBlob:newGroup];
         
-
-    }
-    if (n_changes)
-        //TODO: save????
         
-        NSLog(@"%i changes found", n_changes);
+    }
+    
+    NSLog(@"%i changes found", n_changes);
     return n_changes;
 }
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
@@ -196,7 +201,7 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+-(void)viewDidLoad
 {
     NSLog(@"viewDidLoad");
     [self loadData];
@@ -257,8 +262,6 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    
-    // Return the number of sections.
     return 2;
 }
 
@@ -296,6 +299,12 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     cell.textLabel.text = group.name;
     
     return cell;
+}
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (section==0)
+        return @"Facebook Groups";
+    return @"Facebook Lists";
 }
 
 -(IBAction)editOrder:(id)sender
@@ -369,6 +378,14 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     NSLog(@"cell was moved");
 }
 
+- (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath
+{
+    if( sourceIndexPath.section != proposedDestinationIndexPath.section )
+        return sourceIndexPath;
+    else
+        return proposedDestinationIndexPath;
+}
+
 -(void)updateRowOrder
 {
     for (int i=0; i<self.groups.count; i++) {
@@ -401,11 +418,7 @@ NSString * const EVENT_FRIENDLIST_SHOW_HIDDEN = @"showHiddenLists";
     [self setEditing:NO];
     
     //TODO: The model object should know what kind of table VC to show
-    FriendTableVc *friendTable;
-    if (group.class == [ModelFbList class])
-        friendTable= [[FriendTableVc alloc] initWithListId:group.fb_id andListName:group.name andListType:[group valueForKey:@"list_type"]];
-    else
-        friendTable= [[FriendTableVc alloc] initWithListId:group.fb_id andListName:group.name andListType:@"friends"];
+    FriendTableVc *friendTable = [[FriendTableVc alloc] initWithGroup:group];
     [self.navigationController pushViewController:friendTable animated:YES];
     
 }

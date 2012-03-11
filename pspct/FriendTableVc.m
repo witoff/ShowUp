@@ -14,6 +14,11 @@
 #import "TemplateTableVc.h"
 #import "AbContact.h"
 #import "FbContact.h"
+#import "ModelGroup.h"
+#import "ModelFbList.h"
+#import "ModelGroupUserEntry.h"
+#import "ModelFbUser.h"
+#import "ModelAbkContactMatch.h"
 
 @interface FriendTableVc (hidden)
 
@@ -21,29 +26,25 @@
 -(IBAction)showMissingContact:(id)sender;
 
 - (void)loadData;
-- (void)saveData;
 
 -(NSArray*)getSelectedRecipients;
 
 - (IBAction)sendSms:(id)sender;
-
 
 @end
 
 
 @implementation FriendTableVc
 
-@synthesize listId, friends, friends_hidden, listName, listType, btnMessage, selected, imgMissing;
+@synthesize friends, btnMessage, imgMissing, group;
 
 #pragma mark - init
 
-- (id)initWithListId:(NSString*)identifier andListName:(NSString*)name andListType:(NSString*)type
+- (id)initWithGroup:(ModelGroup*)aGroup
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
-        self.listId = identifier;
-        self.listName = name;
-        self.listType = type;
+        self.group = aGroup;
         
         //Add Message Button
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
@@ -57,6 +58,7 @@
         [btn addTarget:self action:@selector(showTemplateTable:) forControlEvents:UIControlEventTouchUpInside];
         
         UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(sendSms:)];
+        recognizer.minimumPressDuration = .3;
         [btn addGestureRecognizer:recognizer];
         self.btnMessage = [[UIBarButtonItem alloc] initWithCustomView:btn];
         
@@ -69,78 +71,102 @@
 
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
-    NSMutableArray* newFriends = [result objectForKey:@"data"];
+    NSMutableArray* newUsers = [result objectForKey:@"data"];
     
-    NSNumber *isSelected = [NSNumber numberWithBool:!(newFriends.count>10)];
-    
-    NSLog(@"type: %@", self.listType);
-    //Auto add some members if the list is new
-    if ([self.listType isEqualToString:@"family"] && self.friends.count==0)
+    if (group.class == [ModelFbList class])
     {
-        NSLog(@"we have a family");
-        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", @"Mom", @"id", nil]];
-        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", @"Dad", @"id", nil]];
-        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Sister",@"name", @"Sister", @"id", nil]];
-        [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Brother",@"name", @"Brother", @"id", nil]];
+        /*TODO: Make this work with the new objects
+         
+         ModelFbList *list = (ModelFbList*)group;
+         NSLog(@"type: %@", list.list_type);
+         //Auto add some members if the list is new
+         if ([list.list_type isEqualToString:@"family"] && self.friends.count==0)
+         {
+         NSLog(@"we have a family");
+         [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Mom",@"name", @"Mom", @"id", nil]];
+         [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Dad",@"name", @"Dad", @"id", nil]];
+         [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Sister",@"name", @"Sister", @"id", nil]];
+         [newFriends addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"Brother",@"name", @"Brother", @"id", nil]];
+         }
+         */
     }
     
-    NSMutableDictionary *selected_unmatched = [[NSMutableDictionary alloc] initWithCapacity:11];
-    NSMutableArray *friends_unmatched = [[NSMutableArray alloc] initWithCapacity:11];
-    
-    BOOL hasChanges = NO;
-    for (NSDictionary* nf in newFriends) {
+    int n_changes = 0;
+    for (NSDictionary* nu in newUsers) {
         
-        bool isFound = NO;
-        NSString* new_key = [nf objectForKey:@"id"];
+        NSString* new_key = [nu objectForKey:@"id"];
         
-        for (FbContact* fbContact in self.friends) {
-            if ([fbContact.key isEqualToString:new_key])
+        //
+        // DOES USER EXIST
+        //
+        ModelFbUser *user = [ModelFbUser getUserWithFbKey:new_key];
+        
+        /*
+         NSArray *allUsers = [ModelFbUser getAllUsers];
+         for (ModelFbUser *u in allUsers)
+         {
+         if ([u.fb_key isEqualToString:new_key])
+         NSLog(@"LIARS id: %@", u.fb_key);
+         }
+         NSLog(@"all users: %i", allUsers.count);
+         */
+        
+        if (!user)
+        {
+            //user doesn't exist, neeeds to be created
+            NSLog(@"user doesn't exist");
+            user = [ModelFbUser insertUserFromFbBlob:nu];
+            
+            ModelGroupUserEntry *entry = [ModelGroupUserEntry insertNewObject];
+            entry.user = user;
+            entry.group = self.group;
+            
+            if (user.adbk_match)
+                entry.order = [NSNumber numberWithInt: 0];
+            else
+                entry.order = [NSNumber numberWithInt: self.group.users.count];
+            
+            n_changes++;        
+            continue;
+        }
+        
+        //
+        // IS USER CAPTURED IN THIS LIST?
+        //
+        bool isFound = NO;        
+        for (ModelGroupUserEntry *entry in group.users) {
+            if ([entry.user.fb_key isEqualToString:new_key])
             {
-                isFound = YES;
+                isFound = YES;                
                 break;
             }
         }
         if (!isFound)
-            for (FbContact* fbContact in self.friends_hidden) {
-                if ([fbContact.key isEqualToString:new_key])
-                {
-                    isFound = YES;
-                    break;
-                }  
-            }
-        if (isFound)
-            continue;
-        hasChanges=YES;
-
-        FbContact *newContact = [[FbContact alloc] init];
-        newContact.name = [nf objectForKey:@"name"];
-        newContact.key = [nf  objectForKey:@"id"];
-        
-
-        
-        if (![newContact getBestAbContact] || ![[newContact getBestAbContact] getBestNumber])
         {
-            [selected_unmatched setObject:[NSNumber numberWithBool:NO] forKey:newContact.key];
-            [friends_unmatched addObject:newContact];
-        }
-        else
-        {
-            [self.selected setObject:isSelected forKey:newContact.key];
-            [self.friends addObject:newContact];
+            NSLog(@"user exists, but wasn't found in this group.");
+            ModelGroupUserEntry *entry = [ModelGroupUserEntry insertNewObject];
+            entry.user = user;
+            entry.group = self.group;
+            entry.is_visible = [NSNumber numberWithBool:YES];
+            
+            if (user.adbk_match)
+                entry.order = [NSNumber numberWithInt: 0];
+            else
+                entry.order = [NSNumber numberWithInt: self.group.users.count];
+            
+            n_changes++;        
         }
     }
     
     //TODO: Handle if a user has been deleted from a group on Facebook
     
-    if (hasChanges)
+    if (n_changes)
     {
-        [self.selected addEntriesFromDictionary:selected_unmatched];
-        [self.friends addObjectsFromArray:friends_unmatched];
+        [self loadData];
+        [self updateRowOrder];
         [self.tableView reloadData];
     }
-    NSLog(@"data merged");
-    
-    [self.tableView reloadData];
+    NSLog(@"Friend data loaded.  %i changes.", n_changes);
 }
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
 {
@@ -162,12 +188,12 @@
     [self loadData];
     
     PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSString* endpoint = [NSString stringWithFormat:@"%@/members", self.listId, nil];
+    NSString* endpoint = [NSString stringWithFormat:@"%@/members", self.group.fb_key, nil];
     NSLog(@"--asking for friends from: %@", endpoint);
     
     [appDelegate.facebook requestWithGraphPath:endpoint andDelegate:self];
     
-    self.navigationItem.title = self.listName;
+    self.navigationItem.title = self.group.name;
     
     [super viewDidLoad];
     
@@ -207,7 +233,6 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [self saveData];
     [super viewDidDisappear:animated];
 }
 
@@ -227,13 +252,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (!self.friends)
-        return 0;
-    if (section==0)
+    if (self.friends && section==0)
         return self.friends.count;
-    return self.friends_hidden.count;
-    
-    
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -246,11 +267,10 @@
     }
     
     
-    FbContact *fbContact = [self.friends objectAtIndex:indexPath.row];
-    cell.textLabel.text = fbContact.name;
+    ModelGroupUserEntry *entry = [self.friends objectAtIndex:indexPath.row];
+    cell.textLabel.text = entry.user.name;
     //cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", fbContact.name, [[fbContact getBestAbContact] getBestNumber]];
-    
-    if (![fbContact getBestAbContact] || ![[fbContact getBestAbContact] getBestNumber])
+    if (!entry.user.adbk_match) // || ![[entry.user.adbk_match getAbContact] getBestNumber]
     {
         if (!self.imgMissing)
             self.imgMissing = [UIImage imageNamed:@"184-warning"];
@@ -260,7 +280,7 @@
     else
         cell.imageView.image = nil;
     
-    if ([[self.selected objectForKey:fbContact.key] boolValue])
+    if (entry.is_selected.boolValue)
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     else
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -290,7 +310,6 @@
     if (!editing)
     {
         self.navigationItem.rightBarButtonItem = btnMessage;
-        [self saveData];
     }
     [super setEditing:editing animated:animated];
 }
@@ -308,12 +327,12 @@
     }
     NSLog(@"selection found");
     
-    FbContact *contact = [self.friends objectAtIndex:indexPath.row];
+    ModelGroupUserEntry *entry = [self.friends objectAtIndex:indexPath.row];
     
-
+    
     //Toggle selection
-    BOOL isSelected = [[selected objectForKey:contact.key] boolValue];
-    [selected setObject:[NSNumber numberWithBool:!isSelected] forKey:contact.key];
+    BOOL isSelected = entry.is_selected.boolValue ;
+    entry.is_selected = [NSNumber numberWithBool:!isSelected];
     
     [self.tableView reloadData];
     
@@ -325,13 +344,13 @@
 {
     NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
     //get last name
-    for (FbContact *friend in self.friends) {
+    for (ModelGroupUserEntry *entry in self.friends) {
         
-        if (![[self.selected valueForKey:friend.key] boolValue])
+        if (!entry.is_selected.boolValue)
             continue;
         
         //get number
-        AbContact *contact = [friend getBestAbContact];
+        AbContact *contact = [entry.user.adbk_match getAbContact];
         
         NSString* number = [contact getBestNumber];
         
@@ -362,7 +381,7 @@
     
     NSNumber *n_recipients = [NSNumber numberWithInt:messageVc.recipients.count];
     [[MixpanelAPI sharedAPI] track:@"sending message" properties:[NSDictionary dictionaryWithObject:n_recipients forKey:@"n_recipients"]];
-
+    
     
     [self presentViewController:messageVc animated:YES completion:nil];
     NSLog(@"shown");
@@ -424,9 +443,11 @@
     NSLog(@"commit editing style");
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [self.friends_hidden addObject:[self.friends objectAtIndex:indexPath.row]];
+        ModelGroupUserEntry *entry = [self.friends objectAtIndex:indexPath.row];
+        entry.is_visible = [NSNumber numberWithBool:NO];
         [self.friends removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self updateRowOrder];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         
@@ -440,51 +461,28 @@
     [self.friends removeObjectAtIndex:fromIndexPath.row];
     [self.friends insertObject:obj atIndex:toIndexPath.row];
     
+    [self updateRowOrder];
+    
     NSLog(@"cell was moved");
 }
 
 
 -(void)loadData
 {
-    /*
-     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-     NSString *documentsDirectory = [paths objectAtIndex:0];
-     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
-     
-     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-     if (dict)
-     {
-     //Check for nils otherwise they can prematurely terminate the dictionary that's later saved
-     self.friends = [dict objectForKey:@"friends"];
-     if (!self.friends)
-     self.friends = [[NSMutableArray alloc] initWithCapacity:5];
-     self.friends_hidden = [dict objectForKey:@"friends_hidden"];
-     if (!self.friends_hidden)
-     self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
-     }
-     else
-     */
-    {
-        NSLog(@"NO DATA TO LOAD, INITIALIZING WITH EMPTY DATA");
-        self.friends = [[NSMutableArray alloc] initWithCapacity:12];
-        self.friends_hidden = [[NSMutableArray alloc] initWithCapacity:5];
-        self.selected = [[NSMutableDictionary alloc] initWithCapacity:17];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"order"
+                                                                   ascending:YES];
+    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+    NSArray *sortedArray = [self.group.users.allObjects sortedArrayUsingDescriptors:sortDescriptors];
+    
+    self.friends = [NSMutableArray arrayWithArray: sortedArray];
+}
+
+-(void)updateRowOrder
+{
+    for (int i=0; i<self.friends.count; i++) {
+        ModelGroupUserEntry *entry = [self.friends objectAtIndex:i];
+        entry.order = [NSNumber numberWithInt:i];        
     }
 }
-
--(void)saveData
-{
-    /*
-     NSLog(@"saving data");
-     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-     NSString *documentsDirectory = [paths objectAtIndex:0];
-     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:self.listId];
-     
-     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.friends, @"friends", self.friends_hidden, @"friends_hidden", nil];
-     if (![dict writeToFile:filePath atomically:YES])
-     NSLog(@":: There was an error saving your data!!");
-     */
-}
-
 
 @end

@@ -60,7 +60,7 @@
     //Creating a managed object
     ModelFbList *list = [NSEntityDescription insertNewObjectForEntityForName:@"FbList" inManagedObjectContext:context];
 
-    list.fb_id = [blob objectForKey:@"id"];
+    list.fb_key = [blob objectForKey:@"id"];
     list.name = [blob objectForKey:@"name"];
     list.list_type = [blob objectForKey:@"list_type"];
     list.is_visible = [NSNumber numberWithBool:YES];

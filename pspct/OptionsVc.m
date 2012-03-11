@@ -9,7 +9,7 @@
 #import "OptionsVc.h"
 #import "PspctAppDelegate.h"
 #import "Constants.h"
-#import "FriendListTableVc.h"
+#import "GroupTableVc.h"
 
 @implementation OptionsVc
 
@@ -105,6 +105,7 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+    cell.textLabel.textAlignment = UITextAlignmentCenter;
     switch (indexPath.section) {
         case 0:
             //Show hidden lists
@@ -112,7 +113,7 @@
             break;
         case 11:
             //Show hidden friends
-            cell.textLabel.text = @"Show Hidden Friends";            
+            cell.textLabel.text = @"Show Hidden Friends";      
             break;
         case 1:
             //Logout of facebook
@@ -160,7 +161,7 @@
 -(void)showHiddenLists
 {
     NSLog(@"hidden lists");
-    [FriendListTableVc showHiddenLists];
+    [GroupTableVc showHiddenLists];
 
 }
 

@@ -10,7 +10,7 @@
 #import "Facebook.h"
 #import "ModelGroup.h"
 
-@interface FriendListTableVc : UITableViewController<FBRequestDelegate>
+@interface GroupTableVc : UITableViewController<FBRequestDelegate>
 {
     NSMutableArray* groups;
     NSMutableArray* lists;
@@ -24,8 +24,6 @@
 -(void) loadData;
 
 -(void) preloadMvc;
-
--(NSManagedObject*)getNewList:(NSDictionary*)fbListObj;
 
 -(int)processFbResponse:(id)result withModel:(Class)groupType;
 

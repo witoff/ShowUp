@@ -9,18 +9,18 @@
 #import <Foundation/Foundation.h>
 #import <AddressBook/AddressBook.h>
 #import "AbContact.h"
-#import "FbContact.h"
+#import "ModelFbUser.h"
 
 @interface AbScanner : NSObject
 {
-    FbContact* fbContact;
+    ModelFbUser* fbUser;
 }
 
-@property (nonatomic, retain) FbContact *fbContact;
+@property (nonatomic, retain) ModelFbUser *fbUser;
 
 +(void)invalidateContactList;
 
-- (id)initWithFbContact:(FbContact*)fbContact;
+- (id)initWithFbUser:(ModelFbUser*)user;
 
 - (AbContact*) simpleSearch;
 - (AbContact*) getMatchingAbContact;

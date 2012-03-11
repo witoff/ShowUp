@@ -35,6 +35,7 @@
     
     if (!self.abContactMatchKey && (!hasSearchedForAbMatch || !hasSearchedForAbMatch.boolValue))
     {
+        /*
         AbScanner *scanner = [[AbScanner alloc] initWithFbContact:self];
         AbContact *match = [scanner getMatchingAbContact];
         self.hasSearchedForAbMatch = [NSNumber numberWithBool:YES];
@@ -43,6 +44,7 @@
         self.abContactMatchKey = match.key;
         
         return match;
+         */
     }
     return nil;
     
@@ -85,7 +87,6 @@
     if (components.count>1)
         _lastname = [components objectAtIndex:components.count-1];
     _firstname = [components objectAtIndex:0];
-    
 }
 
 

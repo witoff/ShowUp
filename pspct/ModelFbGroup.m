@@ -56,7 +56,7 @@
     //Creating a managed object
     ModelFbGroup *group = [NSEntityDescription insertNewObjectForEntityForName:@"FbGroup" inManagedObjectContext:context];
     
-    group.fb_id = [blob objectForKey:@"id"];
+    group.fb_key = [blob objectForKey:@"id"];
     group.name = [blob objectForKey:@"name"];
     group.is_visible = [NSNumber numberWithBool:YES];
     

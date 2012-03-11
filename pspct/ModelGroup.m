@@ -2,22 +2,21 @@
 //  ModelGroup.m
 //  perspect
 //
-//  Created by Robert Witoff on 3/9/12.
+//  Created by Robert Witoff on 3/10/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import "ModelGroup.h"
-#import "ModelFbUser.h"
+#import "ModelGroupUserEntry.h"
 #import "PspctAppDelegate.h"
 
 @implementation ModelGroup
 
+@dynamic fb_key;
 @dynamic is_visible;
 @dynamic name;
 @dynamic order;
-@dynamic fb_id;
 @dynamic users;
-
 
 +(NSArray*)getAll
 {
@@ -43,7 +42,7 @@
     
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"order" ascending:YES];
     [request setSortDescriptors:[NSArray arrayWithObject:sort]];
-
+    
     if (predicate)
         [request setPredicate: predicate];
     
