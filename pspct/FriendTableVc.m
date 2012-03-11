@@ -475,6 +475,14 @@
     NSArray *sortedArray = [self.group.users.allObjects sortedArrayUsingDescriptors:sortDescriptors];
     
     self.friends = [NSMutableArray arrayWithArray: sortedArray];
+    
+    for (int i=0; i<self.friends.count; i++) {
+        if (!((ModelGroupUserEntry*)[self.friends objectAtIndex:i]).is_visible.boolValue)
+        {
+            [self.friends removeObjectAtIndex:i];
+            i--;
+        }
+    }
 }
 
 -(void)updateRowOrder
