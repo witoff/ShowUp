@@ -6,16 +6,19 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "EventVc.h"
+#import "EventsVc.h"
 #import "Facebook.h"
 #import "PspctAppDelegate.h"
 #import "AbScanner.h"
 #import <MessageUI/MessageUI.h>
 #import "AbContact.h"
+#import "EventAccessor.h"
+#import <EventKit/EventKit.h>
+#import "EventAttendeesVc.h"
 
-@implementation EventVc
+@implementation EventsVc
 
-@synthesize birthdays;
+@synthesize birthdays, events;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -91,13 +94,24 @@
 
 - (void)viewDidLoad
 {
-    PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
+    //PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     //TODO: paging??
+    
+    /* REQUEST FB EVENTS
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"id,name,birthday",@"fields", @"500", @"limit", nil];
     [appDelegate.facebook requestWithGraphPath:@"me/friends" andParams:params andDelegate:self];
+     */
     
+
+    EventAccessor *ea = [[EventAccessor alloc] init];
+    self.events = [[NSMutableArray alloc] initWithCapacity:9];
     
+    for (int i=-1; i<8; i++) {
+        [self.events insertObject:[ea getEventsFromOffset:i to:i+1] atIndex:i+1];       
+    }
+    
+
     [super viewDidLoad];
     
     
@@ -143,15 +157,30 @@
 
 #pragma mark - Table view data source
 
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    switch (section) {
+        case 0:
+            return @"Yesterday";
+        case 1:
+            return @"Today";
+        case 2:
+            return @"Tomorrow";
+        default:
+            return @"The Future";
+    }
+    return @"test";
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return self.events.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (self.birthdays)
-        return self.birthdays.count;
+    if (self.events)
+        return [[self.events objectAtIndex:section] count];
     return 0;
 }
 
@@ -161,12 +190,17 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
     // Configure the cell...
-    NSDictionary *bday = [self.birthdays objectAtIndex:indexPath.row];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", [bday objectForKey:@"name"], [bday objectForKey:@"birthday"]];
+    EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    cell.textLabel.text = event.title;
+
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"HH:mm";
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@  -  %@", [formatter stringFromDate: event.startDate], [formatter stringFromDate:event.endDate]];
+    
     return cell;
 }
 
@@ -213,7 +247,20 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self sendSms: [[self.birthdays objectAtIndex:indexPath.row] valueForKey:@"name"] ];
+    EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    
+    NSLog(@"\nAttendees:");
+    
+    for (EKParticipant *p in event.attendees) {
+        NSLog(@"name: %@", p.name);
+    }
+    
+    EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:[[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
+    
+    [self.navigationController pushViewController:eavc animated:YES];
+
+    
+    //[self sendSms: [[self.birthdays objectAtIndex:indexPath.row] valueForKey:@"name"] ];
 }
 
 -(NSArray*)getContactDetails:(NSString*)firstname andLast:(NSString*)lastname
@@ -244,6 +291,7 @@
         lastname = [components objectAtIndex:components.count-1];
     NSString* firstname = [components objectAtIndex:0];
     
+    
     messageVc.recipients = [self getContactDetails:firstname andLast:lastname];
     messageVc.body = [NSString stringWithFormat: @"Happy Birthday %@!", firstname];
     
@@ -260,4 +308,6 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 
+
 @end
+

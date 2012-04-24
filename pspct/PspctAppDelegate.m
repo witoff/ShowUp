@@ -21,7 +21,7 @@
 @implementation PspctAppDelegate
 
 @synthesize window = _window, viewController = _viewController;
-@synthesize facebook, mixpanel;
+@synthesize facebook, mixpanel, store;
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
@@ -30,6 +30,7 @@
 {
     mixpanel = [MixpanelAPI sharedAPIWithToken:@"30cb438635ae2386bbde7c4ef81fd191"];
 
+    store = [[EKEventStore alloc] init];
     
     facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -57,23 +58,10 @@
     //Launch Intro or storyboard
     
     //Do nothing if correct vc is already displayed
-    if (self.viewController != nil)
-    {
-        if([facebook isSessionValid] && [self.window.rootViewController class ] != [IntroVc class])
-            return;
-        if(![facebook isSessionValid] && [self.window.rootViewController class ] == [IntroVc class])
-            return;
-    }
     
-    if (![facebook isSessionValid]) {
-        self.viewController = [[IntroVc alloc] initWithNibName:@"IntroVc" bundle:nil];
-    }
-    else
-    {
-        //mixpanel.nameTag = facebook.
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
-        self.viewController = [storyboard instantiateInitialViewController];
-    }
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
+    self.viewController = [storyboard instantiateInitialViewController];
+    
     
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];

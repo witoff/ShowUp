@@ -14,9 +14,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "06788E6614E770AD007C5BE4"
-               BuildableName = "perspect.app"
-               BlueprintName = "perspect"
-               ReferencedContainer = "container:perspect.xcodeproj">
+               BuildableName = "perspect calendar.app"
+               BlueprintName = "perspect calendar"
+               ReferencedContainer = "container:perspect calendar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,9 +32,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "06788E9514E770AD007C5BE4"
-               BuildableName = "perspectTests.octest"
-               BlueprintName = "perspectTests"
-               ReferencedContainer = "container:perspect.xcodeproj">
+               BuildableName = "perspect calendarTests.octest"
+               BlueprintName = "perspect calendarTests"
+               ReferencedContainer = "container:perspect calendar.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -42,9 +42,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06788E6614E770AD007C5BE4"
-            BuildableName = "perspect.app"
-            BlueprintName = "perspect"
-            ReferencedContainer = "container:perspect.xcodeproj">
+            BuildableName = "perspect calendar.app"
+            BlueprintName = "perspect calendar"
+            ReferencedContainer = "container:perspect calendar.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -54,15 +54,16 @@
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Debug"
+      ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06788E6614E770AD007C5BE4"
-            BuildableName = "perspect.app"
-            BlueprintName = "perspect"
-            ReferencedContainer = "container:perspect.xcodeproj">
+            BuildableName = "perspect calendar.app"
+            BlueprintName = "perspect calendar"
+            ReferencedContainer = "container:perspect calendar.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -78,9 +79,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06788E6614E770AD007C5BE4"
-            BuildableName = "perspect.app"
-            BlueprintName = "perspect"
-            ReferencedContainer = "container:perspect.xcodeproj">
+            BuildableName = "perspect calendar.app"
+            BlueprintName = "perspect calendar"
+            ReferencedContainer = "container:perspect calendar.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -6,37 +6,11 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1179"/>
     </dependencies>
     <scenes>
-        <!--Group Table Vc - Perspect-->
-        <scene sceneID="9VM-bG-Oww">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="RFZ-o1-blB" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="zZ4-I5-0NP" customClass="GroupTableVc" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="Perspect" id="CKc-s9-4AT"/>
-                </viewController>
-            </objects>
-            <point key="canvasLocation" x="1156" y="-360"/>
-        </scene>
-        <!--Navigation Controller - Friend LIsts-->
-        <scene sceneID="axn-1k-eSj">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="AE5-UV-6V9" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController definesPresentationContext="YES" id="8ki-ng-VqH" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Friend LIsts" image="112-group.png" id="UHs-3b-Qki"/>
-                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="ZGi-lF-OBz">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="zZ4-I5-0NP" kind="relationship" relationship="rootViewController" id="iSF-0N-Lxv"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="667" y="-374"/>
-        </scene>
-        <!--Event Vc - Event List-->
+        <!--Events Vc - Event List-->
         <scene sceneID="hUU-ln-QdR">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bce-nS-fSp" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="U36-4J-Z93" customClass="EventVc" sceneMemberID="viewController">
+                <viewController id="U36-4J-Z93" customClass="EventsVc" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" title="Event List" id="dXi-sK-Yis"/>
                 </viewController>
             </objects>
@@ -59,32 +33,6 @@
             </objects>
             <point key="canvasLocation" x="667" y="252"/>
         </scene>
-        <!--Options Vc - Perspect Options-->
-        <scene sceneID="pkv-zx-Ufq">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="abJ-bM-LRu" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="cJb-kN-CQ2" customClass="OptionsVc" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="Perspect Options" id="PQ6-QA-fws"/>
-                </viewController>
-            </objects>
-            <point key="canvasLocation" x="1156" y="843"/>
-        </scene>
-        <!--Navigation Controller - Options-->
-        <scene sceneID="qGl-9g-OG2">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Uu1-Ur-Oda" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController definesPresentationContext="YES" id="qfL-Gw-Wgu" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Options" image="20-gear.png" id="93P-0C-r48"/>
-                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="zpU-ZO-xfm">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="cJb-kN-CQ2" kind="relationship" relationship="rootViewController" id="ufV-dG-nuy"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="657" y="843"/>
-        </scene>
         <!--Pspct Tab Bar Controller-->
         <scene sceneID="15">
             <objects>
@@ -97,8 +45,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="8ki-ng-VqH" kind="relationship" relationship="viewControllers" id="Ukt-sE-sgW"/>
-                        <segue destination="qfL-Gw-Wgu" kind="relationship" relationship="viewControllers" id="7im-Ie-fTi"/>
+                        <segue destination="u2D-sy-7iy" kind="relationship" relationship="viewControllers" id="FLT-oN-15o"/>
                     </connections>
                 </tabBarController>
             </objects>
@@ -106,23 +53,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="112-group.png" width="32" height="21"/>
-        <image name="20-gear.png" width="26" height="28"/>
         <image name="83-calendar.png" width="23" height="25"/>
     </resources>
     <classes>
-        <class className="EventVc" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/EventVc.h"/>
-        </class>
-        <class className="GroupTableVc" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/GroupTableVc.h"/>
-            <relationships>
-                <relationship kind="action" name="editOrder:"/>
-            </relationships>
-        </class>
-        <class className="OptionsVc" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OptionsVc.h"/>
-        </class>
         <class className="PspctTabBarController" superclassName="UITabBarController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PspctTabBarController.h"/>
         </class>

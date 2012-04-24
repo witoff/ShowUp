@@ -34,7 +34,7 @@ static NSArray* allcontacts;
 
 @implementation AbScanner
 
-@synthesize fbUser;
+@synthesize fbUser, firstname, lastname;
 
 #pragma mark - init
 
@@ -44,8 +44,22 @@ static NSArray* allcontacts;
     if (self)
     {
         self.fbUser = user;
+        self.firstname = user.firstname;
+        self.lastname = user.lastname;
     }
     return self;
+}
+
+-(id)initWithFirstname:(NSString *)first andLastname:(NSString *)last
+{
+    self = [super init];
+    if (self)
+    {
+        self.firstname = first;
+        self.lastname = last;
+    }
+    return self;
+    
 }
 
 #pragma mark - class methods
@@ -167,8 +181,8 @@ static NSArray* allcontacts;
 
 - (AbContact*)simpleSearch
 {
-    NSString* fbFirstname = [self.fbUser.firstname lowercaseString];
-    NSString* fbLastname = [self.fbUser.lastname lowercaseString];
+    NSString* fbFirstname = [self.firstname lowercaseString];
+    NSString* fbLastname = [self.lastname lowercaseString];
     
     NSLog(@"simpleSearch");
     fbFirstname = [fbFirstname lowercaseString];
@@ -259,8 +273,8 @@ static NSArray* allcontacts;
 
 - (AbContact*)getMatchingAbContact
 {
-    NSString *fbFirstname = self.fbUser.firstname;
-    NSString *fbLastname = self.fbUser.lastname;
+    NSString *fbFirstname = self.firstname;
+    NSString *fbLastname = self.lastname;
     
     NSLog(@"simpleSearch");
     

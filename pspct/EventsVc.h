@@ -10,12 +10,14 @@
 #import "Facebook.h"
 #import <MessageUI/MessageUI.h>
 
-@interface EventVc : UITableViewController<FBRequestDelegate, MFMessageComposeViewControllerDelegate>
+@interface EventsVc : UITableViewController<FBRequestDelegate, MFMessageComposeViewControllerDelegate>
 {
     NSArray *birthdays;
+    NSMutableArray *events;
 }
 
 @property (nonatomic, retain) NSArray *birthdays; 
+@property (nonatomic, retain) NSMutableArray *events; 
 
 -(NSArray*)getContactDetails:(NSString*)firstname andLast:(NSString*)lastname;
 -(void)sendSms:(NSString*)fullname;

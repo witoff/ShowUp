@@ -13,14 +13,20 @@
 
 @interface AbScanner : NSObject
 {
-    ModelFbUser* fbUser;
+    NSString *firstname;
+    NSString *lastname;
+    
+    ModelFbUser *fbUser;
 }
 
 @property (nonatomic, retain) ModelFbUser *fbUser;
+@property (nonatomic, retain) NSString *firstname;
+@property (nonatomic, retain) NSString *lastname;
 
 +(void)invalidateContactList;
 
 - (id)initWithFbUser:(ModelFbUser*)user;
+- (id)initWithFirstname:(NSString*)first andLastname:(NSString*)last;
 
 - (AbContact*) simpleSearch;
 - (AbContact*) getMatchingAbContact;

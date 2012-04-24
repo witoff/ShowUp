@@ -10,11 +10,14 @@
 #import "FBConnect.h"
 #import "MixpanelAPI.h"
 #import "IntroVc.h"
+#import <EventKit/EventKit.h>
 
 @interface PspctAppDelegate : UIResponder <UIApplicationDelegate, FBSessionDelegate, FBRequestDelegate>
 {
     Facebook *facebook;
     MixpanelAPI *mixpanel;
+    EKEventStore *store;
+    
 }
 
 //Views
@@ -30,5 +33,7 @@
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+//Events
+@property (nonatomic, retain) EKEventStore *store;
 
 @end
