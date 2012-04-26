@@ -52,11 +52,6 @@
     // Fetch all events that match the predicate.
     NSArray *events = [store eventsMatchingPredicate:predicate];
     
-    for (EKEvent *e in events) {
-        NSLog(@"event: %@", e.title);
-
-    }
-    
     //[self setEvents:events];
     
     if (!events)

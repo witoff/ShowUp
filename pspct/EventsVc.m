@@ -15,6 +15,13 @@
 #import "EventAccessor.h"
 #import <EventKit/EventKit.h>
 #import "EventAttendeesVc.h"
+#import "JSON.h"
+
+@interface EventsVc (hidden)
+
+-(void)debugLogAllEvents;
+
+@end
 
 @implementation EventsVc
 
@@ -122,6 +129,26 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+-(void)debugLogAllEvents
+{
+    EventAccessor *ea = [[EventAccessor alloc] init];
+    NSArray* ev = [ea getEventsFromOffset:-1000 to:7];
+
+    NSMutableArray *jevents = [[NSMutableArray alloc] init];
+
+    for (EKEvent *e in ev) {
+        NSMutableArray* attendees = [[NSMutableArray alloc] initWithCapacity:e.attendees.count];
+        for (EKParticipant *p in e.attendees)
+            [attendees addObject:p.name];
+        NSString* title = e.title ? e.title : @"";
+        NSString* organizer = e.organizer.name ? e.organizer.name : @"";
+        
+        [jevents addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:title, @"title", organizer, @"organizer", attendees, @"attendees", nil]];
+    }
+    
+    NSLog(@"%@", [jevents JSONRepresentation]);
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -159,17 +186,37 @@
 
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
+    // Create the predicate's start and end dates.
+    CFGregorianDate gregorianStartDate;
+    CFGregorianUnits startUnits = {0, 0, section-1, 0, 0, 0};
+    CFTimeZoneRef timeZone = CFTimeZoneCopySystem();
+    
+    gregorianStartDate = CFAbsoluteTimeGetGregorianDate(
+                                                        CFAbsoluteTimeAddGregorianUnits(CFAbsoluteTimeGetCurrent(), timeZone, startUnits),
+                                                        timeZone);
+    gregorianStartDate.hour = 0;
+    gregorianStartDate.minute = 0;
+    gregorianStartDate.second = 0;
+        
+    NSDate* startDate =
+    [NSDate dateWithTimeIntervalSinceReferenceDate:CFGregorianDateGetAbsoluteTime(gregorianStartDate, timeZone)];
+    
+    CFRelease(timeZone);
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"EEEE, M/d";
+    NSString* dateString = [formatter stringFromDate:startDate];
+      
     switch (section) {
         case 0:
-            return @"Yesterday";
+            return [NSString stringWithFormat: @"Yesterday - %@", dateString];
         case 1:
-            return @"Today";
+            return [NSString stringWithFormat: @"Today - %@", dateString];
         case 2:
-            return @"Tomorrow";
+            return [NSString stringWithFormat: @"Tomorrow - %@", dateString];
         default:
-            return @"The Future";
+            return dateString;
     }
-    return @"test";
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

@@ -10,7 +10,7 @@
 #import <AddressBook/AddressBook.h>
 #import "AbContact.h"
 #import <Accelerate/Accelerate.h>
-
+#import "JSON.h"
 
 @interface AbScanner (hidden)
 
@@ -27,6 +27,8 @@
 + (NSArray*)allcontacts;
 + (void)setAllcontacts:(NSArray*)newContacts;
 
+-(void)debugLogAllContacts;
+
 @end
 
 static NSArray* allcontacts;
@@ -35,6 +37,18 @@ static NSArray* allcontacts;
 @implementation AbScanner
 
 @synthesize fbUser, firstname, lastname;
+
+#pragma mark - debug
+-(void)debugLogAllContacts
+{
+    NSMutableArray *all = [[NSMutableArray alloc] initWithCapacity:[self getAllContacts].count];
+    
+    for (AbContact *c in [self getAllContacts]) {
+        [all addObject:[NSDictionary dictionaryWithObjectsAndKeys:c.firstname, @"f", c.lastname, @"l", nil]];
+    }
+    
+    NSLog(@"%@", [all JSONRepresentation]);
+}
 
 #pragma mark - init
 
@@ -55,6 +69,7 @@ static NSArray* allcontacts;
     self = [super init];
     if (self)
     {
+        [self debugLogAllContacts];
         self.firstname = first;
         self.lastname = last;
     }

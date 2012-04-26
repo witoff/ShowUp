@@ -13,6 +13,7 @@
 @interface EventAttendeesVc : UITableViewController<MFMessageComposeViewControllerDelegate>
 {
     EKEvent *event;
+    NSMutableArray* attendees;
     NSMutableDictionary* attendeeContacts;
     UIImage *imgMissing;
 }
@@ -21,6 +22,7 @@
 -(void)parseContacts;
 
 @property(nonatomic, retain) EKEvent *event;
+@property(nonatomic, retain) NSMutableArray *attendees;
 @property(nonatomic, retain) NSMutableDictionary *attendeeContacts;
 @property(nonatomic, retain) UIImage *imgMissing;
 

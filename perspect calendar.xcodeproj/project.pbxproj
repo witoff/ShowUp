@@ -14,6 +14,8 @@
 		060EBF8914F96A64004B4264 /* MixpanelAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 060EBF8214F96A64004B4264 /* MixpanelAPI.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		060EBF8A14F96A64004B4264 /* MixpanelEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 060EBF8414F96A64004B4264 /* MixpanelEvent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		06291B7A14F3659D000BB1D9 /* OptionsVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06291B7914F3659D000BB1D9 /* OptionsVc.m */; };
+		064720AF154916A600C1EDC0 /* allcontacts.json in Resources */ = {isa = PBXBuildFile; fileRef = 064720AD154916A600C1EDC0 /* allcontacts.json */; };
+		064720B0154916A600C1EDC0 /* allevents.json in Resources */ = {isa = PBXBuildFile; fileRef = 064720AE154916A600C1EDC0 /* allevents.json */; };
 		064BD02B15047CDF00124A69 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064BD02A15047CDF00124A69 /* CoreData.framework */; };
 		0653A2BC15008D06008CB1F1 /* icon.5@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 0653A2BA15008D05008CB1F1 /* icon.5@2.png */; };
 		0653A2BD15008D06008CB1F1 /* icon.5.png in Resources */ = {isa = PBXBuildFile; fileRef = 0653A2BB15008D05008CB1F1 /* icon.5.png */; };
@@ -134,6 +136,8 @@
 		060EBF8414F96A64004B4264 /* MixpanelEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MixpanelEvent.m; sourceTree = "<group>"; };
 		06291B7814F3659D000BB1D9 /* OptionsVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVc.h; sourceTree = "<group>"; };
 		06291B7914F3659D000BB1D9 /* OptionsVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVc.m; sourceTree = "<group>"; };
+		064720AD154916A600C1EDC0 /* allcontacts.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = allcontacts.json; sourceTree = "<group>"; };
+		064720AE154916A600C1EDC0 /* allevents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = allevents.json; sourceTree = "<group>"; };
 		064BD02A15047CDF00124A69 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		0653A2BA15008D05008CB1F1 /* icon.5@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon.5@2.png"; sourceTree = "<group>"; };
 		0653A2BB15008D05008CB1F1 /* icon.5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.5.png; sourceTree = "<group>"; };
@@ -251,7 +255,7 @@
 		06EBAA5914FAFF1000D2C78B /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		06ED3A5F14F779AB0078C900 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		06ED3A6114F779BD0078C900 /* 20-gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "20-gear@2x.png"; sourceTree = "<group>"; };
-		06ED3A6514F78F100078C900 /* EventsVc.h */ = {isa = PBXFileReference; fileEncoding = 4; path = EventsVc.h; sourceTree = "<group>"; };
+		06ED3A6514F78F100078C900 /* EventsVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsVc.h; sourceTree = "<group>"; };
 		06ED3A6614F78F100078C900 /* EventsVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventsVc.m; sourceTree = "<group>"; };
 		06ED3A6814F79CDC0078C900 /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
 		06ED3A6914F79CDC0078C900 /* 83-calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar@2x.png"; sourceTree = "<group>"; };
@@ -497,6 +501,8 @@
 		06788E9E14E770AD007C5BE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				064720AD154916A600C1EDC0 /* allcontacts.json */,
+				064720AE154916A600C1EDC0 /* allevents.json */,
 				06788E9F14E770AD007C5BE4 /* perspect calendarTests-Info.plist */,
 				06788EA014E770AD007C5BE4 /* InfoPlist.strings */,
 			);
@@ -757,6 +763,8 @@
 				06D0C0171543D33000E7A0BB /* Default.png in Resources */,
 				06D0C01A1543D5DD00E7A0BB /* icon.png in Resources */,
 				06D0C01B1543D5DD00E7A0BB /* icon@2.png in Resources */,
+				064720AF154916A600C1EDC0 /* allcontacts.json in Resources */,
+				064720B0154916A600C1EDC0 /* allevents.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
