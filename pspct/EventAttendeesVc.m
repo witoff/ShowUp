@@ -7,10 +7,13 @@
 //
 
 #import "EventAttendeesVc.h"
-#import "AbScanner.h"
+#import "ContactProviderAb.h"
 #import "AbContact.h"
 #import <MessageUI/MessageUI.h>
 #import "MixpanelAPI.h"
+#import "FullNameParser.h" 
+#import "ContactSearcher.h"
+#import "ContactTextParser.h"
 
 @interface EventAttendeesVc ()
 
@@ -20,65 +23,24 @@
 
 @implementation EventAttendeesVc
 
-@synthesize event, attendees, attendeeContacts, imgMissing;
+@synthesize event, attendees, attendeeContacts, imgMissing, _title_contacts;
 
 -(id)initWithEvent:(EKEvent *)evt
 {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         self.event = evt;
-        self.attendees = [[NSMutableArray alloc] initWithCapacity:evt.attendees.count+1];
-        self.attendeeContacts = [[NSMutableDictionary alloc] initWithCapacity:self.event.attendees.count];
     }
     return self;
 }
 
 -(AbContact*)findContact:(EKParticipant*)participant
 {
-    NSLog(@"\n New Name");
+    FullNameParser *parser = [[FullNameParser alloc] initWithName:participant.name];
     
-    NSString *firstname;
-    NSString *lastname;
+    ContactSearcher *searcher = [[ContactSearcher alloc] initWithContactProvider:[ContactProvider defaultProvider] andFirstname:[parser getFirstname] andLastname:[parser getLastname]];
     
-    NSMutableString *name = [[NSMutableString alloc] initWithString:participant.name];
-    NSLog(@"name: %@", name);
-    
-    //Remove any notes referenced in the attendee name like "Rob (mystical unicorn)"
-    NSError *error = nil;
-    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"\\(.*\\)" options:0 error:&error];
-    
-    [regex replaceMatchesInString:name options:0 range:NSMakeRange(0, name.length) withTemplate:@""];
-    NSLog(@"name: %@", name);
-    
-    //Remove any hyphenated prefix on the name like "FRIEND-Bob Sagget"
-    error = nil;
-    regex = [[NSRegularExpression alloc] initWithPattern:@"[A-Z][A-Z]*\\-" options:0 error:&error];
-    
-    [regex replaceMatchesInString:name options:0 range:NSMakeRange(0, name.length) withTemplate:@""];
-    NSLog(@"name: %@", name);    
-    
-    //Split into first and lastname
-    NSArray* components = [name componentsSeparatedByString:@","];
-    if (components.count!=2)
-    {
-        NSLog(@"components !=1, skipping");
-        return nil;
-    }
-    
-    //Strip whitespace and assign
-    firstname = [[components objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    lastname = [[components objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    
-    //Strip a trailing middle initial
-    error = nil;
-    regex = [[NSRegularExpression alloc] initWithPattern:@"\\s.*" options:0 error:&error];
-    firstname = [regex stringByReplacingMatchesInString:firstname options:0 range:NSMakeRange(0, firstname.length) withTemplate:@""];
-    
-    NSLog(@"firstname: %@", firstname);
-    NSLog(@"lastname: %@", lastname);
-    
-    AbScanner *scanner = [[AbScanner alloc] initWithFirstname:firstname andLastname:lastname];
-    AbContact *contact = [scanner getMatchingAbContact];
+    AbContact *contact = [searcher getMatchingAbContact];
     
     if (!contact)
     {
@@ -92,7 +54,7 @@
 
 -(void)parseContacts
 {
-  
+    
     //Add all attendees
     for (EKParticipant *participant in self.event.attendees) {
         AbContact *contact = [self findContact:participant];
@@ -127,14 +89,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    [self parseContacts];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    //Find contacts in the title
+    ContactTextParser *parser = [[ContactTextParser alloc] initWithText:self.event.title];
+    
+    self._title_contacts = [parser getContacts];
+    NSLog(@"contacts found in title: %i", self._title_contacts.count);
+    
+    self.attendees = [[NSMutableArray alloc] initWithCapacity:self.event.attendees.count+1];
+    self.attendeeContacts = [[NSMutableDictionary alloc] initWithCapacity:self.event.attendees.count+1];
+    
+    
+    [self parseContacts];
 }
 
 - (void)viewDidUnload
@@ -158,7 +124,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.attendees.count;
+    return self._title_contacts.count + self.attendees.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -171,15 +137,23 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
+    EKParticipant *participant = nil;
+    AbContact *contact = nil;
     
-    
-    EKParticipant *participant = [self.attendees objectAtIndex:indexPath.row];
-    AbContact *contact = [attendeeContacts objectForKey:participant.name];
+    if (indexPath.row<self._title_contacts.count){
+        contact = [self._title_contacts objectAtIndex:indexPath.row ];
+    }
+    else {
+        int index = indexPath.row-self._title_contacts.count;
+        NSLog(@"index: %i", index);
+        participant = [self.attendees objectAtIndex:index];
+        contact = [attendeeContacts objectForKey:participant.name];
+    }
 
     if (contact)
     {
         if (contact.lastname)
-        cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", contact.firstname, contact.lastname];
+            cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", contact.firstname, contact.lastname];
         else
             cell.textLabel.text = contact.firstname;
         cell.imageView.image = nil;
@@ -203,7 +177,7 @@
     MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
     
     messageVc.messageComposeDelegate = self;
- 
+    
     messageVc.recipients = recipients;
     messageVc.body = message;
     
@@ -221,43 +195,43 @@
 }
 
 /*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
+ // Override to support conditional editing of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ // Return NO if you do not want the specified item to be editable.
+ return YES;
+ }
+ */
 
 /*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
+ // Override to support editing the table view.
+ - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ if (editingStyle == UITableViewCellEditingStyleDelete) {
+ // Delete the row from the data source
+ [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+ }   
+ else if (editingStyle == UITableViewCellEditingStyleInsert) {
+ // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+ }   
+ }
+ */
 
 /*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
+ // Override to support rearranging the table view.
+ - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+ {
+ }
+ */
 
 /*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
+ // Override to support conditional rearranging of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ // Return NO if you do not want the item to be re-orderable.
+ return YES;
+ }
+ */
 
 #pragma mark - Table view delegate
 
@@ -270,9 +244,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EKParticipant *participant = [self.attendees objectAtIndex:indexPath.row];
-    AbContact *contact = [attendeeContacts objectForKey:participant.name];
-    
+    AbContact *contact = nil;
+    if (indexPath.row<self._title_contacts.count)
+    {
+        contact = [self._title_contacts objectAtIndex:indexPath.row];
+    }
+    else
+    {
+        EKParticipant *participant = [self.attendees objectAtIndex:indexPath.row];
+        contact = [attendeeContacts objectForKey:participant.name];
+    }
     [self sendSmsWithMessage:@"On my way!" andRecipients:[[NSArray alloc] initWithObjects:[[contact.numbers objectAtIndex:0] valueForKey:@"number"], nil]];
 }
 

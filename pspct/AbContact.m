@@ -11,7 +11,7 @@
 
 @implementation AbContact
 
-@synthesize key, lastname, firstname, image, numbers, email, matchConfidence;
+@synthesize key, lastname, firstname, image, numbers, email, matchConfidence, linked_keys;
 
 #pragma mark - init
 -(id)init
@@ -105,6 +105,45 @@
 }
 
 #pragma mark - helpers
+
+/** Many contacts on your phone are identical across multiple address books and are therefore 'linked' by iOS.  
+ 
+ This returns all contact IDs (includeing this AbContact) that are linked.
+ 
+ **/
+
+
+-(NSArray*)getLinkedContactKeys
+{
+    if (self.linked_keys)
+        return self.linked_keys;
+    
+    ABAddressBookRef addressBook = ABAddressBookCreate();
+    ABRecordID recordId = [self.key integerValue];
+    ABRecordRef ref = ABAddressBookGetPersonWithRecordID(addressBook, recordId);
+    
+    CFArrayRef cfContacts = ABPersonCopyArrayOfAllLinkedPeople(ref);
+    
+    NSArray *linkedContacts = [NSArray arrayWithArray:(__bridge NSArray*) cfContacts];
+    
+    NSMutableArray *linkedIds = [[NSMutableArray alloc] initWithCapacity:linkedContacts.count+1];
+    
+    for (id linkedRef in linkedContacts) {
+        ABRecordID record_id = ABRecordGetRecordID((__bridge ABRecordRef)linkedRef);
+        NSNumber *identifier = [NSNumber numberWithInt:record_id];
+        [linkedIds addObject:identifier];
+    }
+    
+    CFRelease(addressBook);    
+    CFRelease(cfContacts);
+    
+    if (!linkedIds)
+        self.linked_keys = [[NSArray alloc] init];
+    else 
+        self.linked_keys = linkedIds;
+    
+    return self.linked_keys;
+}
 
 -(NSString*)getBestNumber
 {

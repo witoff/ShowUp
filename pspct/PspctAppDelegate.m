@@ -7,10 +7,10 @@
 //
 
 #import "PspctAppDelegate.h"
-#import "AbScanner.h"
 #import "MixpanelAPI.h"
 #import "Constants.h"
 #import <CoreData/CoreData.h>
+#import "ContactProviderAb.h"
 
 @interface PspctAppDelegate (hidden)
 
@@ -178,7 +178,7 @@
     [self showCorrectRootView];
     
     //invalidate contact list... may have changed while you were outside of the app
-    [AbScanner invalidateContactList];
+    [ContactProviderAb invalidateContactList];
     
     [facebook extendAccessTokenIfNeeded];
     

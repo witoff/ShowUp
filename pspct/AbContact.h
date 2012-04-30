@@ -11,6 +11,7 @@
 
 @interface AbContact : NSObject
 {
+    @public
     NSNumber *key;
     NSString *firstname;
     NSString *lastname;
@@ -19,6 +20,9 @@
     NSString *email;
 
     NSNumber *matchConfidence;
+    
+    @private 
+    NSArray *linked_keys;
 }
 
 @property (nonatomic, retain) NSNumber *key;
@@ -29,10 +33,13 @@
 @property (nonatomic, retain) NSString *email;
 @property (nonatomic, retain) NSNumber *matchConfidence;
 
+@property (nonatomic, retain) NSArray *linked_keys;
+
 + (AbContact*)contactWithAbContactKey:(NSNumber*)key;
 + (AbContact*)contactWithRecordRef:(ABRecordRef)ref;
 
 -(NSString*)getBestNumber;
 -(NSString*)getFullname;
+-(NSArray*)getLinkedContactKeys;
 
 @end

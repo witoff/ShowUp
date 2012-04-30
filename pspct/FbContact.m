@@ -8,7 +8,6 @@
 
 #import "FbContact.h"
 #import "AbContact.h"
-#import "AbScanner.h"
 
 @interface FbContact (hidden)
 

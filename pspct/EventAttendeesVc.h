@@ -16,6 +16,9 @@
     NSMutableArray* attendees;
     NSMutableDictionary* attendeeContacts;
     UIImage *imgMissing;
+    
+@private
+    NSArray *_title_contacts;
 }
 
 -(id)initWithEvent:(EKEvent*)evt;
@@ -25,5 +28,6 @@
 @property(nonatomic, retain) NSMutableArray *attendees;
 @property(nonatomic, retain) NSMutableDictionary *attendeeContacts;
 @property(nonatomic, retain) UIImage *imgMissing;
+@property(nonatomic, retain) NSArray* _title_contacts;
 
 @end

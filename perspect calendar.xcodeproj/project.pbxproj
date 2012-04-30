@@ -79,7 +79,18 @@
 		06A7E6DC1504316800CD5957 /* PspctTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A7E6DB1504316800CD5957 /* PspctTabBarController.m */; };
 		06A7E76E1504353700CD5957 /* IntroVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A7E76C1504353700CD5957 /* IntroVc.m */; };
 		06A7E76F1504353700CD5957 /* IntroVc.xib in Resources */ = {isa = PBXBuildFile; fileRef = 06A7E76D1504353700CD5957 /* IntroVc.xib */; };
-		06C9622514E876FF0045F610 /* AbScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 06C9622414E876FE0045F610 /* AbScanner.m */; };
+		06B2AE6F154BD70900B36D7F /* ContactSearcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B2AE6E154BD70900B36D7F /* ContactSearcher.m */; };
+		06B2AE72154BD9ED00B36D7F /* ContactProviderLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B2AE71154BD9ED00B36D7F /* ContactProviderLocal.m */; };
+		06B2AE75154BDE3900B36D7F /* unique_event_attendees.json in Resources */ = {isa = PBXBuildFile; fileRef = 06B2AE74154BDE3900B36D7F /* unique_event_attendees.json */; };
+		06B2AE7B154E3FFE00B36D7F /* eventprocessor.py in Resources */ = {isa = PBXBuildFile; fileRef = 06B2AE76154E3FFE00B36D7F /* eventprocessor.py */; };
+		06B2AE7C154E3FFE00B36D7F /* eventtitles.keyed.json in Resources */ = {isa = PBXBuildFile; fileRef = 06B2AE77154E3FFE00B36D7F /* eventtitles.keyed.json */; };
+		06B2AE7D154E3FFE00B36D7F /* eventtitles.keyed.pretty in Resources */ = {isa = PBXBuildFile; fileRef = 06B2AE78154E3FFE00B36D7F /* eventtitles.keyed.pretty */; };
+		06B2AE7E154E3FFE00B36D7F /* unique_event_attendees.keyed.json in Resources */ = {isa = PBXBuildFile; fileRef = 06B2AE79154E3FFE00B36D7F /* unique_event_attendees.keyed.json */; };
+		06B2AE7F154E3FFE00B36D7F /* unique_event_attendees.keyed.pretty in Resources */ = {isa = PBXBuildFile; fileRef = 06B2AE7A154E3FFE00B36D7F /* unique_event_attendees.keyed.pretty */; };
+		06B2AE82154E532B00B36D7F /* FullNameParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B2AE81154E532B00B36D7F /* FullNameParser.m */; };
+		06B2AE85154E626C00B36D7F /* ContactTextParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B2AE84154E626C00B36D7F /* ContactTextParser.m */; };
+		06B2AE88154E651B00B36D7F /* ContactProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B2AE87154E651A00B36D7F /* ContactProvider.m */; };
+		06C9622514E876FF0045F610 /* ContactProviderAb.m in Sources */ = {isa = PBXBuildFile; fileRef = 06C9622414E876FE0045F610 /* ContactProviderAb.m */; };
 		06C9622714E877AB0045F610 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C9622614E877AB0045F610 /* AddressBook.framework */; };
 		06C9622914E877B30045F610 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C9622814E877B30045F610 /* AddressBookUI.framework */; };
 		06D0C0111543CD4300E7A0BB /* EventAccessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D0C0101543CD4200E7A0BB /* EventAccessor.m */; };
@@ -136,7 +147,7 @@
 		060EBF8414F96A64004B4264 /* MixpanelEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MixpanelEvent.m; sourceTree = "<group>"; };
 		06291B7814F3659D000BB1D9 /* OptionsVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVc.h; sourceTree = "<group>"; };
 		06291B7914F3659D000BB1D9 /* OptionsVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVc.m; sourceTree = "<group>"; };
-		064720AD154916A600C1EDC0 /* allcontacts.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = allcontacts.json; sourceTree = "<group>"; };
+		064720AD154916A600C1EDC0 /* allcontacts.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = allcontacts.json; path = pspctTests/allcontacts.json; sourceTree = SOURCE_ROOT; };
 		064720AE154916A600C1EDC0 /* allevents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = allevents.json; sourceTree = "<group>"; };
 		064BD02A15047CDF00124A69 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		0653A2BA15008D05008CB1F1 /* icon.5@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon.5@2.png"; sourceTree = "<group>"; };
@@ -237,8 +248,24 @@
 		06A7E76B1504353700CD5957 /* IntroVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroVc.h; sourceTree = "<group>"; };
 		06A7E76C1504353700CD5957 /* IntroVc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroVc.m; sourceTree = "<group>"; };
 		06A7E76D1504353700CD5957 /* IntroVc.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IntroVc.xib; sourceTree = "<group>"; };
-		06C9622314E876FE0045F610 /* AbScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbScanner.h; sourceTree = "<group>"; };
-		06C9622414E876FE0045F610 /* AbScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbScanner.m; sourceTree = "<group>"; };
+		06B2AE6D154BD70900B36D7F /* ContactSearcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactSearcher.h; sourceTree = "<group>"; };
+		06B2AE6E154BD70900B36D7F /* ContactSearcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactSearcher.m; sourceTree = "<group>"; };
+		06B2AE70154BD9ED00B36D7F /* ContactProviderLocal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactProviderLocal.h; sourceTree = "<group>"; };
+		06B2AE71154BD9ED00B36D7F /* ContactProviderLocal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactProviderLocal.m; sourceTree = "<group>"; };
+		06B2AE74154BDE3900B36D7F /* unique_event_attendees.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = unique_event_attendees.json; sourceTree = "<group>"; };
+		06B2AE76154E3FFE00B36D7F /* eventprocessor.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = eventprocessor.py; sourceTree = "<group>"; };
+		06B2AE77154E3FFE00B36D7F /* eventtitles.keyed.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = eventtitles.keyed.json; sourceTree = "<group>"; };
+		06B2AE78154E3FFE00B36D7F /* eventtitles.keyed.pretty */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = eventtitles.keyed.pretty; sourceTree = "<group>"; };
+		06B2AE79154E3FFE00B36D7F /* unique_event_attendees.keyed.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = unique_event_attendees.keyed.json; sourceTree = "<group>"; };
+		06B2AE7A154E3FFE00B36D7F /* unique_event_attendees.keyed.pretty */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unique_event_attendees.keyed.pretty; sourceTree = "<group>"; };
+		06B2AE80154E532B00B36D7F /* FullNameParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullNameParser.h; sourceTree = "<group>"; };
+		06B2AE81154E532B00B36D7F /* FullNameParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullNameParser.m; sourceTree = "<group>"; };
+		06B2AE83154E626C00B36D7F /* ContactTextParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactTextParser.h; sourceTree = "<group>"; };
+		06B2AE84154E626C00B36D7F /* ContactTextParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactTextParser.m; sourceTree = "<group>"; };
+		06B2AE86154E651A00B36D7F /* ContactProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactProvider.h; sourceTree = "<group>"; };
+		06B2AE87154E651A00B36D7F /* ContactProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactProvider.m; sourceTree = "<group>"; };
+		06C9622314E876FE0045F610 /* ContactProviderAb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactProviderAb.h; sourceTree = "<group>"; };
+		06C9622414E876FE0045F610 /* ContactProviderAb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactProviderAb.m; sourceTree = "<group>"; };
 		06C9622614E877AB0045F610 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		06C9622814E877B30045F610 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		06D0C00F1543CD4200E7A0BB /* EventAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAccessor.h; sourceTree = "<group>"; };
@@ -469,6 +496,7 @@
 				064BCF2E15044B8700124A69 /* views */,
 				064BCF3C1504521500124A69 /* model */,
 				06577D4E14F0C05200EA6180 /* util */,
+				06B2AE73154BDDCD00B36D7F /* Events */,
 				068CC69E14F8CB8F0063BFC9 /* Contacts */,
 				06788E7214E770AD007C5BE4 /* Supporting Files */,
 			);
@@ -501,6 +529,12 @@
 		06788E9E14E770AD007C5BE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				06B2AE76154E3FFE00B36D7F /* eventprocessor.py */,
+				06B2AE77154E3FFE00B36D7F /* eventtitles.keyed.json */,
+				06B2AE78154E3FFE00B36D7F /* eventtitles.keyed.pretty */,
+				06B2AE79154E3FFE00B36D7F /* unique_event_attendees.keyed.json */,
+				06B2AE7A154E3FFE00B36D7F /* unique_event_attendees.keyed.pretty */,
+				06B2AE74154BDE3900B36D7F /* unique_event_attendees.json */,
 				064720AD154916A600C1EDC0 /* allcontacts.json */,
 				064720AE154916A600C1EDC0 /* allevents.json */,
 				06788E9F14E770AD007C5BE4 /* perspect calendarTests-Info.plist */,
@@ -565,8 +599,7 @@
 				068CC6A114F8CBAE0063BFC9 /* AbContact.m */,
 				06FE547114F975D500C67057 /* FbContact.h */,
 				06FE547214F975D500C67057 /* FbContact.m */,
-				06C9622314E876FE0045F610 /* AbScanner.h */,
-				06C9622414E876FE0045F610 /* AbScanner.m */,
+				06B2AE6C154BD6E200B36D7F /* Scanners */,
 			);
 			name = Contacts;
 			sourceTree = "<group>";
@@ -579,6 +612,34 @@
 				06A7E76D1504353700CD5957 /* IntroVc.xib */,
 			);
 			name = Intro;
+			sourceTree = "<group>";
+		};
+		06B2AE6C154BD6E200B36D7F /* Scanners */ = {
+			isa = PBXGroup;
+			children = (
+				06B2AE83154E626C00B36D7F /* ContactTextParser.h */,
+				06B2AE84154E626C00B36D7F /* ContactTextParser.m */,
+				06B2AE80154E532B00B36D7F /* FullNameParser.h */,
+				06B2AE81154E532B00B36D7F /* FullNameParser.m */,
+				06B2AE6D154BD70900B36D7F /* ContactSearcher.h */,
+				06B2AE6E154BD70900B36D7F /* ContactSearcher.m */,
+				06B2AE70154BD9ED00B36D7F /* ContactProviderLocal.h */,
+				06B2AE71154BD9ED00B36D7F /* ContactProviderLocal.m */,
+				06C9622314E876FE0045F610 /* ContactProviderAb.h */,
+				06C9622414E876FE0045F610 /* ContactProviderAb.m */,
+				06B2AE86154E651A00B36D7F /* ContactProvider.h */,
+				06B2AE87154E651A00B36D7F /* ContactProvider.m */,
+			);
+			name = Scanners;
+			sourceTree = "<group>";
+		};
+		06B2AE73154BDDCD00B36D7F /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				06D0C00F1543CD4200E7A0BB /* EventAccessor.h */,
+				06D0C0101543CD4200E7A0BB /* EventAccessor.m */,
+			);
+			name = Events;
 			sourceTree = "<group>";
 		};
 		06D30E5214FAF84B00ED3254 /* images-pspct */ = {
@@ -609,8 +670,6 @@
 			children = (
 				06ED3A6514F78F100078C900 /* EventsVc.h */,
 				06ED3A6614F78F100078C900 /* EventsVc.m */,
-				06D0C00F1543CD4200E7A0BB /* EventAccessor.h */,
-				06D0C0101543CD4200E7A0BB /* EventAccessor.m */,
 				06658E981546607E003CD3D1 /* EventAttendeesVc.h */,
 				06658E991546607E003CD3D1 /* EventAttendeesVc.m */,
 			);
@@ -765,6 +824,12 @@
 				06D0C01B1543D5DD00E7A0BB /* icon@2.png in Resources */,
 				064720AF154916A600C1EDC0 /* allcontacts.json in Resources */,
 				064720B0154916A600C1EDC0 /* allevents.json in Resources */,
+				06B2AE75154BDE3900B36D7F /* unique_event_attendees.json in Resources */,
+				06B2AE7B154E3FFE00B36D7F /* eventprocessor.py in Resources */,
+				06B2AE7C154E3FFE00B36D7F /* eventtitles.keyed.json in Resources */,
+				06B2AE7D154E3FFE00B36D7F /* eventtitles.keyed.pretty in Resources */,
+				06B2AE7E154E3FFE00B36D7F /* unique_event_attendees.keyed.json in Resources */,
+				06B2AE7F154E3FFE00B36D7F /* unique_event_attendees.keyed.pretty in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -814,7 +879,7 @@
 				06788EDB14E77186007C5BE4 /* SBJsonWriter.m in Sources */,
 				06F26F8514E77EED009121C1 /* GroupTableVc.m in Sources */,
 				06F26F8914E84B5C009121C1 /* FriendTableVc.m in Sources */,
-				06C9622514E876FF0045F610 /* AbScanner.m in Sources */,
+				06C9622514E876FF0045F610 /* ContactProviderAb.m in Sources */,
 				06577D4D14F0B60D00EA6180 /* TemplateTableVc.m in Sources */,
 				06577D5114F0C08900EA6180 /* SimpleRequester.m in Sources */,
 				06291B7A14F3659D000BB1D9 /* OptionsVc.m in Sources */,
@@ -841,6 +906,11 @@
 				0669E77D150C93FF00595016 /* ModelAbkContactMatch.m in Sources */,
 				06D0C0111543CD4300E7A0BB /* EventAccessor.m in Sources */,
 				06658E9A1546607E003CD3D1 /* EventAttendeesVc.m in Sources */,
+				06B2AE6F154BD70900B36D7F /* ContactSearcher.m in Sources */,
+				06B2AE72154BD9ED00B36D7F /* ContactProviderLocal.m in Sources */,
+				06B2AE82154E532B00B36D7F /* FullNameParser.m in Sources */,
+				06B2AE85154E626C00B36D7F /* ContactTextParser.m in Sources */,
+				06B2AE88154E651B00B36D7F /* ContactProvider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,13 +1046,13 @@
 		06788EAC14E770AD007C5BE4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/pspct.app/pspct";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/perspect calendar.app/perspect calendar";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "pspct/pspct-Prefix.pch";
+				GCC_PREFIX_HEADER = "pspct/perspect calendar-Prefix.pch";
 				INFOPLIST_FILE = "pspctTests/perspect calendarTests-Info.plist";
 				PRODUCT_NAME = "perspect calendarTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
@@ -993,13 +1063,13 @@
 		06788EAD14E770AD007C5BE4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/pspct.app/pspct";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/perspect calendar.app/perspect calendar";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "pspct/pspct-Prefix.pch";
+				GCC_PREFIX_HEADER = "pspct/perspect calendar-Prefix.pch";
 				INFOPLIST_FILE = "pspctTests/perspect calendarTests-Info.plist";
 				PRODUCT_NAME = "perspect calendarTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";

@@ -1,20 +1,19 @@
 //
-//  ScanAddressBook.m
-//  pspct
+//  ContactScanner.m
+//  perspect calendar
 //
-//  Created by Robert Witoff on 2/12/12.
+//  Created by Robert Witoff on 4/28/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "AbScanner.h"
-#import <AddressBook/AddressBook.h>
-#import "AbContact.h"
 #import <Accelerate/Accelerate.h>
+#import <AddressBook/AddressBook.h>
+#import "ContactProvider.h"
+#import "AbContact.h"
 #import "JSON.h"
+#import "ContactSearcher.h"
 
-@interface AbScanner (hidden)
-
-- (NSArray*) getAllContacts;
+@interface ContactSearcher (hidden)
 
 - (BOOL)doBidirectionalSubstringMatch:(NSString*)one andTwo:(NSString*)two;
 - (BOOL)areAllContactsLinked:(NSArray*)contacts;
@@ -31,12 +30,10 @@
 
 @end
 
-static NSArray* allcontacts;
 
+@implementation ContactSearcher
 
-@implementation AbScanner
-
-@synthesize fbUser, firstname, lastname;
+@synthesize _fbUser, _firstname, _lastname, _provider;
 
 #pragma mark - debug
 -(void)debugLogAllContacts
@@ -44,7 +41,13 @@ static NSArray* allcontacts;
     NSMutableArray *all = [[NSMutableArray alloc] initWithCapacity:[self getAllContacts].count];
     
     for (AbContact *c in [self getAllContacts]) {
-        [all addObject:[NSDictionary dictionaryWithObjectsAndKeys:c.firstname, @"f", c.lastname, @"l", nil]];
+        if (!c.firstname)
+            c.firstname = @"";
+        if (!c.lastname)
+            c.lastname = @"";
+        
+        
+        [all addObject:[NSDictionary dictionaryWithObjectsAndKeys:c.firstname, @"f", c.lastname, @"l", c.key, @"key", [c getLinkedContactKeys], @"linked_ids", nil]];
     }
     
     NSLog(@"%@", [all JSONRepresentation]);
@@ -52,48 +55,44 @@ static NSArray* allcontacts;
 
 #pragma mark - init
 
-- (id)initWithFbUser:(ModelFbUser*)user
+- (id)initWithContactProvider:(ContactProvider*)provider
 {
     self = [super init];
     if (self)
     {
-        self.fbUser = user;
-        self.firstname = user.firstname;
-        self.lastname = user.lastname;
+        self._provider = provider;
     }
     return self;
 }
 
--(id)initWithFirstname:(NSString *)first andLastname:(NSString *)last
+- (id)initWithContactProvider:(ContactProvider*)provider andFbUser:(ModelFbUser*)user
 {
     self = [super init];
     if (self)
     {
-        [self debugLogAllContacts];
-        self.firstname = first;
-        self.lastname = last;
+        self._provider = provider;
+        self._fbUser = user;
+        self._firstname = user.firstname;
+        self._lastname = user.lastname;
+    }
+    return self;
+}
+
+- (id)initWithContactProvider:(ContactProvider*)provider andFirstname:(NSString*)first andLastname:(NSString*)last
+{
+    self = [super init];
+    if (self)
+    {
+        self._provider = provider;
+        self._firstname = first;
+        self._lastname = last;
+        //[self debugLogAllContacts];
     }
     return self;
     
 }
 
 #pragma mark - class methods
-
-+ (NSArray*)allcontacts {
-    return allcontacts;
-}
-
-+ (void)setAllcontacts:(NSArray *)newContacts
-{
-    if (allcontacts != newContacts) {
-        allcontacts = newContacts;
-    }
-}
-
-+(void)invalidateContactList
-{
-    allcontacts = nil;
-}
 
 - (void) testSearch
 {
@@ -166,28 +165,7 @@ static NSArray* allcontacts;
 
 - (NSArray*) getAllContacts
 {
-    if (allcontacts)
-        return allcontacts;
-    
-    ABAddressBookRef addressBook = ABAddressBookCreate();
-    CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople(addressBook);
-    CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
-    
-    NSMutableArray *contactArray = [[NSMutableArray alloc] initWithCapacity:100];
-    for( int i = 0 ; i < nPeople ; i++ )
-    {
-        
-        ABRecordRef ref = CFArrayGetValueAtIndex(allPeople, i );
-        AbContact *contact = [AbContact contactWithRecordRef:ref];
-        //CFRelease(ref);
-        
-        [contactArray addObject:contact];
-    }
-    
-    CFRelease(addressBook);
-    CFRelease(allPeople);
-    allcontacts = contactArray;
-    return allcontacts;
+    return [self._provider getAllContacts];
 }
 
 
@@ -196,10 +174,10 @@ static NSArray* allcontacts;
 
 - (AbContact*)simpleSearch
 {
-    NSString* fbFirstname = [self.firstname lowercaseString];
-    NSString* fbLastname = [self.lastname lowercaseString];
-    
     NSLog(@"simpleSearch");
+    NSString* fbFirstname = [self._firstname lowercaseString];
+    NSString* fbLastname = [self._lastname lowercaseString];
+    
     fbFirstname = [fbFirstname lowercaseString];
     fbLastname = [fbLastname lowercaseString];
     
@@ -288,10 +266,10 @@ static NSArray* allcontacts;
 
 - (AbContact*)getMatchingAbContact
 {
-    NSString *fbFirstname = self.firstname;
-    NSString *fbLastname = self.lastname;
+    NSString *fbFirstname = self._firstname;
+    NSString *fbLastname = self._lastname;
     
-    NSLog(@"simpleSearch");
+    NSLog(@"getMatchingAbContacts");
     
     if (fbFirstname.length == 0)
         fbFirstname = nil;
@@ -303,12 +281,12 @@ static NSArray* allcontacts;
     if (fbLastname)
         fbLastname = [fbLastname lowercaseString];
     
-    NSLog(@"searching for last name: '%@'", fbLastname);
+    //NSLog(@"searching for last name: '%@'", fbLastname);
     
     if (fbLastname)
     {
         NSArray *lnMatches = [self matchesLastName:fbLastname withContacts:[self getAllContacts] doSubstrings:NO];
-        
+        NSArray *all = [self getAllContacts];
         //1. Exact Matches
         // Matches "Chris Shaffer" to "Chris Shaffer"
         NSArray *lnAndFnMatches = [self matchesFirstName:fbFirstname withContacts:lnMatches doSubstrings:NO];
@@ -465,30 +443,18 @@ static NSArray* allcontacts;
     return nil;
 }
 
-
 -(BOOL)areAllContactsLinked:(NSArray*)contacts
 {
     if (!contacts || contacts.count==0)
         return NO;
     
     // are all matches the same person, just linked?
+    
     for (int i=1; i<contacts.count; i++) {
-        AbContact *lastC = [contacts objectAtIndex:i-1];
-        AbContact *c = [contacts objectAtIndex:i];
-        if (lastC.firstname || c.firstname)
-        {
-            if(![[lastC.firstname lowercaseString] isEqualToString:[c.firstname lowercaseString]])
-                return NO;
-        }
-        if (lastC.lastname || c.lastname)
-        {
-            if(![[lastC.lastname lowercaseString] isEqualToString:[c.lastname lowercaseString]])
-                return NO;
-        }
-        
-        if(lastC.numbers && lastC.numbers>0 && c.numbers && c.numbers>0)
-        {
-            if (![[[lastC.numbers objectAtIndex:0] valueForKey:@"number"] isEqualToString:[[c.numbers objectAtIndex:0] valueForKey:@"number"]])
+        AbContact* currentContact = [contacts objectAtIndex:i];
+        for (int j=i; j<contacts.count; j++) {
+            AbContact* nextContact = [contacts objectAtIndex:j];
+            if (![[nextContact getLinkedContactKeys] containsObject:currentContact.key])
                 return NO;
         }
     }

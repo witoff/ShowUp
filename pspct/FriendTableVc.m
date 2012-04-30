@@ -9,7 +9,6 @@
 #import "FriendTableVc.h"
 #import "PspctAppDelegate.h"
 #import <MessageUI/MessageUI.h>
-#import "AbScanner.h"
 #import "SimpleRequester.h"
 #import "TemplateTableVc.h"
 #import "AbContact.h"

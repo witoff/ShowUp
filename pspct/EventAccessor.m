@@ -9,6 +9,7 @@
 #import "EventAccessor.h"
 #import <EventKit/EventKit.h>
 #import "PspctAppDelegate.h"
+#import "JSON.h"
 
 @implementation EventAccessor
 
@@ -57,6 +58,28 @@
     if (!events)
         events = [[NSArray alloc] init];
     return events;
+}
+
+-(NSArray*)debugGetLocalEvents
+{
+    //Load from disk
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"allevents" ofType:@"json"];  
+    NSString *raw = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    NSArray *data = [raw JSONValue];
+
+    /*
+    NSMutableArray *eventss = [[NSMutableArray alloc] initWithCapacity:data.count];
+    EKEventStore *store = [[EKEventStore alloc] init];
+
+    for (NSDictionary *entry in data) {
+        
+        EKEvent *event = [EKEvent eventWithEventStore:store];
+        EKParticipant *test = [[EKParticipant alloc] init];
+        test.name = @"arst"
+    }
+    
+     */
+    return data;
 }
 
 @end

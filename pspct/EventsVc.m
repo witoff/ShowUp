@@ -9,7 +9,7 @@
 #import "EventsVc.h"
 #import "Facebook.h"
 #import "PspctAppDelegate.h"
-#import "AbScanner.h"
+#import "ContactProviderAb.h"
 #import <MessageUI/MessageUI.h>
 #import "AbContact.h"
 #import "EventAccessor.h"
@@ -310,11 +310,12 @@
     //[self sendSms: [[self.birthdays objectAtIndex:indexPath.row] valueForKey:@"name"] ];
 }
 
+/*
 -(NSArray*)getContactDetails:(NSString*)firstname andLast:(NSString*)lastname
 {
     NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
     //get last name
-    AbScanner *addressBook = [[AbScanner alloc] init];
+    ContactProviderAb *addressBook = [[ContactProviderAb alloc] init];
         
     //get number
     AbContact *contact = [addressBook simpleSearch];
@@ -324,7 +325,7 @@
     
     return recipients;
 }
-
+*/
 - (void)sendSms:(NSString*)fullname
 {
     MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
