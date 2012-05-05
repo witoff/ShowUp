@@ -76,6 +76,12 @@
 		069816C1150B40BB002A3BA4 /* ModelFbGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 069816C0150B40BB002A3BA4 /* ModelFbGroup.m */; };
 		069816C4150B40BB002A3BA4 /* ModelFbList.m in Sources */ = {isa = PBXBuildFile; fileRef = 069816C3150B40BB002A3BA4 /* ModelFbList.m */; };
 		069816CA150B40BB002A3BA4 /* ModelTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 069816C9150B40BB002A3BA4 /* ModelTemplate.m */; };
+		06A4C8DA1554C8FE00231351 /* Clouds-320x367.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D51554C8FE00231351 /* Clouds-320x367.png */; };
+		06A4C8DB1554C8FE00231351 /* bgClouds.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D61554C8FE00231351 /* bgClouds.png */; };
+		06A4C8DC1554C8FE00231351 /* Clouds-640x734.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D71554C8FE00231351 /* Clouds-640x734.png */; };
+		06A4C8DD1554C8FE00231351 /* Clouds-640x867.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D81554C8FE00231351 /* Clouds-640x867.png */; };
+		06A4C8DE1554C8FE00231351 /* bgClouds@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D91554C8FE00231351 /* bgClouds@2.png */; };
+		06A4C8E11554EE4100231351 /* EventTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A4C8E01554EE4100231351 /* EventTableCell.m */; };
 		06A7E6DC1504316800CD5957 /* PspctTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A7E6DB1504316800CD5957 /* PspctTabBarController.m */; };
 		06A7E76E1504353700CD5957 /* IntroVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A7E76C1504353700CD5957 /* IntroVc.m */; };
 		06A7E76F1504353700CD5957 /* IntroVc.xib in Resources */ = {isa = PBXBuildFile; fileRef = 06A7E76D1504353700CD5957 /* IntroVc.xib */; };
@@ -243,6 +249,13 @@
 		069816C3150B40BB002A3BA4 /* ModelFbList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelFbList.m; sourceTree = "<group>"; };
 		069816C8150B40BB002A3BA4 /* ModelTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelTemplate.h; sourceTree = "<group>"; };
 		069816C9150B40BB002A3BA4 /* ModelTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelTemplate.m; sourceTree = "<group>"; };
+		06A4C8D51554C8FE00231351 /* Clouds-320x367.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Clouds-320x367.png"; sourceTree = "<group>"; };
+		06A4C8D61554C8FE00231351 /* bgClouds.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgClouds.png; sourceTree = "<group>"; };
+		06A4C8D71554C8FE00231351 /* Clouds-640x734.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Clouds-640x734.png"; sourceTree = "<group>"; };
+		06A4C8D81554C8FE00231351 /* Clouds-640x867.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Clouds-640x867.png"; sourceTree = "<group>"; };
+		06A4C8D91554C8FE00231351 /* bgClouds@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bgClouds@2.png"; sourceTree = "<group>"; };
+		06A4C8DF1554EE4100231351 /* EventTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTableCell.h; sourceTree = "<group>"; };
+		06A4C8E01554EE4100231351 /* EventTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTableCell.m; sourceTree = "<group>"; };
 		06A7E6DA1504316800CD5957 /* PspctTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PspctTabBarController.h; sourceTree = "<group>"; };
 		06A7E6DB1504316800CD5957 /* PspctTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PspctTabBarController.m; sourceTree = "<group>"; };
 		06A7E76B1504353700CD5957 /* IntroVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroVc.h; sourceTree = "<group>"; };
@@ -506,6 +519,7 @@
 		06788E7214E770AD007C5BE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				06A4C8D41554C47700231351 /* imapes-pspct-backgrounds */,
 				06D30E5214FAF84B00ED3254 /* images-pspct */,
 				06577D4014F0AC0400EA6180 /* Images-iOS */,
 				06788E7314E770AD007C5BE4 /* perspect calendar-Info.plist */,
@@ -595,13 +609,39 @@
 		068CC69E14F8CB8F0063BFC9 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
+				06A4C8D31554C16B00231351 /* Providers */,
+				06B2AE6C154BD6E200B36D7F /* Scanners */,
 				068CC6A014F8CBAE0063BFC9 /* AbContact.h */,
 				068CC6A114F8CBAE0063BFC9 /* AbContact.m */,
 				06FE547114F975D500C67057 /* FbContact.h */,
 				06FE547214F975D500C67057 /* FbContact.m */,
-				06B2AE6C154BD6E200B36D7F /* Scanners */,
 			);
 			name = Contacts;
+			sourceTree = "<group>";
+		};
+		06A4C8D31554C16B00231351 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				06B2AE70154BD9ED00B36D7F /* ContactProviderLocal.h */,
+				06B2AE71154BD9ED00B36D7F /* ContactProviderLocal.m */,
+				06C9622314E876FE0045F610 /* ContactProviderAb.h */,
+				06C9622414E876FE0045F610 /* ContactProviderAb.m */,
+				06B2AE86154E651A00B36D7F /* ContactProvider.h */,
+				06B2AE87154E651A00B36D7F /* ContactProvider.m */,
+			);
+			name = Providers;
+			sourceTree = "<group>";
+		};
+		06A4C8D41554C47700231351 /* imapes-pspct-backgrounds */ = {
+			isa = PBXGroup;
+			children = (
+				06A4C8D61554C8FE00231351 /* bgClouds.png */,
+				06A4C8D91554C8FE00231351 /* bgClouds@2.png */,
+				06A4C8D51554C8FE00231351 /* Clouds-320x367.png */,
+				06A4C8D71554C8FE00231351 /* Clouds-640x734.png */,
+				06A4C8D81554C8FE00231351 /* Clouds-640x867.png */,
+			);
+			name = "imapes-pspct-backgrounds";
 			sourceTree = "<group>";
 		};
 		06A7E6D715042C6600CD5957 /* Intro */ = {
@@ -623,12 +663,6 @@
 				06B2AE81154E532B00B36D7F /* FullNameParser.m */,
 				06B2AE6D154BD70900B36D7F /* ContactSearcher.h */,
 				06B2AE6E154BD70900B36D7F /* ContactSearcher.m */,
-				06B2AE70154BD9ED00B36D7F /* ContactProviderLocal.h */,
-				06B2AE71154BD9ED00B36D7F /* ContactProviderLocal.m */,
-				06C9622314E876FE0045F610 /* ContactProviderAb.h */,
-				06C9622414E876FE0045F610 /* ContactProviderAb.m */,
-				06B2AE86154E651A00B36D7F /* ContactProvider.h */,
-				06B2AE87154E651A00B36D7F /* ContactProvider.m */,
 			);
 			name = Scanners;
 			sourceTree = "<group>";
@@ -670,6 +704,8 @@
 			children = (
 				06ED3A6514F78F100078C900 /* EventsVc.h */,
 				06ED3A6614F78F100078C900 /* EventsVc.m */,
+				06A4C8DF1554EE4100231351 /* EventTableCell.h */,
+				06A4C8E01554EE4100231351 /* EventTableCell.m */,
 				06658E981546607E003CD3D1 /* EventAttendeesVc.h */,
 				06658E991546607E003CD3D1 /* EventAttendeesVc.m */,
 			);
@@ -830,6 +866,11 @@
 				06B2AE7D154E3FFE00B36D7F /* eventtitles.keyed.pretty in Resources */,
 				06B2AE7E154E3FFE00B36D7F /* unique_event_attendees.keyed.json in Resources */,
 				06B2AE7F154E3FFE00B36D7F /* unique_event_attendees.keyed.pretty in Resources */,
+				06A4C8DA1554C8FE00231351 /* Clouds-320x367.png in Resources */,
+				06A4C8DB1554C8FE00231351 /* bgClouds.png in Resources */,
+				06A4C8DC1554C8FE00231351 /* Clouds-640x734.png in Resources */,
+				06A4C8DD1554C8FE00231351 /* Clouds-640x867.png in Resources */,
+				06A4C8DE1554C8FE00231351 /* bgClouds@2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,6 +952,7 @@
 				06B2AE82154E532B00B36D7F /* FullNameParser.m in Sources */,
 				06B2AE85154E626C00B36D7F /* ContactTextParser.m in Sources */,
 				06B2AE88154E651B00B36D7F /* ContactProvider.m in Sources */,
+				06A4C8E11554EE4100231351 /* EventTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

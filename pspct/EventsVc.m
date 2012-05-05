@@ -16,6 +16,7 @@
 #import <EventKit/EventKit.h>
 #import "EventAttendeesVc.h"
 #import "JSON.h"
+#import "EventTableCell.h"
 
 @interface EventsVc (hidden)
 
@@ -27,12 +28,18 @@
 
 @synthesize birthdays, events;
 
-- (id)initWithStyle:(UITableViewStyle)style
+
+-(id)initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
+    self =  [super initWithCoder:aDecoder];
+    if (self)
+    {
+        //BUG: The vc may still default to the originally assigned tableview if a low memory warning is received.
+        self.tableView = [[UITableView alloc] initWithFrame:self.tableView.frame style:UITableViewStyleGrouped];
+        
+        didScroll = NO;
     }
+    
     return self;
 }
 
@@ -101,16 +108,20 @@
 
 - (void)viewDidLoad
 {
-    //PspctAppDelegate *appDelegate = (PspctAppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSLog(@"viewdidload: %@", self);
+    if (self.navigationController.viewControllers.count==1)
+    {
+        NSLog(@"navcontroller: %@, %i", self.navigationController, self.navigationController.viewControllers.count);
+        
+        UIView *backgroundView = [[UIView alloc] initWithFrame: self.tableView.frame];
+        backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bgClouds.png"]];
+        [self.navigationController.view insertSubview:backgroundView atIndex:0];
+        
+        self.view.backgroundColor = [UIColor clearColor];    
+        //[self.tableView.window makeKeyAndVisible];
+    }
     
-    //TODO: paging??
-    
-    /* REQUEST FB EVENTS
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"id,name,birthday",@"fields", @"500", @"limit", nil];
-    [appDelegate.facebook requestWithGraphPath:@"me/friends" andParams:params andDelegate:self];
-     */
-    
-
+    //Setup Table
     EventAccessor *ea = [[EventAccessor alloc] init];
     self.events = [[NSMutableArray alloc] initWithCapacity:9];
     
@@ -118,12 +129,8 @@
         [self.events insertObject:[ea getEventsFromOffset:i to:i+1] atIndex:i+1];       
     }
     
-
-    [super viewDidLoad];
-    
-    
     // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    //self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
@@ -133,9 +140,9 @@
 {
     EventAccessor *ea = [[EventAccessor alloc] init];
     NSArray* ev = [ea getEventsFromOffset:-1000 to:7];
-
+    
     NSMutableArray *jevents = [[NSMutableArray alloc] init];
-
+    
     for (EKEvent *e in ev) {
         NSMutableArray* attendees = [[NSMutableArray alloc] initWithCapacity:e.attendees.count];
         for (EKParticipant *p in e.attendees)
@@ -163,7 +170,18 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    //Scroll to today on the first view
+    if (!didScroll)
+    {
+        NSLog(@"%@ did scroll: %i", self, didScroll);
+        didScroll=YES;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:1];    
+        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        
+    }
+    
     [super viewDidAppear:animated];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -197,7 +215,7 @@
     gregorianStartDate.hour = 0;
     gregorianStartDate.minute = 0;
     gregorianStartDate.second = 0;
-        
+    
     NSDate* startDate =
     [NSDate dateWithTimeIntervalSinceReferenceDate:CFGregorianDateGetAbsoluteTime(gregorianStartDate, timeZone)];
     
@@ -206,7 +224,7 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"EEEE, M/d";
     NSString* dateString = [formatter stringFromDate:startDate];
-      
+    
     switch (section) {
         case 0:
             return [NSString stringWithFormat: @"Yesterday - %@", dateString];
@@ -235,22 +253,40 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    EventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[EventTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
     // Configure the cell...
     EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     cell.textLabel.text = event.title;
-
+    
+    if ([event.startDate compare:[NSDate date]] == NSOrderedAscending)
+    {
+        
+        cell.backgroundColor = [UIColor colorWithRed:.8 green:.8 blue:.8 alpha:1];
+        cell.textLabel.textColor = [UIColor colorWithRed:.2 green:.2 blue:.2 alpha:1];
+    }
+    else {
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.textLabel.textColor = [UIColor blackColor];
+    }
+                        
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"HH:mm";
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@  -  %@", [formatter stringFromDate: event.startDate], [formatter stringFromDate:event.endDate]];
+    //formatter.dateFormat = @"HH:mm";
+    formatter.dateFormat = @"ha";
+    NSString *dateString = [NSString stringWithFormat:@"%@ - %@", [formatter stringFromDate: event.startDate], [formatter stringFromDate:event.endDate]];
+    
+    cell.detailTextLabel.text = [dateString lowercaseString];
+    cell.lblAttendees.text = [NSString stringWithFormat:@"Attendees: %i", event.attendees.count];
     
     return cell;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 60.;
+}
 /*
  // Override to support conditional editing of the table view.
  - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -305,50 +341,9 @@
     EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:[[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
     
     [self.navigationController pushViewController:eavc animated:YES];
-
+    
     
     //[self sendSms: [[self.birthdays objectAtIndex:indexPath.row] valueForKey:@"name"] ];
-}
-
-/*
--(NSArray*)getContactDetails:(NSString*)firstname andLast:(NSString*)lastname
-{
-    NSMutableArray *recipients = [[NSMutableArray alloc] initWithCapacity:5];
-    //get last name
-    ContactProviderAb *addressBook = [[ContactProviderAb alloc] init];
-        
-    //get number
-    AbContact *contact = [addressBook simpleSearch];
-    
-    if (contact)
-        [recipients addObject:[contact getBestNumber]];
-    
-    return recipients;
-}
-*/
-- (void)sendSms:(NSString*)fullname
-{
-    MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
-    
-    //messageVc.messageComposeDelegate = self;
-    
-    NSArray *components = [fullname componentsSeparatedByString:@" "];
-    
-    NSString *lastname = nil;
-    if (components.count>1)
-        lastname = [components objectAtIndex:components.count-1];
-    NSString* firstname = [components objectAtIndex:0];
-    
-    
-    messageVc.recipients = [self getContactDetails:firstname andLast:lastname];
-    messageVc.body = [NSString stringWithFormat: @"Happy Birthday %@!", firstname];
-    
-    //This check is late in the message so debug info is written to the log
-    if (![MFMessageComposeViewController canSendText])
-        return;
-    
-    [self presentViewController:messageVc animated:YES completion:nil];
-    NSLog(@"shown");
 }
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result

@@ -7,6 +7,7 @@
 //
 
 #import "PspctAppDelegate.h"
+#import "PspctTabBarController.h"
 #import "MixpanelAPI.h"
 #import "Constants.h"
 #import <CoreData/CoreData.h>
@@ -29,7 +30,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     mixpanel = [MixpanelAPI sharedAPIWithToken:@"30cb438635ae2386bbde7c4ef81fd191"];
-
+    
     store = [[EKEventStore alloc] init];
     
     facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
@@ -58,13 +59,23 @@
     //Launch Intro or storyboard
     
     //Do nothing if correct vc is already displayed
-    
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
-    self.viewController = [storyboard instantiateInitialViewController];
-    
-    
-    self.window.rootViewController = self.viewController;
-    [self.window makeKeyAndVisible];
+    if (self.window.rootViewController == nil)
+    {
+        //First launch of the application
+        
+        NSLog(@"Not displaying the home tab bar controller, must be our first launch.  Rebuilding storyboard.");
+        //Navigation controller is only visible after on the main page
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
+        self.viewController = [storyboard instantiateInitialViewController];
+        
+        
+        self.window.rootViewController = self.viewController;
+        [self.window makeKeyAndVisible];
+    }
+    else if (self.window.rootViewController.class != [PspctTabBarController class])
+    {
+        //App already launched but not viewing the tab bar controller
+    }
     
 }
 
@@ -104,7 +115,7 @@
     [defaults synchronize];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:EVENT_FB_LOGIN object:self];
-
+    
     [facebook requestWithGraphPath:@"me" andDelegate:self];
     
     [self showCorrectRootView];
@@ -114,9 +125,9 @@
     NSLog(@"failed fb request: %@", error.description);
 }
 -(void)request:(FBRequest *)request didLoad:(id)result{
-
+    
     NSDictionary *response = (NSDictionary*)result;
-          
+    
     NSString* name = [response objectForKey:@"name"];
     if (name)
     {

@@ -12,14 +12,13 @@
 
 @interface EventsVc : UITableViewController<FBRequestDelegate, MFMessageComposeViewControllerDelegate>
 {
+    @private
+    bool didScroll;
     NSArray *birthdays;
     NSMutableArray *events;
 }
 
 @property (nonatomic, retain) NSArray *birthdays; 
 @property (nonatomic, retain) NSMutableArray *events; 
-
--(NSArray*)getContactDetails:(NSString*)firstname andLast:(NSString*)lastname;
--(void)sendSms:(NSString*)fullname;
 
 @end

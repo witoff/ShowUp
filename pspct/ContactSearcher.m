@@ -286,7 +286,7 @@
     if (fbLastname)
     {
         NSArray *lnMatches = [self matchesLastName:fbLastname withContacts:[self getAllContacts] doSubstrings:NO];
-        NSArray *all = [self getAllContacts];
+        //NSArray *all = [self getAllContacts];
         //1. Exact Matches
         // Matches "Chris Shaffer" to "Chris Shaffer"
         NSArray *lnAndFnMatches = [self matchesFirstName:fbFirstname withContacts:lnMatches doSubstrings:NO];

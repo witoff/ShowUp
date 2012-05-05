@@ -46,8 +46,12 @@
 {
     if (isParsed)
         return;
-    
     isParsed = YES;
+    
+    //ignore null names
+    if (!self.raw_name)
+        return;
+    
     
     NSMutableString *name = [[NSMutableString alloc] initWithString:self.raw_name];
     NSLog(@"name: %@", name);

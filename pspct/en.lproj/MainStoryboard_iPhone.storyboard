@@ -6,12 +6,12 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1179"/>
     </dependencies>
     <scenes>
-        <!--Events Vc - Event List-->
+        <!--Events Vc - Events-->
         <scene sceneID="hUU-ln-QdR">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bce-nS-fSp" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="U36-4J-Z93" customClass="EventsVc" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="Event List" id="dXi-sK-Yis"/>
+                    <navigationItem key="navigationItem" title="Events" id="dXi-sK-Yis"/>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="1156" y="252"/>
@@ -55,11 +55,6 @@
     <resources>
         <image name="83-calendar.png" width="23" height="25"/>
     </resources>
-    <classes>
-        <class className="PspctTabBarController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PspctTabBarController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

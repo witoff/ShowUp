@@ -12,9 +12,8 @@
 
 -(NSArray*)getEventsFromOffset:(int)from to:(int)to;
 
-
 -(NSArray*)debugGetLocalEvents;
--(NSArray*)debugGetUniqueEventAttendees;
--(NSArray*)debugGetUniqueEventTitles;
+//-(NSArray*)debugGetUniqueEventAttendees;
+//-(NSArray*)debugGetUniqueEventTitles;
 
 @end
