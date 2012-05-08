@@ -21,4 +21,8 @@
 @property (nonatomic, retain) NSArray *birthdays; 
 @property (nonatomic, retain) NSMutableArray *events; 
 
+
+-(IBAction)scrollToToday:(id)sender;
+-(IBAction)reloadEvents:(id)sender;
+
 @end

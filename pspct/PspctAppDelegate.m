@@ -29,26 +29,34 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    mixpanel = [MixpanelAPI sharedAPIWithToken:@"30cb438635ae2386bbde7c4ef81fd191"];
     
-    store = [[EKEventStore alloc] init];
+    //FORMAT STATUS BAR
+    [application setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
     
-    facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
+    //SETUP FRAMEWORKS
+    self.mixpanel = [MixpanelAPI sharedAPIWithToken:@"12a3027a7865c7f01d1531534e05cba9"];    
+    self.store = [[EKEventStore alloc] init];
+    //facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
+    
+    //PERSISTANT DATA
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([defaults objectForKey:@"FBAccessTokenKey"] 
-        && [defaults objectForKey:@"FBExpirationDateKey"]) {
-        facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
-        facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
-    }
-    if ([defaults objectForKey:@"FBName"])
-    {
-        mixpanel.nameTag = [defaults objectForKey:@"FBName"];
-        NSLog(@"setting mixpanel name to: %@", [defaults objectForKey:@"FBName"]);
-    }
+    /*
+     if ([defaults objectForKey:@"FBAccessTokenKey"] 
+     && [defaults objectForKey:@"FBExpirationDateKey"]) {
+     facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
+     facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
+     }
+     
+     if ([defaults objectForKey:@"FBName"])
+     {
+     mixpanel.nameTag = [defaults objectForKey:@"FBName"];
+     NSLog(@"setting mixpanel name to: %@", [defaults objectForKey:@"FBName"]);
+     }
+     */
+    [self.mixpanel track:@"appDidFinishLaunching"];
     
-    
+    //SETUP WINDOW
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
     [self showCorrectRootView];
     
     return YES;
@@ -68,6 +76,10 @@
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
         self.viewController = [storyboard instantiateInitialViewController];
         
+        //Set Background
+        UIView *backgroundView = [[UIView alloc] initWithFrame: self.window.frame];
+        backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bgClouds.png"]];
+        [self.viewController.view insertSubview:backgroundView atIndex:0];
         
         self.window.rootViewController = self.viewController;
         [self.window makeKeyAndVisible];
@@ -185,6 +197,7 @@
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
+    [self.mixpanel track:@"appDidBecomeActive"];
     
     [self showCorrectRootView];
     
@@ -192,9 +205,6 @@
     [ContactProviderAb invalidateContactList];
     
     [facebook extendAccessTokenIfNeeded];
-    
-    [mixpanel track:@"opened application"]; 
-    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

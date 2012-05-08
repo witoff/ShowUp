@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <EventKit/EventKit.h>
 #import <MessageUI/MessageUI.h>
+#import "EventAttendeeSliderCell.h"
 
 @interface EventAttendeesVc : UITableViewController<MFMessageComposeViewControllerDelegate>
 {
@@ -17,8 +18,10 @@
     NSMutableDictionary* attendeeContacts;
     UIImage *imgMissing;
     
+    
 @private
     NSArray *_title_contacts;
+    EventAttendeeSliderCell *_sliderCell;
 }
 
 -(id)initWithEvent:(EKEvent*)evt;
@@ -28,6 +31,8 @@
 @property(nonatomic, retain) NSMutableArray *attendees;
 @property(nonatomic, retain) NSMutableDictionary *attendeeContacts;
 @property(nonatomic, retain) UIImage *imgMissing;
+
 @property(nonatomic, retain) NSArray* _title_contacts;
+@property(nonatomic, retain) EventAttendeeSliderCell *_sliderCell;
 
 @end

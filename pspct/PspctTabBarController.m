@@ -7,8 +7,14 @@
 //
 
 #import "PspctTabBarController.h"
+#import "PspctAppDelegate.h"
 
 @implementation PspctTabBarController
+
+-(void)viewDidLoad
+{  
+    [super viewDidLoad];
+}
 
 -(void)viewDidAppear:(BOOL)animated
 {

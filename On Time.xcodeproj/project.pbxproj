@@ -82,6 +82,7 @@
 		06A4C8DD1554C8FE00231351 /* Clouds-640x867.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D81554C8FE00231351 /* Clouds-640x867.png */; };
 		06A4C8DE1554C8FE00231351 /* bgClouds@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06A4C8D91554C8FE00231351 /* bgClouds@2.png */; };
 		06A4C8E11554EE4100231351 /* EventTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A4C8E01554EE4100231351 /* EventTableCell.m */; };
+		06A4C8E515551BCA00231351 /* EventNavigationItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A4C8E415551BC900231351 /* EventNavigationItem.m */; };
 		06A7E6DC1504316800CD5957 /* PspctTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A7E6DB1504316800CD5957 /* PspctTabBarController.m */; };
 		06A7E76E1504353700CD5957 /* IntroVc.m in Sources */ = {isa = PBXBuildFile; fileRef = 06A7E76C1504353700CD5957 /* IntroVc.m */; };
 		06A7E76F1504353700CD5957 /* IntroVc.xib in Resources */ = {isa = PBXBuildFile; fileRef = 06A7E76D1504353700CD5957 /* IntroVc.xib */; };
@@ -107,6 +108,7 @@
 		06D0C01B1543D5DD00E7A0BB /* icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06D0C0191543D5DD00E7A0BB /* icon@2.png */; };
 		06D30E5614FAFB2200ED3254 /* Icon-small@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06D30E5314FAFB2200ED3254 /* Icon-small@2.png */; };
 		06D30E5814FAFB2200ED3254 /* Icon-small.png in Resources */ = {isa = PBXBuildFile; fileRef = 06D30E5514FAFB2200ED3254 /* Icon-small.png */; };
+		06D5E5C51558FE4D00AF9BE2 /* EventAttendeeSliderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D5E5C41558FE4D00AF9BE2 /* EventAttendeeSliderCell.m */; };
 		06EA767B1500924100A98687 /* icon.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 06EA767A1500924100A98687 /* icon.1.png */; };
 		06EA767D1500925400A98687 /* icon.1.@2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06EA767C1500925400A98687 /* icon.1.@2.png */; };
 		06EBAA5A14FAFF1100D2C78B /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 06EBAA5914FAFF1000D2C78B /* iTunesArtwork */; };
@@ -188,23 +190,23 @@
 		067466BC14FA242500A5119C /* 286-speechbubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "286-speechbubble@2x.png"; sourceTree = "<group>"; };
 		067466BF14FA247400A5119C /* 286-speechbubble-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "286-speechbubble-white.png"; sourceTree = "<group>"; };
 		067466C014FA247400A5119C /* 286-speechbubble-white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "286-speechbubble-white@2x.png"; sourceTree = "<group>"; };
-		06788E6714E770AD007C5BE4 /* perspect calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "perspect calendar.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		06788E6714E770AD007C5BE4 /* On Time.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "On Time.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		06788E6B14E770AD007C5BE4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		06788E6D14E770AD007C5BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		06788E6F14E770AD007C5BE4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		06788E7314E770AD007C5BE4 /* perspect calendar-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "perspect calendar-Info.plist"; sourceTree = "<group>"; };
+		06788E7314E770AD007C5BE4 /* On Time-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "On Time-Info.plist"; sourceTree = "<group>"; };
 		06788E7514E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		06788E7714E770AD007C5BE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		06788E7914E770AD007C5BE4 /* perspect calendar-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "perspect calendar-Prefix.pch"; sourceTree = "<group>"; };
+		06788E7914E770AD007C5BE4 /* On Time-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "On Time-Prefix.pch"; sourceTree = "<group>"; };
 		06788E7A14E770AD007C5BE4 /* PspctAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PspctAppDelegate.h; sourceTree = "<group>"; };
 		06788E7B14E770AD007C5BE4 /* PspctAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PspctAppDelegate.m; sourceTree = "<group>"; };
 		06788E7E14E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		06788E8114E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		06788E8A14E770AD007C5BE4 /* PspctSecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PspctSecondViewController.h; sourceTree = "<group>"; };
 		06788E8B14E770AD007C5BE4 /* PspctSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PspctSecondViewController.m; sourceTree = "<group>"; };
-		06788E9614E770AD007C5BE4 /* perspect calendarTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "perspect calendarTests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		06788E9614E770AD007C5BE4 /* On TimeTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "On TimeTests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		06788E9714E770AD007C5BE4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		06788E9F14E770AD007C5BE4 /* perspect calendarTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "perspect calendarTests-Info.plist"; sourceTree = "<group>"; };
+		06788E9F14E770AD007C5BE4 /* On TimeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "On TimeTests-Info.plist"; sourceTree = "<group>"; };
 		06788EA114E770AD007C5BE4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		06788EA314E770AD007C5BE4 /* pspctTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pspctTests.h; sourceTree = "<group>"; };
 		06788EA414E770AD007C5BE4 /* pspctTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pspctTests.m; sourceTree = "<group>"; };
@@ -256,6 +258,8 @@
 		06A4C8D91554C8FE00231351 /* bgClouds@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bgClouds@2.png"; sourceTree = "<group>"; };
 		06A4C8DF1554EE4100231351 /* EventTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTableCell.h; sourceTree = "<group>"; };
 		06A4C8E01554EE4100231351 /* EventTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTableCell.m; sourceTree = "<group>"; };
+		06A4C8E315551BC900231351 /* EventNavigationItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventNavigationItem.h; sourceTree = "<group>"; };
+		06A4C8E415551BC900231351 /* EventNavigationItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventNavigationItem.m; sourceTree = "<group>"; };
 		06A7E6DA1504316800CD5957 /* PspctTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PspctTabBarController.h; sourceTree = "<group>"; };
 		06A7E6DB1504316800CD5957 /* PspctTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PspctTabBarController.m; sourceTree = "<group>"; };
 		06A7E76B1504353700CD5957 /* IntroVc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroVc.h; sourceTree = "<group>"; };
@@ -290,6 +294,8 @@
 		06D0C0191543D5DD00E7A0BB /* icon@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2.png"; sourceTree = "<group>"; };
 		06D30E5314FAFB2200ED3254 /* Icon-small@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-small@2.png"; sourceTree = "<group>"; };
 		06D30E5514FAFB2200ED3254 /* Icon-small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-small.png"; sourceTree = "<group>"; };
+		06D5E5C31558FE4D00AF9BE2 /* EventAttendeeSliderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAttendeeSliderCell.h; sourceTree = "<group>"; };
+		06D5E5C41558FE4D00AF9BE2 /* EventAttendeeSliderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventAttendeeSliderCell.m; sourceTree = "<group>"; };
 		06EA767A1500924100A98687 /* icon.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.1.png; sourceTree = "<group>"; };
 		06EA767C1500925400A98687 /* icon.1.@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon.1.@2.png"; sourceTree = "<group>"; };
 		06EBAA5914FAFF1000D2C78B /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -471,8 +477,8 @@
 		06788E6814E770AD007C5BE4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				06788E6714E770AD007C5BE4 /* perspect calendar.app */,
-				06788E9614E770AD007C5BE4 /* perspect calendarTests.octest */,
+				06788E6714E770AD007C5BE4 /* On Time.app */,
+				06788E9614E770AD007C5BE4 /* On TimeTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -522,10 +528,10 @@
 				06A4C8D41554C47700231351 /* imapes-pspct-backgrounds */,
 				06D30E5214FAF84B00ED3254 /* images-pspct */,
 				06577D4014F0AC0400EA6180 /* Images-iOS */,
-				06788E7314E770AD007C5BE4 /* perspect calendar-Info.plist */,
+				06788E7314E770AD007C5BE4 /* On Time-Info.plist */,
 				06788E7414E770AD007C5BE4 /* InfoPlist.strings */,
 				06788E7714E770AD007C5BE4 /* main.m */,
-				06788E7914E770AD007C5BE4 /* perspect calendar-Prefix.pch */,
+				06788E7914E770AD007C5BE4 /* On Time-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -551,7 +557,7 @@
 				06B2AE74154BDE3900B36D7F /* unique_event_attendees.json */,
 				064720AD154916A600C1EDC0 /* allcontacts.json */,
 				064720AE154916A600C1EDC0 /* allevents.json */,
-				06788E9F14E770AD007C5BE4 /* perspect calendarTests-Info.plist */,
+				06788E9F14E770AD007C5BE4 /* On TimeTests-Info.plist */,
 				06788EA014E770AD007C5BE4 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -708,6 +714,10 @@
 				06A4C8E01554EE4100231351 /* EventTableCell.m */,
 				06658E981546607E003CD3D1 /* EventAttendeesVc.h */,
 				06658E991546607E003CD3D1 /* EventAttendeesVc.m */,
+				06A4C8E315551BC900231351 /* EventNavigationItem.h */,
+				06A4C8E415551BC900231351 /* EventNavigationItem.m */,
+				06D5E5C31558FE4D00AF9BE2 /* EventAttendeeSliderCell.h */,
+				06D5E5C41558FE4D00AF9BE2 /* EventAttendeeSliderCell.m */,
 			);
 			name = Event;
 			sourceTree = "<group>";
@@ -724,11 +734,11 @@
 		06F26F8614E84B1C009121C1 /* Friend */ = {
 			isa = PBXGroup;
 			children = (
-				06F26F8314E77EED009121C1 /* GroupTableVc.h */,
-				06F26F8414E77EED009121C1 /* GroupTableVc.m */,
 				06F26F8714E84B5C009121C1 /* FriendTableVc.h */,
-				06F26F8814E84B5C009121C1 /* FriendTableVc.m */,
+				06F26F8314E77EED009121C1 /* GroupTableVc.h */,
 				06577D4B14F0B60D00EA6180 /* TemplateTableVc.h */,
+				06F26F8814E84B5C009121C1 /* FriendTableVc.m */,
+				06F26F8414E77EED009121C1 /* GroupTableVc.m */,
 				06577D4C14F0B60D00EA6180 /* TemplateTableVc.m */,
 			);
 			name = Friend;
@@ -737,9 +747,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		06788E6614E770AD007C5BE4 /* perspect calendar */ = {
+		06788E6614E770AD007C5BE4 /* On Time */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspect calendar" */;
+			buildConfigurationList = 06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "On Time" */;
 			buildPhases = (
 				06788E6314E770AD007C5BE4 /* Sources */,
 				06788E6414E770AD007C5BE4 /* Frameworks */,
@@ -749,14 +759,14 @@
 			);
 			dependencies = (
 			);
-			name = "perspect calendar";
+			name = "On Time";
 			productName = pspct;
-			productReference = 06788E6714E770AD007C5BE4 /* perspect calendar.app */;
+			productReference = 06788E6714E770AD007C5BE4 /* On Time.app */;
 			productType = "com.apple.product-type.application";
 		};
-		06788E9514E770AD007C5BE4 /* perspect calendarTests */ = {
+		06788E9514E770AD007C5BE4 /* On TimeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspect calendarTests" */;
+			buildConfigurationList = 06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "On TimeTests" */;
 			buildPhases = (
 				06788E9114E770AD007C5BE4 /* Sources */,
 				06788E9214E770AD007C5BE4 /* Frameworks */,
@@ -768,9 +778,9 @@
 			dependencies = (
 				06788E9C14E770AD007C5BE4 /* PBXTargetDependency */,
 			);
-			name = "perspect calendarTests";
+			name = "On TimeTests";
 			productName = pspctTests;
-			productReference = 06788E9614E770AD007C5BE4 /* perspect calendarTests.octest */;
+			productReference = 06788E9614E770AD007C5BE4 /* On TimeTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -781,7 +791,7 @@
 			attributes = {
 				LastUpgradeCheck = 0420;
 			};
-			buildConfigurationList = 06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "perspect calendar" */;
+			buildConfigurationList = 06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "On Time" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -799,8 +809,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				06788E6614E770AD007C5BE4 /* perspect calendar */,
-				06788E9514E770AD007C5BE4 /* perspect calendarTests */,
+				06788E6614E770AD007C5BE4 /* On Time */,
+				06788E9514E770AD007C5BE4 /* On TimeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -953,6 +963,8 @@
 				06B2AE85154E626C00B36D7F /* ContactTextParser.m in Sources */,
 				06B2AE88154E651B00B36D7F /* ContactProvider.m in Sources */,
 				06A4C8E11554EE4100231351 /* EventTableCell.m in Sources */,
+				06A4C8E515551BCA00231351 /* EventNavigationItem.m in Sources */,
+				06D5E5C51558FE4D00AF9BE2 /* EventAttendeeSliderCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -969,7 +981,7 @@
 /* Begin PBXTargetDependency section */
 		06788E9C14E770AD007C5BE4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 06788E6614E770AD007C5BE4 /* perspect calendar */;
+			target = 06788E6614E770AD007C5BE4 /* On Time */;
 			targetProxy = 06788E9B14E770AD007C5BE4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1062,10 +1074,10 @@
 			buildSettings = {
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "pspct/perspect calendar-Prefix.pch";
-				INFOPLIST_FILE = "pspct/perspect calendar-Info.plist";
+				GCC_PREFIX_HEADER = "pspct/On Time-Prefix.pch";
+				INFOPLIST_FILE = "pspct/On Time-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "perspect calendar";
+				PRODUCT_NAME = "On Time";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1076,10 +1088,10 @@
 			buildSettings = {
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "pspct/perspect calendar-Prefix.pch";
-				INFOPLIST_FILE = "pspct/perspect calendar-Info.plist";
+				GCC_PREFIX_HEADER = "pspct/On Time-Prefix.pch";
+				INFOPLIST_FILE = "pspct/On Time-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "perspect calendar";
+				PRODUCT_NAME = "On Time";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1095,8 +1107,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pspct/perspect calendar-Prefix.pch";
-				INFOPLIST_FILE = "pspctTests/perspect calendarTests-Info.plist";
-				PRODUCT_NAME = "perspect calendarTests";
+				INFOPLIST_FILE = "pspctTests/On TimeTests-Info.plist";
+				PRODUCT_NAME = "On TimeTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -1112,8 +1124,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pspct/perspect calendar-Prefix.pch";
-				INFOPLIST_FILE = "pspctTests/perspect calendarTests-Info.plist";
-				PRODUCT_NAME = "perspect calendarTests";
+				INFOPLIST_FILE = "pspctTests/On TimeTests-Info.plist";
+				PRODUCT_NAME = "On TimeTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -1122,7 +1134,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "perspect calendar" */ = {
+		06788E6114E770AC007C5BE4 /* Build configuration list for PBXProject "On Time" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06788EA614E770AD007C5BE4 /* Debug */,
@@ -1131,7 +1143,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspect calendar" */ = {
+		06788EA814E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "On Time" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06788EA914E770AD007C5BE4 /* Debug */,
@@ -1140,7 +1152,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "perspect calendarTests" */ = {
+		06788EAB14E770AD007C5BE4 /* Build configuration list for PBXNativeTarget "On TimeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06788EAC14E770AD007C5BE4 /* Debug */,

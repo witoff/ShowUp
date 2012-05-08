@@ -20,6 +20,7 @@
 
 @interface EventsVc (hidden)
 
+-(NSString*)getDateString:(NSDate*)date;
 -(void)debugLogAllEvents;
 
 @end
@@ -109,26 +110,38 @@
 - (void)viewDidLoad
 {
     NSLog(@"viewdidload: %@", self);
-    if (self.navigationController.viewControllers.count==1)
+    
+    //DEBUG
+    //NSLog(@"navcontroller: %@, %i", self.navigationController, self.navigationController.viewControllers.count);
+    //NSLog(@"sub: %@, self: %@", [self.navigationController.viewControllers objectAtIndex:0], self);
+    
+    
+    //viewDidLoad is often called twice.  Only the second call matters
+    if (self.navigationController.viewControllers.count>0)
     {
-        NSLog(@"navcontroller: %@, %i", self.navigationController, self.navigationController.viewControllers.count);
         
-        UIView *backgroundView = [[UIView alloc] initWithFrame: self.tableView.frame];
-        backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bgClouds.png"]];
-        [self.navigationController.view insertSubview:backgroundView atIndex:0];
+        //Reload events when app resumed from somewhere else
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(reloadEvents:)
+                                                     name:UIApplicationDidBecomeActiveNotification object:nil];
+
         
+        //Make the backgrounds clear so the sky shows through
         self.view.backgroundColor = [UIColor clearColor];    
-        //[self.tableView.window makeKeyAndVisible];
+        
+        //Action on the title bar
+        UIButton *titleLabel = [UIButton buttonWithType:UIButtonTypeCustom];
+        [titleLabel setTitle:@"Events" forState:UIControlStateNormal];
+        titleLabel.alpha = 1;
+        titleLabel.opaque = YES;
+        titleLabel.frame = CGRectMake(0, 0, 70, 44);
+        titleLabel.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+        [titleLabel addTarget:self action:@selector(scrollToToday:) forControlEvents:UIControlEventTouchUpInside];
+        self.navigationItem.titleView = titleLabel;
+        
+        //Setup Table
+        [self reloadEvents:nil];
     }
-    
-    //Setup Table
-    EventAccessor *ea = [[EventAccessor alloc] init];
-    self.events = [[NSMutableArray alloc] initWithCapacity:9];
-    
-    for (int i=-1; i<8; i++) {
-        [self.events insertObject:[ea getEventsFromOffset:i to:i+1] atIndex:i+1];       
-    }
-    
     // Uncomment the following line to preserve selection between presentations.
     //self.clearsSelectionOnViewWillAppear = NO;
     
@@ -163,9 +176,30 @@
     // e.g. self.myOutlet = nil;
 }
 
+
 - (void)viewWillAppear:(BOOL)animated
 {
+    /*
+     CGRect rect = self.tableView.frame;
+     NSLog(@"y: %f", self.tableView.frame.origin.y);
+     rect.origin.y = rect.origin.y+44;
+     rect.size.height = rect.size.height-100;
+     self.tableView.frame = rect;
+     NSLog(@"y: %f", self.tableView.frame.origin.y);
+     [self.tableView setNeedsDisplayInRect:rect];
+     */
+    
     [super viewWillAppear:animated];
+}
+
+-(IBAction)scrollToToday:(id) sender
+{
+    //Can only scroll if there are rows in today's section
+    if ([self.tableView numberOfRowsInSection:1]>0)
+    {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:1];
+        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -175,13 +209,11 @@
     {
         NSLog(@"%@ did scroll: %i", self, didScroll);
         didScroll=YES;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:1];    
-        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-        
+        [self scrollToToday:nil];
     }
     
     [super viewDidAppear:animated];
-
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -258,31 +290,95 @@
         cell = [[EventTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-    // Configure the cell...
+    // Get Data
     EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     cell.textLabel.text = event.title;
     
+    //Set the background color based on past, current, future
     if ([event.startDate compare:[NSDate date]] == NSOrderedAscending)
     {
+        if ([event.endDate compare:[NSDate date]] == NSOrderedDescending)
+        {
+            //  NOW
+            cell.backgroundColor = [UIColor colorWithRed:.1 green:.4 blue:.7 alpha:1];
+            cell.textLabel.textColor = [UIColor blackColor];
+            
+            UIColor *detailColor = [UIColor colorWithRed:.1 green:.1 blue:.1 alpha:1];
+            cell.detailTextLabel.textColor = detailColor;
+            cell.lblAttendees.textColor = detailColor;
+            
+        }
+        else {
+            // PAST
+            cell.backgroundColor = [UIColor colorWithRed:.8 green:.8 blue:.8 alpha:1];
+            cell.textLabel.textColor = [UIColor colorWithRed:.4 green:.4 blue:.4 alpha:1];
+            cell.detailTextLabel.textColor = [UIColor grayColor];
+            cell.lblAttendees.textColor = [UIColor grayColor];
+        }
         
-        cell.backgroundColor = [UIColor colorWithRed:.8 green:.8 blue:.8 alpha:1];
-        cell.textLabel.textColor = [UIColor colorWithRed:.2 green:.2 blue:.2 alpha:1];
     }
     else {
+        // FUTURE
         cell.backgroundColor = [UIColor whiteColor];
         cell.textLabel.textColor = [UIColor blackColor];
+        cell.detailTextLabel.textColor = [UIColor grayColor];
+        cell.lblAttendees.textColor = [UIColor grayColor];
     }
-                        
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    //formatter.dateFormat = @"HH:mm";
-    formatter.dateFormat = @"ha";
-    NSString *dateString = [NSString stringWithFormat:@"%@ - %@", [formatter stringFromDate: event.startDate], [formatter stringFromDate:event.endDate]];
     
-    cell.detailTextLabel.text = [dateString lowercaseString];
+    //Set duration text
+    if (event.allDay)
+    {
+        cell.detailTextLabel.text = @"All Day";
+        
+    }
+    else {
+        NSString *dateString = [NSString stringWithFormat:@"%@ - %@", [self getDateString: event.startDate], [self getDateString:event.endDate]];
+        cell.detailTextLabel.text = [dateString lowercaseString];
+    }
+    
+    //Set attendee count
     cell.lblAttendees.text = [NSString stringWithFormat:@"Attendees: %i", event.attendees.count];
     
     return cell;
 }
+
+/* Depending on integer values of minutes, returns 12am or 12:01am */
+-(NSString*)getDateString:(NSDate*)date
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:date];
+    NSInteger minute = [components minute];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];    
+    if (minute==0)
+    {
+        formatter.dateFormat = @"ha";
+    }
+    else {
+        formatter.dateFormat =@"h:mma";
+    }
+    NSString* result = [formatter stringFromDate:date];
+    return result;
+}
+
+-(IBAction)reloadEvents:(id)sender
+{
+    EventAccessor *ea = [[EventAccessor alloc] init];
+
+    self.events = nil;
+    self.events = [[NSMutableArray alloc] initWithCapacity:9];
+    
+    for (int i=-1; i<8; i++) {
+        [self.events insertObject:[ea getEventsFromOffset:i to:i+1] atIndex:i+1];       
+    }
+    
+
+    PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
+    [delegate.mixpanel track:@"loadEvents" properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:self.events.count], @"count", nil]];
+    
+    [self.tableView reloadData];
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 60.;
@@ -332,18 +428,13 @@
 {
     EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
-    NSLog(@"\nAttendees:");
+
+    PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
+    [delegate.mixpanel track:@"didSelectEvent" properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:event.attendees.count], @"attendee count", event.title, @"event title", nil]];
     
-    for (EKParticipant *p in event.attendees) {
-        NSLog(@"name: %@", p.name);
-    }
-    
-    EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:[[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
+    EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:event];
     
     [self.navigationController pushViewController:eavc animated:YES];
-    
-    
-    //[self sendSms: [[self.birthdays objectAtIndex:indexPath.row] valueForKey:@"name"] ];
 }
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result

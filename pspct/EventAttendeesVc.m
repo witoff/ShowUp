@@ -14,6 +14,7 @@
 #import "FullNameParser.h" 
 #import "ContactSearcher.h"
 #import "ContactTextParser.h"
+#import "PspctAppDelegate.h"
 
 @interface EventAttendeesVc ()
 
@@ -23,13 +24,14 @@
 
 @implementation EventAttendeesVc
 
-@synthesize event, attendees, attendeeContacts, imgMissing, _title_contacts;
+@synthesize event, attendees, attendeeContacts, imgMissing, _title_contacts, _sliderCell;
 
 -(id)initWithEvent:(EKEvent *)evt
 {
-    self = [super initWithStyle:UITableViewStylePlain];
+    self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
         self.event = evt;
+        self._sliderCell = [[EventAttendeeSliderCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"slider"];
     }
     return self;
 }
@@ -75,6 +77,11 @@
             [attendeeContacts setValue:contact forKey:self.event.organizer.name];
         [self.attendees insertObject:self.event.organizer atIndex:0];
     }
+    
+    
+    //Log
+    PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
+    [delegate.mixpanel track:@"didLoadEventAttendees" properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:self.attendees.count], @"attendee count", [NSNumber numberWithInt:self.attendeeContacts.count], @"matched count", [NSNumber numberWithInt:self._title_contacts.count], @"title attendee count",event.title, @"event title", nil]];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -90,6 +97,10 @@
 {
     [super viewDidLoad];
     
+    //Make bground clear so clouds show through
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.navigationItem.title = self.event.title;
+    
     //Find contacts in the title
     ContactTextParser *parser = [[ContactTextParser alloc] initWithText:self.event.title];
     
@@ -99,7 +110,6 @@
     self.attendees = [[NSMutableArray alloc] initWithCapacity:self.event.attendees.count+1];
     self.attendeeContacts = [[NSMutableDictionary alloc] initWithCapacity:self.event.attendees.count+1];
     
-    
     [self parseContacts];
 }
 
@@ -108,6 +118,21 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    
+    if ([self.tableView numberOfRowsInSection:1]==1)
+    {
+        [super viewWillAppear:NO];
+        NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self tableView:nil didSelectRowAtIndexPath:path];
+        
+    }
+    else {
+        [super viewWillAppear:YES];
+    }
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -119,16 +144,32 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (section==0)
+        return 1;
     return self._title_contacts.count + self.attendees.count;
+}
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (section==0)
+        return @"How Much Time Do You Need?";
+    return @"Tell Who?";
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    if (indexPath.section==0)
+    {
+        return self._sliderCell;
+    }
+    
+    
     static NSString *CellIdentifier = @"AttendeeCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -149,7 +190,7 @@
         participant = [self.attendees objectAtIndex:index];
         contact = [attendeeContacts objectForKey:participant.name];
     }
-
+    
     if (contact)
     {
         if (contact.lastname)
@@ -192,6 +233,8 @@
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
     [self dismissModalViewControllerAnimated:YES];
+    if ([self.tableView numberOfRowsInSection:1]==1)
+        [self.navigationController popViewControllerAnimated:NO];
 }
 
 /*
@@ -254,7 +297,7 @@
         EKParticipant *participant = [self.attendees objectAtIndex:indexPath.row];
         contact = [attendeeContacts objectForKey:participant.name];
     }
-    [self sendSmsWithMessage:@"On my way!" andRecipients:[[NSArray alloc] initWithObjects:[[contact.numbers objectAtIndex:0] valueForKey:@"number"], nil]];
+    [self sendSmsWithMessage:self._sliderCell.message andRecipients:[[NSArray alloc] initWithObjects:[[contact.numbers objectAtIndex:0] valueForKey:@"number"], nil]];
 }
 
 @end

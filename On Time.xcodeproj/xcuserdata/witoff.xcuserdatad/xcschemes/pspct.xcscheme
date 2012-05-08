@@ -15,8 +15,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "06788E6614E770AD007C5BE4"
                BuildableName = "perspect calendar.app"
-               BlueprintName = "perspect calendar"
-               ReferencedContainer = "container:perspect calendar.xcodeproj">
+               BlueprintName = "On Time"
+               ReferencedContainer = "container:On Time.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,8 +33,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "06788E9514E770AD007C5BE4"
                BuildableName = "perspect calendarTests.octest"
-               BlueprintName = "perspect calendarTests"
-               ReferencedContainer = "container:perspect calendar.xcodeproj">
+               BlueprintName = "On TimeTests"
+               ReferencedContainer = "container:On Time.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,8 +43,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06788E6614E770AD007C5BE4"
             BuildableName = "perspect calendar.app"
-            BlueprintName = "perspect calendar"
-            ReferencedContainer = "container:perspect calendar.xcodeproj">
+            BlueprintName = "On Time"
+            ReferencedContainer = "container:On Time.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -62,8 +62,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06788E6614E770AD007C5BE4"
             BuildableName = "perspect calendar.app"
-            BlueprintName = "perspect calendar"
-            ReferencedContainer = "container:perspect calendar.xcodeproj">
+            BlueprintName = "On Time"
+            ReferencedContainer = "container:On Time.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -80,8 +80,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06788E6614E770AD007C5BE4"
             BuildableName = "perspect calendar.app"
-            BlueprintName = "perspect calendar"
-            ReferencedContainer = "container:perspect calendar.xcodeproj">
+            BlueprintName = "On Time"
+            ReferencedContainer = "container:On Time.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
