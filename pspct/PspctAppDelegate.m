@@ -12,10 +12,12 @@
 #import "Constants.h"
 #import <CoreData/CoreData.h>
 #import "ContactProviderAb.h"
+#import <MessageUI/MessageUI.h>
 
 @interface PspctAppDelegate (hidden)
 
 -(void)showCorrectRootView;
+-(IBAction)preloadMFMessage:(id)sender;
 
 @end
 
@@ -30,6 +32,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
+    logDebug(@"debud bedarstarst ");
     //FORMAT STATUS BAR
     [application setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
     
@@ -38,8 +41,11 @@
     self.store = [[EKEventStore alloc] init];
     //facebook = [[Facebook alloc] initWithAppId:@"246082168796906" andDelegate:self];
     
+    //PRELOAD MFMESSAGE
+    [self performSelectorInBackground:@selector(preloadMFMessage:) withObject:nil];
+    
     //PERSISTANT DATA
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    //NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     /*
      if ([defaults objectForKey:@"FBAccessTokenKey"] 
      && [defaults objectForKey:@"FBExpirationDateKey"]) {
@@ -62,6 +68,20 @@
     return YES;
 }
 
+/** The first load of this class can take up to 9 seconds.  Better to do it on app load then right before sending a message **/
+-(IBAction)preloadMFMessage:(id)sender
+{
+    if ([MFMessageComposeViewController canSendText])
+    {
+        logDebug(@"starting MFMessage init");
+        MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
+        logDebug(@"finished MFMessage init");
+        
+        //messageVc.messageComposeDelegate = self;
+        messageVc.body = @"";
+    }
+}
+
 -(void)showCorrectRootView
 {
     //Launch Intro or storyboard
@@ -71,7 +91,7 @@
     {
         //First launch of the application
         
-        NSLog(@"Not displaying the home tab bar controller, must be our first launch.  Rebuilding storyboard.");
+        logInfo(@"Not displaying the home tab bar controller, must be our first launch.  Rebuilding storyboard.");
         //Navigation controller is only visible after on the main page
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
         self.viewController = [storyboard instantiateInitialViewController];
@@ -108,7 +128,7 @@
 
 // Pre 4.2 support
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
-    NSLog(@"handleOpenURL");
+    logDebug(@"handleOpenURL");
     return [facebook handleOpenURL:url]; 
 }
 
@@ -120,7 +140,7 @@
     return [facebook handleOpenURL:url]; 
 }
 - (void)fbDidLogin {
-    NSLog(@"fbDidLogin");
+    logInfo(@"fbDidLogin");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
@@ -134,7 +154,7 @@
 }
 
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error{
-    NSLog(@"failed fb request: %@", error.description);
+    logInfo(@"failed fb request: %@", error.description);
 }
 -(void)request:(FBRequest *)request didLoad:(id)result{
     
@@ -146,21 +166,21 @@
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setObject:name forKey:@"FBName"];
         [self.mixpanel setNameTag:name];
-        NSLog(@"setting mixpanel name to: %@", name);
+        logInfo(@"setting mixpanel name to: %@", name);
         [defaults synchronize];
     }
     
 }
 
 -(void)fbDidExtendToken:(NSString *)accessToken expiresAt:(NSDate *)expiresAt {
-    NSLog(@"token extended");
+    logInfo(@"token extended");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:accessToken forKey:@"FBAccessTokenKey"];
     [defaults setObject:expiresAt forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
 }
 -(void)fbDidLogout{
-    NSLog(@"fbDidLogout");
+    logInfo(@"fbDidLogout");
     
     
 }
@@ -230,7 +250,7 @@
              
              abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
              */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            logDebug(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         } 
     }
@@ -313,7 +333,7 @@
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        logError(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }    
     

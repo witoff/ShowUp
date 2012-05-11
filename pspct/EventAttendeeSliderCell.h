@@ -12,15 +12,15 @@
 {
     
     NSString* message;
-    @private
+@private
     UISlider *_slider;
     UILabel *_durationText;
     int lastValue;
 }
 
 @property (nonatomic, retain) NSString *message;
-@property (nonatomic, retain) UISlider *slider;
-@property (nonatomic, retain) UILabel *durationText;
+@property (nonatomic, retain) UISlider *_slider;
+@property (nonatomic, retain) UILabel *_durationText;
 
 -(IBAction)sliderChanged:(id)sender;
 

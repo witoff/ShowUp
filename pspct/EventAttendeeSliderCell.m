@@ -10,28 +10,28 @@
 
 @implementation EventAttendeeSliderCell
 
-@synthesize slider, durationText, message;
+@synthesize _slider, _durationText, message;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     lastValue = -1;
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.slider = [[UISlider alloc]initWithFrame:CGRectMake(20, 2, 200, 40)];
+        self._slider = [[UISlider alloc]initWithFrame:CGRectMake(20, 2, 200, 40)];
         
-        self.slider.maximumValue=1;
-        self.slider.minimumValue = 0;
-        self.slider.minimumTrackTintColor = [UIColor redColor];
+        self._slider.maximumValue=1;
+        self._slider.minimumValue = 0;
+        self._slider.minimumTrackTintColor = [UIColor redColor];
         
-        self.slider.continuous = YES;
-        [self.slider addTarget:self
+        self._slider.continuous = YES;
+        [self._slider addTarget:self
                         action:@selector(sliderChanged:) 
               forControlEvents:UIControlEventValueChanged];
-        [self addSubview:slider];
+        [self addSubview:_slider];
         
-        self.durationText = [[UILabel alloc] initWithFrame:CGRectMake(240, 2, 80, 40)];
-        self.durationText.backgroundColor = [UIColor clearColor];
-        [self addSubview:durationText];
+        self._durationText = [[UILabel alloc] initWithFrame:CGRectMake(240, 2, 80, 40)];
+        self._durationText.backgroundColor = [UIColor clearColor];
+        [self addSubview:self._durationText];
 
         //initialize textt
         [self sliderChanged:nil];
@@ -44,7 +44,7 @@
 {
     
     NSString *lblText;
-    int value = floor(slider.value*4);
+    int value = floor(self._slider.value*4);
     if (value==lastValue)
         return;
     lastValue = value;
@@ -73,8 +73,8 @@
             break;
     }
     NSLog(@"updating text to: %@", lblText);
-    self.durationText.text = lblText;
-    [self.durationText setNeedsDisplay];
+    self._durationText.text = lblText;
+    [self._durationText setNeedsDisplay];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

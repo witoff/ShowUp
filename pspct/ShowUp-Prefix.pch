@@ -1,0 +1,58 @@
+//
+// Prefix header for all source files of the 'pspct' target in the 'pspct' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <CoreData/CoreData.h>
+    #import "NSString+StringExtras.h"
+#endif
+
+
+/** SLOWLY PRINT EVERYTHING **/
+//#define LOG_VERBOSE 0
+
+#ifdef LOG_VERBOSE
+#define logVerbose( s, ... ) NSLog( @"<%p %@:%d (%@)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__,  NSStringFromSelector(_cmd), [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+#else
+#define logVerbose( ... ) NSLog( __VA_ARGS__ )
+#endif
+
+
+
+/** LOG LEVELS **/
+//#define LOG_LEVEL_ERROR
+//#define LOG_LEVEL_WARN
+//#define LOG_LEVEL_INFO
+//#define LOG_LEVEL_DEBUG
+
+#ifdef LOG_LEVEL_ERROR
+#define logError( ... ) logVerbose( __VA_ARGS__ )
+#else
+#define logError( ... ) 
+#endif
+
+#ifdef LOG_LEVEL_WARN
+#define logWarn( ... ) logVerbose( __VA_ARGS__ )
+#else
+#define logWarn( ... ) 
+#endif
+
+#ifdef LOG_LEVEL_INFO
+#define logInfo( ... ) logVerbose( __VA_ARGS__ )
+#else
+#define logInfo( ... ) 
+#endif
+
+#ifdef LOG_LEVEL_DEBUG
+#define logDebug( ... ) logVerbose( __VA_ARGS__ )
+#else
+#define logDebug( ... )
+#endif

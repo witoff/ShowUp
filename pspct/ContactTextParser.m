@@ -55,9 +55,6 @@
     NSArray* components = [self.raw_text componentsSeparatedByString:@" "];
     NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"\\'s" options:0 error:nil];
     
-    if ([self.raw_text containsString:@"Dinner with Armin"])
-        NSLog(@"Dinner with Armin");
-    
     for (NSString* str in components) {
         
         //remove " 's and strip"

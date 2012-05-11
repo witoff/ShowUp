@@ -50,7 +50,7 @@
         [all addObject:[NSDictionary dictionaryWithObjectsAndKeys:c.firstname, @"f", c.lastname, @"l", c.key, @"key", [c getLinkedContactKeys], @"linked_ids", nil]];
     }
     
-    NSLog(@"%@", [all JSONRepresentation]);
+    logDebug(@"%@", [all JSONRepresentation]);
 }
 
 #pragma mark - init
@@ -104,7 +104,7 @@
     
     if ( people==nil )
     {
-        NSLog(@"No address book entries");
+        logInfo(@"No address book entries");
         CFRelease(addressBook);
         return;
     }
@@ -126,7 +126,7 @@
             
             // Find the ones you want here
             //
-            NSLog(@"-----LAST NAME ENTRY -> %@ : %@", phoneNumberLocalizedLabel, phoneNumberValue );
+            logDebug(@"-----LAST NAME ENTRY -> %@ : %@", phoneNumberLocalizedLabel, phoneNumberValue );
             
             CFRelease(phoneNumberLocalizedLabel);
             CFRelease(phoneNumberLabel);
@@ -148,7 +148,7 @@
             
             // Find the ones you want here
             //
-            NSLog(@"-----PHONE ENTRY -> %@ : %@", phoneNumberLocalizedLabel, phoneNumberValue );
+            logDebug(@"-----PHONE ENTRY -> %@ : %@", phoneNumberLocalizedLabel, phoneNumberValue );
             
             CFRelease(phoneNumberLocalizedLabel);
             CFRelease(phoneNumberLabel);
@@ -174,14 +174,14 @@
 
 - (AbContact*)simpleSearch
 {
-    NSLog(@"simpleSearch");
+    logDebug(@"simpleSearch");
     NSString* fbFirstname = [self._firstname lowercaseString];
     NSString* fbLastname = [self._lastname lowercaseString];
     
     fbFirstname = [fbFirstname lowercaseString];
     fbLastname = [fbLastname lowercaseString];
     
-    NSLog(@"searching for last name: '%@'", fbLastname);
+    logDebug(@"searching for last name: '%@'", fbLastname);
     
     for (AbContact *abContact in [self getAllContacts]) {
         NSString* abFirstname = [abContact.firstname lowercaseString];
@@ -192,14 +192,14 @@
             
             if ([abLastname isEqualToString:fbLastname])
             {
-                NSLog(@"last names are equal");
+                logDebug(@"last names are equal");
                 if (!fbFirstname)
                     return abContact;
                 if ([self doBidirectionalSubstringMatch:fbFirstname andTwo:abFirstname])
                     return abContact;
                 if (abLastname.length==0 && [self doBidirectionalSubstringMatch:fbFirstname andTwo:abFirstname])
                     return abContact;
-                NSLog(@"no last name match");
+                logDebug(@"no last name match");
             }
             else if (abLastname.length==0 && [self doBidirectionalSubstringMatch:abFirstname andTwo:fbLastname])
                 return abContact;
@@ -214,7 +214,7 @@
         //
         
     }
-    NSLog(@"no match for:\nfirstname: %@\nlastname: %@", fbFirstname, fbLastname);
+    logDebug(@"no match for:\nfirstname: %@\nlastname: %@", fbFirstname, fbLastname);
     return nil;
 }
 
@@ -269,7 +269,7 @@
     NSString *fbFirstname = self._firstname;
     NSString *fbLastname = self._lastname;
     
-    NSLog(@"getMatchingAbContacts");
+    logDebug(@"getMatchingAbContacts");
     
     if (fbFirstname.length == 0)
         fbFirstname = nil;
@@ -281,7 +281,7 @@
     if (fbLastname)
         fbLastname = [fbLastname lowercaseString];
     
-    //NSLog(@"searching for last name: '%@'", fbLastname);
+    //logDebug(@"searching for last name: '%@'", fbLastname);
     
     if (fbLastname)
     {
@@ -368,7 +368,7 @@
         NSArray *matchesFirstname = [self matchesFirstName:fbFirstname withContacts:[self getAllContacts] doSubstrings:NO];
         if (matchesFirstname.count>0)
         {
-            NSLog(@"exact firstname substring match found");
+            logDebug(@"exact firstname substring match found");
             AbContact* contact = [matchesFirstname objectAtIndex:0];
             contact.matchConfidence = [NSNumber numberWithDouble: .75 /exp(matchesFirstname.count-1)];
             return contact;
@@ -379,7 +379,7 @@
         matchesFirstname = [self matchesFirstName:fbFirstname withContacts:[self getAllContacts] doSubstrings:YES];
         if (matchesFirstname.count>0)
         {
-            NSLog(@"non-exact firstname substring match found");
+            logDebug(@"non-exact firstname substring match found");
             AbContact* contact = [matchesFirstname objectAtIndex:0];
             contact.matchConfidence = [NSNumber numberWithDouble: .65 /exp(matchesFirstname.count-1)];
             return contact;
@@ -390,7 +390,7 @@
     //exact match
     NSArray *matchesFirstname = [self matchesFirstName:fbFirstname withContacts:[self getAllContacts] doSubstrings:NO];
     
-    NSLog(@"fbfirst: %@, count: %i", fbFirstname, matchesFirstname.count);
+    logDebug(@"fbfirst: %@, count: %i", fbFirstname, matchesFirstname.count);
     // Matches "Ellen Witoff" to "Ellen" if there is only one Abk named Ellen
     
     if ([self areAllContactsLinked:matchesFirstname])
@@ -398,7 +398,7 @@
     
     if (matchesFirstname.count==1)
     {
-        NSLog(@"exact firstname substring match found");
+        logDebug(@"exact firstname substring match found");
         AbContact* contact = [matchesFirstname objectAtIndex:0];
         contact.matchConfidence = [NSNumber numberWithDouble: .80 /exp(matchesFirstname.count-1)];
         if (contact.lastname && fbLastname)
@@ -419,10 +419,10 @@
             if ([self areAllContactsLinked:matchesFirstname])
                 matchesFirstname = [NSArray arrayWithObject:[matchesFirstname objectAtIndex:0]];
             
-            NSLog(@"count: %i", matchesFirstname.count);
+            logDebug(@"count: %i", matchesFirstname.count);
             if (matchesFirstname.count==1)
             {
-                NSLog(@"non-exact firstname substring match found");
+                logDebug(@"non-exact firstname substring match found");
                 AbContact* contact = [matchesFirstname objectAtIndex:0];
                 contact.matchConfidence = [NSNumber numberWithDouble: .75 /exp(matchesFirstname.count-1)];
                 if (contact.firstname.length>3)
@@ -439,7 +439,7 @@
         }
     }
     
-    NSLog(@"no match for:\nfirstname: %@\nlastname: %@", fbFirstname, fbLastname);
+    logDebug(@"no match for:\nfirstname: %@\nlastname: %@", fbFirstname, fbLastname);
     return nil;
 }
 

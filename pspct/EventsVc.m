@@ -17,11 +17,17 @@
 #import "EventAttendeesVc.h"
 #import "JSON.h"
 #import "EventTableCell.h"
+#import "DejalActivityView.h"
+
+
+#define HIDE_NAV_BAR NO
 
 @interface EventsVc (hidden)
 
 -(NSString*)getDateString:(NSDate*)date;
 -(void)debugLogAllEvents;
+-(IBAction)showAttendees:(EKEvent*)event;
+-(IBAction)showParsingIndicator:(id)sender;
 
 @end
 
@@ -55,7 +61,7 @@
 #pragma mark - facebook
 -(void)request:(FBRequest *)request didLoad:(id)result
 {
-    NSLog(@"event response received, merging data");
+    logDebug(@"event response received, merging data");
     
     NSArray *all_friends = [result objectForKey:@"data"];
     NSMutableArray *bday_friends = [[NSMutableArray alloc] initWithCapacity:all_friends.count];
@@ -98,7 +104,7 @@
 }
 -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
 {
-    NSLog(@"EventVc :: Error in FB Request: %@", error.description);
+    logError(@"EventVc :: Error in FB Request: %@", error.description);
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error in Facebook request" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
     [alert show];
 }
@@ -109,11 +115,13 @@
 
 - (void)viewDidLoad
 {
-    NSLog(@"viewdidload: %@", self);
+    logDebug(@"viewdidload: %@", self);
+    
+    [self.navigationController setNavigationBarHidden:HIDE_NAV_BAR animated:NO];
     
     //DEBUG
-    //NSLog(@"navcontroller: %@, %i", self.navigationController, self.navigationController.viewControllers.count);
-    //NSLog(@"sub: %@, self: %@", [self.navigationController.viewControllers objectAtIndex:0], self);
+    //logDebug(@"navcontroller: %@, %i", self.navigationController, self.navigationController.viewControllers.count);
+    //logDebug(@"sub: %@, self: %@", [self.navigationController.viewControllers objectAtIndex:0], self);
     
     
     //viewDidLoad is often called twice.  Only the second call matters
@@ -166,7 +174,7 @@
         [jevents addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:title, @"title", organizer, @"organizer", attendees, @"attendees", nil]];
     }
     
-    NSLog(@"%@", [jevents JSONRepresentation]);
+    logDebug(@"%@", [jevents JSONRepresentation]);
 }
 
 - (void)viewDidUnload
@@ -179,15 +187,9 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    /*
-     CGRect rect = self.tableView.frame;
-     NSLog(@"y: %f", self.tableView.frame.origin.y);
-     rect.origin.y = rect.origin.y+44;
-     rect.size.height = rect.size.height-100;
-     self.tableView.frame = rect;
-     NSLog(@"y: %f", self.tableView.frame.origin.y);
-     [self.tableView setNeedsDisplayInRect:rect];
-     */
+    self.tableView.scrollEnabled = YES;
+    
+    [self.navigationController setNavigationBarHidden:HIDE_NAV_BAR animated:YES];
     
     [super viewWillAppear:animated];
 }
@@ -207,7 +209,7 @@
     //Scroll to today on the first view
     if (!didScroll)
     {
-        NSLog(@"%@ did scroll: %i", self, didScroll);
+        logDebug(@"%@ did scroll: %i", self, didScroll);
         didScroll=YES;
         [self scrollToToday:nil];
     }
@@ -426,16 +428,34 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    
+    //Show activity indicator that's next removed in the eavc
 
+    //Needs to be callend in the background or else the following synchronous calls will block the UI from updating
+    [self performSelectorInBackground:@selector(showParsingIndicator:) withObject:nil];
+    
+    EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    [self showAttendees:event];
+    
+    return;
+}
+
+-(IBAction)showParsingIndicator:(id)sender
+{
+    [DejalBezelActivityView activityViewForView:self.tableView withLabel:@"Parsing..." width:100];
+    self.tableView.scrollEnabled = NO;
+}
+
+-(IBAction)showAttendees:(EKEvent*)event
+{
     PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
     [delegate.mixpanel track:@"didSelectEvent" properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:event.attendees.count], @"attendee count", event.title, @"event title", nil]];
     
-    EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:event];
     
+    EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:event];
     [self.navigationController pushViewController:eavc animated:YES];
+
 }
+
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {

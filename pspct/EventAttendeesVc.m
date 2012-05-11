@@ -15,6 +15,7 @@
 #import "ContactSearcher.h"
 #import "ContactTextParser.h"
 #import "PspctAppDelegate.h"
+#import "DejalActivityView.h"
 
 @interface EventAttendeesVc ()
 
@@ -46,11 +47,11 @@
     
     if (!contact)
     {
-        NSLog(@"No contact found!");
+        logWarn(@"No contact found!");
         return nil;
     }
     
-    NSLog(@"found: %@ - %@", contact.firstname, contact.lastname);
+    logDebug(@"found: %@ - %@", contact.firstname, contact.lastname);
     return contact;
 }
 
@@ -105,12 +106,13 @@
     ContactTextParser *parser = [[ContactTextParser alloc] initWithText:self.event.title];
     
     self._title_contacts = [parser getContacts];
-    NSLog(@"contacts found in title: %i", self._title_contacts.count);
+    logInfo(@"contacts found in title: %i", self._title_contacts.count);
     
     self.attendees = [[NSMutableArray alloc] initWithCapacity:self.event.attendees.count+1];
     self.attendeeContacts = [[NSMutableDictionary alloc] initWithCapacity:self.event.attendees.count+1];
     
     [self parseContacts];
+    [DejalBezelActivityView removeViewAnimated:NO];
 }
 
 - (void)viewDidUnload
@@ -125,12 +127,15 @@
     if ([self.tableView numberOfRowsInSection:1]==1)
     {
         [super viewWillAppear:NO];
-        NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
+        
+        //Tap the first and only entry
+        NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:1];
         [self tableView:nil didSelectRowAtIndexPath:path];
         
     }
     else {
         [super viewWillAppear:YES];
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
     
 }
@@ -186,7 +191,7 @@
     }
     else {
         int index = indexPath.row-self._title_contacts.count;
-        NSLog(@"index: %i", index);
+        logDebug(@"index: %i", index);
         participant = [self.attendees objectAtIndex:index];
         contact = [attendeeContacts objectForKey:participant.name];
     }
@@ -215,7 +220,9 @@
 
 - (void)sendSmsWithMessage:(NSString*)message andRecipients:(NSArray*)recipients
 {
+    logDebug(@"pre alloc init");
     MFMessageComposeViewController *messageVc = [[MFMessageComposeViewController alloc] init];
+    logDebug(@"post alloc init");
     
     messageVc.messageComposeDelegate = self;
     
@@ -226,15 +233,23 @@
     if (![MFMessageComposeViewController canSendText])
         return; 
     
+    logInfo(@"pre-present");
     [self presentViewController:messageVc animated:YES completion:nil];
-    NSLog(@"shown");
+    logInfo(@"shown");
 }
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
+    NSLog(@"dismissing");
     [self dismissModalViewControllerAnimated:YES];
+    NSLog(@"dismissing 2");
     if ([self.tableView numberOfRowsInSection:1]==1)
+    {
+        NSLog(@"popping");
         [self.navigationController popViewControllerAnimated:NO];
+        NSLog(@"popping 2");
+    }
+    NSLog(@"done");
 }
 
 /*

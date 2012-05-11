@@ -147,7 +147,7 @@
 
 -(NSString*)getBestNumber
 {
-    NSLog(@"getBestNumber for: %@, length: %i", self.firstname, self.numbers.count);
+    logDebug(@"getBestNumber for: %@, length: %i", self.firstname, self.numbers.count);
     
     if (self.numbers == nil)
         return nil;
@@ -185,7 +185,7 @@
         }
         
     }
-    NSLog(@"best number: %@ for label: %@", bestNumber, bestLabel);
+    logDebug(@"best number: %@ for label: %@", bestNumber, bestLabel);
     
     return bestNumber;
     

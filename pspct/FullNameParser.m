@@ -54,27 +54,27 @@
     
     
     NSMutableString *name = [[NSMutableString alloc] initWithString:self.raw_name];
-    NSLog(@"name: %@", name);
+    logDebug(@"name: %@", name);
     
     //Remove any notes referenced in the attendee name like "Rob (mystical unicorn)"
     NSError *error = nil;
     NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"\\(.*\\)" options:0 error:&error];
     
     [regex replaceMatchesInString:name options:0 range:NSMakeRange(0, name.length) withTemplate:@""];
-    NSLog(@"name: %@", name);
+    logDebug(@"name: %@", name);
     
     //Remove any hyphenated prefix on the name like "FRIEND-Bob Sagget"
     error = nil;
     regex = [[NSRegularExpression alloc] initWithPattern:@"[A-Z][A-Z]*\\-" options:0 error:&error];
     
     [regex replaceMatchesInString:name options:0 range:NSMakeRange(0, name.length) withTemplate:@""];
-    NSLog(@"name: %@", name);    
+    logDebug(@"name: %@", name);    
     
     //Split into first and lastname
     NSArray* components = [name componentsSeparatedByString:@","];
     if (components.count!=2)
     {
-        NSLog(@"components !=1, skipping");
+        logWarn(@"components !=1, skipping");
         return;
     }
     
@@ -87,8 +87,8 @@
     regex = [[NSRegularExpression alloc] initWithPattern:@"\\s.*" options:0 error:&error];
     self._firstname = [regex stringByReplacingMatchesInString:self._firstname options:0 range:NSMakeRange(0, self._firstname.length) withTemplate:@""];
     
-    NSLog(@"firstname: %@", self._firstname);
-    NSLog(@"lastname: %@", self._lastname);
+    logDebug(@"firstname: %@", self._firstname);
+    logDebug(@"lastname: %@", self._lastname);
 }
 
 
