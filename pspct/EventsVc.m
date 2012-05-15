@@ -299,7 +299,7 @@
     //Set the background color based on past, current, future
     if ([event.startDate compare:[NSDate date]] == NSOrderedAscending)
     {
-        if ([event.endDate compare:[NSDate date]] == NSOrderedDescending)
+        if ([event.endDate compare:[NSDate date]] == NSOrderedDescending && indexPath.section==1) 
         {
             //  NOW
             cell.backgroundColor = [UIColor colorWithRed:.1 green:.4 blue:.7 alpha:1];
@@ -441,7 +441,7 @@
 
 -(IBAction)showParsingIndicator:(id)sender
 {
-    [DejalBezelActivityView activityViewForView:self.tableView withLabel:@"Parsing..." width:100];
+    [DejalBezelActivityView activityViewForView:self.tableView withLabel:@"Analyzing..." width:100];
     self.tableView.scrollEnabled = NO;
 }
 

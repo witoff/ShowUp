@@ -124,7 +124,8 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     
-    if ([self.tableView numberOfRowsInSection:1]==1)
+    //TODO: HANDLE CASE WHERE ONLY ONE ATTENDEE
+    if (NO && [self.tableView numberOfRowsInSection:1]==1)
     {
         [super viewWillAppear:NO];
         
@@ -243,7 +244,9 @@
     NSLog(@"dismissing");
     [self dismissModalViewControllerAnimated:YES];
     NSLog(@"dismissing 2");
-    if ([self.tableView numberOfRowsInSection:1]==1)
+    
+    //TODO: HANDLE CASE WHERE ONLY ONE ATTENDEE
+    if (NO && [self.tableView numberOfRowsInSection:1]==1)
     {
         NSLog(@"popping");
         [self.navigationController popViewControllerAnimated:NO];

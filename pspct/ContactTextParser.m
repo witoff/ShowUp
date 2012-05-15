@@ -52,14 +52,18 @@
     self._contacts = [[NSMutableArray alloc] initWithCapacity:3];
     
     //Try to match every word in the title
-    NSArray* components = [self.raw_text componentsSeparatedByString:@" "];
-    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"\\'s" options:0 error:nil];
+    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"[^a-zA-Z0-9]" options:0 error:nil];
+    //remove anything but characters
+    NSString *formatted = [regex stringByReplacingMatchesInString:self.raw_text options:0 range:NSMakeRange(0, self.raw_text.length) withTemplate:@" "];
+    formatted = formatted.lowercaseString;
+    
+    NSArray* components = [formatted componentsSeparatedByString:@" "];
     
     for (NSString* str in components) {
-        
-        //remove " 's and strip"
-        NSString *trimmed = [regex stringByReplacingMatchesInString:str options:0 range:NSMakeRange(0, str.length) withTemplate:@""];
-        trimmed = [trimmed.lowercaseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];;
+        if (str.length==0)
+            continue;
+
+        NSString* trimmed = [str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];;
         
         NSArray* matches = [_contact_index objectForKey:trimmed];
         
