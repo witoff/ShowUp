@@ -25,7 +25,7 @@
 
 @implementation EventAttendeesVc
 
-@synthesize event, attendees, attendeeContacts, imgMissing, _title_contacts, _sliderCell;
+@synthesize event, invited, _attendeeContacts, imgMissing, _titleContacts, _sliderCell;
 
 -(id)initWithEvent:(EKEvent *)evt
 {
@@ -63,26 +63,33 @@
         AbContact *contact = [self findContact:participant];
         if (contact)
         {
-            [attendeeContacts setValue:contact forKey:participant.name];
-            [self.attendees insertObject:participant atIndex:0];
+            [self._attendeeContacts setValue:contact forKey:participant.name];
+            [self.invited insertObject:participant atIndex:0];
         }
         else
-            [self.attendees insertObject:participant atIndex:self.attendees.count];
+            [self.invited insertObject:participant atIndex:self.invited.count];
     }
     
-    //Add the organizer
-    if (self.event.organizer)
+    //Add the organizer 
+    if (self.event.organizer && self.event.attendees.count>0)
     {
         AbContact *contact = [self findContact:self.event.organizer];
         if (contact)
-            [attendeeContacts setValue:contact forKey:self.event.organizer.name];
-        [self.attendees insertObject:self.event.organizer atIndex:0];
+            [self._attendeeContacts setValue:contact forKey:self.event.organizer.name];
+        [self.invited insertObject:self.event.organizer atIndex:0];
     }
     
     
     //Log
     PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
-    [delegate.mixpanel track:@"didLoadEventAttendees" properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:self.attendees.count], @"attendee count", [NSNumber numberWithInt:self.attendeeContacts.count], @"matched count", [NSNumber numberWithInt:self._title_contacts.count], @"title attendee count",event.title, @"event title", nil]];
+    
+    NSDictionary *trackVals = [NSDictionary dictionaryWithObjectsAndKeys:
+                               [NSNumber numberWithInt:self.invited.count], @"invited count", 
+                               [NSNumber numberWithInt:self._attendeeContacts.count], @"matched count", 
+                               [NSNumber numberWithInt:self._titleContacts.count], @"title attendee count",
+                               event.title, @"event title", nil];
+    
+    [delegate.mixpanel track:@"didLoadEventAttendees" properties:trackVals];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -102,14 +109,14 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.navigationItem.title = self.event.title;
     
-    //Find contacts in the title
+    //Contacts from Title
     ContactTextParser *parser = [[ContactTextParser alloc] initWithText:self.event.title];
+    self._titleContacts = [parser getContacts];
+    logInfo(@"contacts found in title: %i", self._titleContacts.count);
     
-    self._title_contacts = [parser getContacts];
-    logInfo(@"contacts found in title: %i", self._title_contacts.count);
-    
-    self.attendees = [[NSMutableArray alloc] initWithCapacity:self.event.attendees.count+1];
-    self.attendeeContacts = [[NSMutableDictionary alloc] initWithCapacity:self.event.attendees.count+1];
+    //Contacts from Attendees
+    self.invited = [[NSMutableArray alloc] initWithCapacity:self.event.attendees.count+1];
+    self._attendeeContacts = [[NSMutableDictionary alloc] initWithCapacity:self.event.attendees.count+1];
     
     [self parseContacts];
     [DejalBezelActivityView removeViewAnimated:NO];
@@ -157,13 +164,17 @@
 {
     if (section==0)
         return 1;
-    return self._title_contacts.count + self.attendees.count;
+    return self._titleContacts.count + self.invited.count;
 }
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (section==0)
         return @"How Much Time Do You Need?";
-    return @"Tell Who?";
+    
+    if ([self tableView:nil numberOfRowsInSection:1]==0)
+        return @"Sorry, no matches were found!";
+    else
+        return @"Tell Who?";
     
 }
 
@@ -187,14 +198,14 @@
     EKParticipant *participant = nil;
     AbContact *contact = nil;
     
-    if (indexPath.row<self._title_contacts.count){
-        contact = [self._title_contacts objectAtIndex:indexPath.row ];
+    if (indexPath.row<self._titleContacts.count){
+        contact = [self._titleContacts objectAtIndex:indexPath.row ];
     }
     else {
-        int index = indexPath.row-self._title_contacts.count;
+        int index = indexPath.row-self._titleContacts.count;
         logDebug(@"index: %i", index);
-        participant = [self.attendees objectAtIndex:index];
-        contact = [attendeeContacts objectForKey:participant.name];
+        participant = [self.invited objectAtIndex:index];
+        contact = [self._attendeeContacts objectForKey:participant.name];
     }
     
     if (contact)
@@ -241,18 +252,18 @@
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    NSLog(@"dismissing");
+    logDebug(@"dismissing");
     [self dismissModalViewControllerAnimated:YES];
-    NSLog(@"dismissing 2");
+    logDebug(@"dismissing 2");
     
     //TODO: HANDLE CASE WHERE ONLY ONE ATTENDEE
     if (NO && [self.tableView numberOfRowsInSection:1]==1)
     {
-        NSLog(@"popping");
+        logDebug(@"popping");
         [self.navigationController popViewControllerAnimated:NO];
-        NSLog(@"popping 2");
+        logDebug(@"popping 2");
     }
-    NSLog(@"done");
+    logDebug(@"done");
 }
 
 /*
@@ -306,14 +317,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     AbContact *contact = nil;
-    if (indexPath.row<self._title_contacts.count)
+    if (indexPath.row<self._titleContacts.count)
     {
-        contact = [self._title_contacts objectAtIndex:indexPath.row];
+        contact = [self._titleContacts objectAtIndex:indexPath.row];
     }
     else
     {
-        EKParticipant *participant = [self.attendees objectAtIndex:indexPath.row];
-        contact = [attendeeContacts objectForKey:participant.name];
+        EKParticipant *participant = [self.invited objectAtIndex:indexPath.row];
+        contact = [self._attendeeContacts objectForKey:participant.name];
     }
     [self sendSmsWithMessage:self._sliderCell.message andRecipients:[[NSArray alloc] initWithObjects:[[contact.numbers objectAtIndex:0] valueForKey:@"number"], nil]];
 }

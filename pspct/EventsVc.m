@@ -132,7 +132,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(reloadEvents:)
                                                      name:UIApplicationDidBecomeActiveNotification object:nil];
-
+        
         
         //Make the backgrounds clear so the sky shows through
         self.view.backgroundColor = [UIColor clearColor];    
@@ -196,11 +196,13 @@
 
 -(IBAction)scrollToToday:(id) sender
 {
+    //Only animate if this is being called by a button
+    BOOL animated = sender ? YES : NO;
     //Can only scroll if there are rows in today's section
     if ([self.tableView numberOfRowsInSection:1]>0)
     {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:1];
-        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:animated];
     }
 }
 
@@ -285,7 +287,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"EventCell";
     
     EventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
@@ -296,7 +298,7 @@
     EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     cell.textLabel.text = event.title;
     
-    //Set the background color based on past, current, future
+    // Background color based on past, current, future
     if ([event.startDate compare:[NSDate date]] == NSOrderedAscending)
     {
         if ([event.endDate compare:[NSDate date]] == NSOrderedDescending && indexPath.section==1) 
@@ -327,7 +329,7 @@
         cell.lblAttendees.textColor = [UIColor grayColor];
     }
     
-    //Set duration text
+    //Duration text
     if (event.allDay)
     {
         cell.detailTextLabel.text = @"All Day";
@@ -338,8 +340,8 @@
         cell.detailTextLabel.text = [dateString lowercaseString];
     }
     
-    //Set attendee count
-    cell.lblAttendees.text = [NSString stringWithFormat:@"Attendees: %i", event.attendees.count];
+    //Attendee count
+    cell.lblAttendees.text = [NSString stringWithFormat:@"Invited: %i", event.attendees.count];
     
     return cell;
 }
@@ -366,7 +368,7 @@
 -(IBAction)reloadEvents:(id)sender
 {
     EventAccessor *ea = [[EventAccessor alloc] init];
-
+    
     self.events = nil;
     self.events = [[NSMutableArray alloc] initWithCapacity:9];
     
@@ -374,7 +376,7 @@
         [self.events insertObject:[ea getEventsFromOffset:i to:i+1] atIndex:i+1];       
     }
     
-
+    
     PspctAppDelegate *delegate = (PspctAppDelegate*)[[UIApplication sharedApplication] delegate];
     [delegate.mixpanel track:@"loadEvents" properties:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:self.events.count], @"count", nil]];
     
@@ -429,7 +431,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //Show activity indicator that's next removed in the eavc
-
+    
     //Needs to be callend in the background or else the following synchronous calls will block the UI from updating
     [self performSelectorInBackground:@selector(showParsingIndicator:) withObject:nil];
     
@@ -453,7 +455,7 @@
     
     EventAttendeesVc* eavc = [[EventAttendeesVc alloc] initWithEvent:event];
     [self.navigationController pushViewController:eavc animated:YES];
-
+    
 }
 
 

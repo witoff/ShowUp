@@ -453,7 +453,7 @@
 		06788E7214E770AD007C5BE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				06A4C8D41554C47700231351 /* imapes-pspct-backgrounds */,
+				06A4C8D41554C47700231351 /* images-pspct-backgrounds */,
 				06D30E5214FAF84B00ED3254 /* images-pspct */,
 				06577D4014F0AC0400EA6180 /* Images-iOS */,
 				06788E7314E770AD007C5BE4 /* ShowUp-Info.plist */,
@@ -577,13 +577,13 @@
 			name = Providers;
 			sourceTree = "<group>";
 		};
-		06A4C8D41554C47700231351 /* imapes-pspct-backgrounds */ = {
+		06A4C8D41554C47700231351 /* images-pspct-backgrounds */ = {
 			isa = PBXGroup;
 			children = (
 				06A4C8D61554C8FE00231351 /* bgClouds.png */,
 				06A4C8D91554C8FE00231351 /* bgClouds@2.png */,
 			);
-			name = "imapes-pspct-backgrounds";
+			name = "images-pspct-backgrounds";
 			sourceTree = "<group>";
 		};
 		06A7E6D715042C6600CD5957 /* Intro */ = {
