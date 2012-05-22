@@ -72,7 +72,7 @@
         default:
             break;
     }
-    NSLog(@"updating text to: %@", lblText);
+    logDebug(@"updating text to: %@", lblText);
     self._durationText.text = lblText;
     [self._durationText setNeedsDisplay];
 }

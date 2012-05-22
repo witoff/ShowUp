@@ -10,7 +10,7 @@
 #import "Facebook.h"
 #import <MessageUI/MessageUI.h>
 
-@interface EventsVc : UITableViewController<FBRequestDelegate, MFMessageComposeViewControllerDelegate>
+@interface EventsVc : UITableViewController<MFMessageComposeViewControllerDelegate>
 {
     @private
     bool didScroll;

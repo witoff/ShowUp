@@ -10,8 +10,7 @@
 #import "ModelAbkContactMatch.h"
 #import "ModelGroupUserEntry.h"
 #import "PspctAppDelegate.h"
-#import "ContactProviderAb.h"
-#import "ContactSearcher.h"
+#import "AbScanner.h"
 
 @implementation ModelFbUser
 
@@ -126,8 +125,8 @@
 
 -(void)addAbkContactMatch
 {    
-    ContactSearcher *searcher = [[ContactSearcher alloc] initWithContactProvider:[ContactProvider defaultProvider] andFbUser:self];
-    AbContact *match = [searcher getMatchingAbContact];
+    AbScanner *scanner = [[AbScanner alloc] initWithFbUser:self];
+    AbContact *match = [scanner getMatchingAbContact];
     
     if (match)
     {

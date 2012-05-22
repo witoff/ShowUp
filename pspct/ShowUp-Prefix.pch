@@ -9,10 +9,10 @@
 #endif
 
 #ifdef __OBJC__
-    #import <UIKit/UIKit.h>
-    #import <Foundation/Foundation.h>
-    #import <CoreData/CoreData.h>
-    #import "NSString+StringExtras.h"
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+#import "NSString+StringExtras.h"
 #endif
 
 
@@ -56,3 +56,29 @@
 #else
 #define logDebug( ... )
 #endif
+
+
+/** PROFILING **/
+//#define PROFILING
+
+#ifdef PROFILING
+
+#import <mach/mach_time.h>
+void logMachTime_withIdentifier_(uint64_t machTime, NSString *identifier) {
+    static double timeScaleSeconds = 0.0;
+    if (timeScaleSeconds == 0.0) {
+        mach_timebase_info_data_t timebaseInfo;
+        if (mach_timebase_info(&timebaseInfo) == KERN_SUCCESS) {    // returns scale factor for ns
+            double timeScaleMicroSeconds = ((double) timebaseInfo.numer / (double) timebaseInfo.denom) / 1000;
+            timeScaleSeconds = timeScaleMicroSeconds / 1000000;
+        }
+    }
+    
+    NSLog(@"%@: %g seconds", identifier, timeScaleSeconds*machTime);
+}
+uint64_t startTime, stopTime;
+startTime = mach_absolute_time();
+stopTime = mach_absolute_time();
+logMachTime_withIdentifier_(stopTime - startTime, log);
+#endif 
+

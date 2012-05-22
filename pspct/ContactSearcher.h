@@ -28,8 +28,6 @@
 @property (nonatomic, retain) NSString *_firstname;
 @property (nonatomic, retain) NSString *_lastname;
 
-+(void)invalidateContactList;
-
 - (id)initWithContactProvider:(ContactProvider*)provider;
 - (id)initWithContactProvider:(ContactProvider*)provider andFbUser:(ModelFbUser*)user;
 - (id)initWithContactProvider:(ContactProvider*)provider andFirstname:(NSString*)first andLastname:(NSString*)last;

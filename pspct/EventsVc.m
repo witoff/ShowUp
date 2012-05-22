@@ -7,7 +7,6 @@
 //
 
 #import "EventsVc.h"
-#import "Facebook.h"
 #import "PspctAppDelegate.h"
 #import "ContactProviderAb.h"
 #import <MessageUI/MessageUI.h>
@@ -58,57 +57,58 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - facebook
--(void)request:(FBRequest *)request didLoad:(id)result
-{
-    logDebug(@"event response received, merging data");
-    
-    NSArray *all_friends = [result objectForKey:@"data"];
-    NSMutableArray *bday_friends = [[NSMutableArray alloc] initWithCapacity:all_friends.count];
-    
-    //remove no b-days
-    for (NSDictionary *friend in all_friends) {
-        if ([friend objectForKey:@"birthday"])
-        {
-            NSString* bday = [friend objectForKey:@"birthday"];
-            int month = [bday substringToIndex:2].integerValue;
-            int day = [bday substringWithRange:NSMakeRange(3, 2)].integerValue;
-            int doy = day + month*31;
-            
-            [friend setValue:[NSNumber numberWithInt:doy] forKey:@"doy"];
-            [bday_friends addObject:friend];
-        }
-    }
-    
-    //sort
-    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"doy" ascending:YES];
-    NSArray *sortedArr = [bday_friends sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-    
-    //find today's index
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[NSDate date]];
-    
-    int doy = components.day + (31 * components.month);
-    int scroll_index = 0;
-    for (; scroll_index<sortedArr.count; scroll_index++) {
-        if ([[[sortedArr objectAtIndex:scroll_index] objectForKey:@"doy"] integerValue] >= doy)
-            break;
-    }
-    
-    self.birthdays = sortedArr;
-    [self.tableView reloadData];
-    
-    
-    
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:scroll_index inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    
-}
--(void)request:(FBRequest *)request didFailWithError:(NSError *)error
-{
-    logError(@"EventVc :: Error in FB Request: %@", error.description);
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error in Facebook request" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    [alert show];
-}
-
+/*
+ #pragma mark - facebook
+ -(void)request:(FBRequest *)request didLoad:(id)result
+ {
+ logDebug(@"event response received, merging data");
+ 
+ NSArray *all_friends = [result objectForKey:@"data"];
+ NSMutableArray *bday_friends = [[NSMutableArray alloc] initWithCapacity:all_friends.count];
+ 
+ //remove no b-days
+ for (NSDictionary *friend in all_friends) {
+ if ([friend objectForKey:@"birthday"])
+ {
+ NSString* bday = [friend objectForKey:@"birthday"];
+ int month = [bday substringToIndex:2].integerValue;
+ int day = [bday substringWithRange:NSMakeRange(3, 2)].integerValue;
+ int doy = day + month*31;
+ 
+ [friend setValue:[NSNumber numberWithInt:doy] forKey:@"doy"];
+ [bday_friends addObject:friend];
+ }
+ }
+ 
+ //sort
+ NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"doy" ascending:YES];
+ NSArray *sortedArr = [bday_friends sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+ 
+ //find today's index
+ NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[NSDate date]];
+ 
+ int doy = components.day + (31 * components.month);
+ int scroll_index = 0;
+ for (; scroll_index<sortedArr.count; scroll_index++) {
+ if ([[[sortedArr objectAtIndex:scroll_index] objectForKey:@"doy"] integerValue] >= doy)
+ break;
+ }
+ 
+ self.birthdays = sortedArr;
+ [self.tableView reloadData];
+ 
+ 
+ 
+ [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:scroll_index inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+ 
+ }
+ -(void)request:(FBRequest *)request didFailWithError:(NSError *)error
+ {
+ logError(@"EventVc :: Error in FB Request: %@", error.description);
+ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error in Facebook request" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+ [alert show];
+ }
+ */
 
 
 #pragma mark - View lifecycle
@@ -261,16 +261,22 @@
     formatter.dateFormat = @"EEEE, M/d";
     NSString* dateString = [formatter stringFromDate:startDate];
     
+    NSString *title;
     switch (section) {
         case 0:
-            return [NSString stringWithFormat: @"Yesterday - %@", dateString];
+            title = [NSString stringWithFormat: @"Yesterday - %@", dateString];
+            break;
         case 1:
-            return [NSString stringWithFormat: @"Today - %@", dateString];
+            title = [NSString stringWithFormat: @"Today - %@", dateString];
+            break;
         case 2:
-            return [NSString stringWithFormat: @"Tomorrow - %@", dateString];
+            title = [NSString stringWithFormat: @"Tomorrow - %@", dateString];
+            break;
         default:
-            return dateString;
+            title = dateString;
     }
+    
+    return title;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -295,7 +301,9 @@
     }
     
     // Get Data
+    
     EKEvent *event = [[self.events objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    
     cell.textLabel.text = event.title;
     
     // Background color based on past, current, future
@@ -339,10 +347,10 @@
         NSString *dateString = [NSString stringWithFormat:@"%@ - %@", [self getDateString: event.startDate], [self getDateString:event.endDate]];
         cell.detailTextLabel.text = [dateString lowercaseString];
     }
-    
+
     //Attendee count
     cell.lblAttendees.text = [NSString stringWithFormat:@"Invited: %i", event.attendees.count];
-    
+
     return cell;
 }
 
@@ -373,7 +381,13 @@
     self.events = [[NSMutableArray alloc] initWithCapacity:9];
     
     for (int i=-1; i<8; i++) {
-        [self.events insertObject:[ea getEventsFromOffset:i to:i+1] atIndex:i+1];       
+        NSArray *daysEvents = [ea getEventsFromOffset:i to:i+1];
+        [self.events insertObject:daysEvents atIndex:i+1];
+        
+        //Value is lazily loaded (or something) and must be pre-accessed to enable fast scrolling
+        int i = 0;
+        for (EKEvent *e in daysEvents)
+            i = e.attendees.count;
     }
     
     

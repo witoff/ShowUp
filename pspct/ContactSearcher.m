@@ -15,6 +15,7 @@
 
 @interface ContactSearcher (hidden)
 
+
 - (BOOL)doBidirectionalSubstringMatch:(NSString*)one andTwo:(NSString*)two;
 - (BOOL)areAllContactsLinked:(NSArray*)contacts;
 

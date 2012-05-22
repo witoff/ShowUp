@@ -71,7 +71,8 @@
     }
     
     //Add the organizer 
-    if (self.event.organizer && self.event.attendees.count>0)
+    // self.event.attendees.count>0
+    if (self.event.organizer && !self.event.calendar.allowsContentModifications)
     {
         AbContact *contact = [self findContact:self.event.organizer];
         if (contact)
