@@ -28,10 +28,10 @@
 
 
 /** LOG LEVELS **/
-//#define LOG_LEVEL_ERROR
-//#define LOG_LEVEL_WARN
-//#define LOG_LEVEL_INFO
-//#define LOG_LEVEL_DEBUG
+#define LOG_LEVEL_ERROR
+#define LOG_LEVEL_WARN
+#define LOG_LEVEL_INFO
+#define LOG_LEVEL_DEBUG
 
 #ifdef LOG_LEVEL_ERROR
 #define logError( ... ) logVerbose( __VA_ARGS__ )

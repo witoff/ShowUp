@@ -12,7 +12,7 @@
 #import "IntroVc.h"
 #import <EventKit/EventKit.h>
 
-@interface PspctAppDelegate : UIResponder <UIApplicationDelegate, FBSessionDelegate, FBRequestDelegate>
+@interface PspctAppDelegate : UIResponder <UIApplicationDelegate>
 {
     Facebook *facebook;
     MixpanelAPI *mixpanel;
